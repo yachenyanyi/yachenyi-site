@@ -1,0 +1,33 @@
+backend:
+  name: github
+  repo: yachenyanyi/yachenyi-site
+  branch: main
+  # Production requires an OAuth proxy/base_url before remote login is enabled.
+
+local_backend: true
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: projects
+    label: Projects
+    folder: src/content/projects
+    create: true
+    extension: md
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Status, name: status, widget: select, options: [active, experimental, maintenance, archived] }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: GitHub, name: github, widget: string, required: false }
+      - { label: Updated At, name: updatedAt, widget: datetime, format: YYYY-MM-DD }
+      - label: SEO
+        name: seo
+        widget: object
+        required: false
+        fields:
+          - { label: SEO Title, name: title, widget: string, required: false }
+          - { label: SEO Description, name: description, widget: text, required: false }
+          - { label: No Index, name: noindex, widget: boolean, default: false }
+      - { label: Body, name: body, widget: markdown }
