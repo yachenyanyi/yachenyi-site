@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const title = project.data.seo?.title ?? `${project.data.title} — Yachenyi`;
+const description = project.data.seo?.description ?? project.data.summary;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: project.data.title,
+  description,
+  creator: {
+    '@type': 'Person',
+    name: 'Yachenyi',
+  },
+  url: Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined,
+};
+---
+
+<BaseLayout title={title} description={description} noindex={project.data.seo?.noindex} schema={schema}>
+  <article class="prose">
+    <div class="eyebrow">{project.data.status}</div>
+    <h1>{project.data.title}</h1>
+    <p class="lead">{project.data.summary}</p>
+    <Content />
+  </article>
+</BaseLayout>
