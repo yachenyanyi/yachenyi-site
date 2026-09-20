@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects'))
+  .filter(({ data }) => data.featured)
+  .slice(0, 3);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Yachenyi',
+    url: Astro.site?.toString(),
+    jobTitle: 'Independent AI Software Builder',
+    knowsAbout: ['AI Agents', 'Automation', 'Developer Tools', 'Software Engineering'],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Yachenyi',
+    url: Astro.site?.toString(),
+  },
+];
+---
+
+<BaseLayout
+  title="Yachenyi — Independent AI Software Studio"
+  description="Yachenyi builds AI agents, automation systems, developer tools and AI-native software."
+  schema={schema}
+>
+  <section class="hero">
+    <div class="eyebrow">Independent AI Software Studio</div>
+    <h1>Build useful<br />software.</h1>
+    <p class="lead">
+      AI agents, automation, developer tools and focused software systems — built and documented in public.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">Featured projects</div>
+    <div class="grid">
+      {projects.map((project) => (
+        <a class="card" href={`/projects/${project.id}/`}>
+          <div class="meta">{project.data.status}</div>
+          <h2>{project.data.title}</h2>
+          <p>{project.data.summary}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
