@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('lab'))
+  .filter(({ data }) => !data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+---
+
+<BaseLayout
+  title="Lab — Yachenyi"
+  description="Build notes, architecture decisions and experiments from Yachenyi."
+>
+  <section class="prose">
+    <div class="eyebrow">Lab / Build Log</div>
+    <h1>Lab</h1>
+    {posts.length === 0 ? (
+      <p class="lead">Research notes and build logs will appear here.</p>
+    ) : (
+      <div class="grid">
+        {posts.map((post) => (
+          <article class="card">
+            <div class="meta">{post.data.publishedAt.toISOString().slice(0, 10)}</div>
+            <h2>{post.data.title}</h2>
+            <p>{post.data.summary}</p>
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
