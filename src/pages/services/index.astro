@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Services — Yachenyi"
+  description="AI agents, automation, internal tools and software development services from Yachenyi."
+>
+  <section class="prose">
+    <div class="eyebrow">Services</div>
+    <h1>Services</h1>
+    {services.length === 0 ? (
+      <p class="lead">Service offerings are being prepared.</p>
+    ) : (
+      <div class="grid">
+        {services.map((service) => (
+          <article class="card">
+            <h2>{service.data.title}</h2>
+            <p>{service.data.summary}</p>
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
