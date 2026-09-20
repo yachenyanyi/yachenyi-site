@@ -6,6 +6,26 @@ const projects = (await getCollection('projects'))
   .filter(({ data }) => data.featured)
   .slice(0, 3);
 
+const services = (await getCollection('services'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const labPosts = (await getCollection('lab'))
+  .filter(({ data }) => !data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 2);
+
+const serviceIcons: Record<string, string> = {
+  'ai-agents': '/icons/generated/icon-concept-01.webp',
+  automation: '/icons/generated/icon-concept-03.webp',
+  'web-systems': '/icons/generated/icon-concept-06.webp',
+};
+
+const labImages = [
+  '/images/generated/home-misty-mountains.webp',
+  '/images/generated/misty-blue-coast.webp',
+];
+
 const schema = [
   {
     '@context': 'https://schema.org',
@@ -29,24 +49,137 @@ const schema = [
   description="Yachenyi builds AI agents, automation systems, developer tools and AI-native software."
   schema={schema}
 >
-  <section class="hero">
-    <div class="eyebrow">Independent AI Software Studio</div>
-    <h1>Build useful<br />software.</h1>
-    <p class="lead">
-      AI agents, automation, developer tools and focused software systems — built and documented in public.
-    </p>
+  <section class="hero hero-editorial">
+    <div class="hero-copy">
+      <div class="eyebrow">Independent AI Software Studio</div>
+      <h1>Ideas into<br />useful software.</h1>
+      <p class="lead">
+        AI agents, automation, developer tools and focused software systems — designed, built and documented by one independent builder.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-dark" href="/projects/">View projects</a>
+        <a class="text-link" href="/lab/">Read the lab <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+
+    <figure class="hero-visual">
+      <img
+        src="/images/generated/home-creative-workspace.webp"
+        alt="A quiet minimal workspace representing the Yachenyi independent software studio"
+        width="1600"
+        height="1000"
+        loading="eager"
+      />
+      <figcaption>Independent, AI-native, deliberately small.</figcaption>
+    </figure>
+  </section>
+
+  <section class="section split-feature">
+    <div>
+      <div class="eyebrow">Currently building</div>
+      <h2 class="display-2">Software that coordinates software work.</h2>
+      <p class="section-copy">
+        Current experiments focus on long-running agent workflows, durable project state and practical automation that turns repetitive development work into reusable systems.
+      </p>
+      <a class="text-link" href="/projects/deep-loopminder/">Explore DeepLoopMinder <span aria-hidden="true">↗</span></a>
+    </div>
+    <img
+      class="feature-image"
+      src="/images/generated/ai-network-workbench.webp"
+      alt="Minimal workstation with a connected AI network visualization"
+      width="1400"
+      height="900"
+      loading="lazy"
+    />
   </section>
 
   <section class="section">
-    <div class="eyebrow">Featured projects</div>
-    <div class="grid">
-      {projects.map((project) => (
-        <a class="card" href={`/projects/${project.id}/`}>
-          <div class="meta">{project.data.status}</div>
-          <h2>{project.data.title}</h2>
-          <p>{project.data.summary}</p>
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">Selected work</div>
+        <h2 class="display-2">Projects</h2>
+      </div>
+      <a class="text-link" href="/projects/">All projects <span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="project-grid">
+      {projects.map((project, index) => (
+        <a class:list={['project-card', { 'project-card-wide': index === 0 }]} href={`/projects/${project.id}/`}>
+          <div class="project-card-media">
+            <img
+              src={index === 0 ? '/images/generated/futurist-white-architecture.webp' : '/images/generated/home-misty-mountains.webp'}
+              alt=""
+              loading="lazy"
+            />
+          </div>
+          <div class="project-card-body">
+            <div class="meta">{project.data.status}</div>
+            <h3>{project.data.title}</h3>
+            <p>{project.data.summary}</p>
+          </div>
         </a>
       ))}
     </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">What I build</div>
+        <h2 class="display-2">Services</h2>
+      </div>
+      <a class="text-link" href="/services/">Details <span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="service-grid">
+      {services.map((service) => (
+        <a class="service-card" href={`/services/${service.id}/`}>
+          <img
+            class="service-icon"
+            src={serviceIcons[service.id] ?? '/icons/generated/icon-concept-08.webp'}
+            alt=""
+            width="128"
+            height="128"
+            loading="lazy"
+          />
+          <div>
+            <h3>{service.data.title}</h3>
+            <p>{service.data.summary}</p>
+          </div>
+          <span class="card-arrow" aria-hidden="true">↗</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">Notes from the lab</div>
+        <h2 class="display-2">Build in public.</h2>
+      </div>
+      <a class="text-link" href="/lab/">Open Lab <span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="lab-grid">
+      {labPosts.map((post, index) => (
+        <a class="lab-card" href={`/lab/${post.id}/`}>
+          <img src={labImages[index % labImages.length]} alt="" loading="lazy" />
+          <div class="lab-card-body">
+            <div class="meta">{post.data.publishedAt.toISOString().slice(0, 10)}</div>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.summary}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section contact-panel">
+    <div>
+      <div class="eyebrow">Have a project in mind?</div>
+      <h2 class="display-2">Build something useful.</h2>
+    </div>
+    <a class="button button-dark" href="/contact/">Start a conversation</a>
   </section>
 </BaseLayout>

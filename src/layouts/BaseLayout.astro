@@ -17,6 +17,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.u
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#f7f7f4" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
@@ -30,15 +31,32 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.u
   </head>
   <body>
     <header class="site-header">
-      <a href="/" aria-label="Yachenyi home"><strong>YACHENYI</strong></a>
+      <a class="brand" href="/" aria-label="Yachenyi home">YACHENYI<span class="brand-dot">.</span></a>
       <nav aria-label="Primary">
         <a href="/projects/">Projects</a>
+        <a href="/services/">Services</a>
         <a href="/lab/">Lab</a>
         <a href="/about/">About</a>
       </nav>
+      <a class="header-contact" href="/contact/">Contact ↗</a>
     </header>
+
     <main>
       <slot />
     </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>YACHENYI</strong>
+        <p>Independent AI Software Studio</p>
+      </div>
+      <div class="footer-links">
+        <a href="/projects/">Projects</a>
+        <a href="/lab/">Lab</a>
+        <a href="/facts/">Facts</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <p class="footer-meta">One person. AI-native. Software first.</p>
+    </footer>
   </body>
 </html>

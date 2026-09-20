@@ -3,26 +3,36 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const serviceIcons: Record<string, string> = {
+  'ai-agents': '/icons/generated/icon-concept-01.webp',
+  automation: '/icons/generated/icon-concept-03.webp',
+  'web-systems': '/icons/generated/icon-concept-06.webp',
+};
 ---
 
 <BaseLayout
   title="Services — Yachenyi"
-  description="AI agents, automation, internal tools and software development services from Yachenyi."
+  description="AI agents, automation, internal tools and web systems from Yachenyi."
 >
-  <section class="prose">
+  <section class="page-intro">
     <div class="eyebrow">Services</div>
-    <h1>Services</h1>
-    {services.length === 0 ? (
-      <p class="lead">Service offerings are being prepared.</p>
-    ) : (
-      <div class="grid">
-        {services.map((service) => (
-          <article class="card">
+    <h1 class="page-title">Small studio.<br />Focused systems.</h1>
+    <p class="lead">Independent software work for problems that benefit from thoughtful architecture, automation and AI-native tooling.</p>
+  </section>
+
+  <section class="section">
+    <div class="service-grid">
+      {services.map((service) => (
+        <a class="service-card" href={`/services/${service.id}/`}>
+          <img class="service-icon" src={serviceIcons[service.id] ?? '/icons/generated/icon-concept-08.webp'} alt="" loading="lazy" />
+          <div>
+            <div class="meta">0{service.data.order}</div>
             <h2>{service.data.title}</h2>
             <p>{service.data.summary}</p>
-          </article>
-        ))}
-      </div>
-    )}
+          </div>
+          <span class="card-arrow" aria-hidden="true">↗</span>
+        </a>
+      ))}
+    </div>
   </section>
 </BaseLayout>
