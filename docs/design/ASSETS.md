@@ -7,19 +7,21 @@
 - `/images/generated/ai-network-workbench.webp`
 - `/images/generated/futurist-white-architecture.webp`
 - `/images/generated/misty-blue-coast.webp`
+- `/images/generated/yachenyi-brand-visual.webp`
 
-## Generated icon concepts
+## Semantic service icons
 
-- `/icons/generated/icon-concept-01.webp`
-- `/icons/generated/icon-concept-02.webp`
-- `/icons/generated/icon-concept-03.webp`
-- `/icons/generated/icon-concept-04.webp`
-- `/icons/generated/icon-concept-05.webp`
-- `/icons/generated/icon-concept-06.webp`
-- `/icons/generated/icon-concept-07.webp`
-- `/icons/generated/icon-concept-08.webp`
+- `/icons/services/ai-agents.webp`
+- `/icons/services/automation.webp`
+- `/icons/services/web-systems.webp`
 
-These remain unassigned concepts until used by a specific component.
+The semantic files reference selected generated icon concepts and are the paths that application code should use.
+
+## Generated icon source concepts
+
+- `/icons/generated/icon-concept-01.webp` … `icon-concept-08.webp`
+
+Unused concepts remain available as source material but should not be referenced directly by normal page components.
 
 ## Design reference
 

@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects'))
   .filter(({ data }) => data.featured)
+  .sort((a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf())
   .slice(0, 3);
 
 const services = (await getCollection('services'))
@@ -16,9 +17,15 @@ const labPosts = (await getCollection('lab'))
   .slice(0, 2);
 
 const serviceIcons: Record<string, string> = {
-  'ai-agents': '/icons/generated/icon-concept-01.webp',
-  automation: '/icons/generated/icon-concept-03.webp',
-  'web-systems': '/icons/generated/icon-concept-06.webp',
+  'ai-agents': '/icons/services/ai-agents.webp',
+  automation: '/icons/services/automation.webp',
+  'web-systems': '/icons/services/web-systems.webp',
+};
+
+const projectImages: Record<string, string> = {
+  'deep-loopminder': '/images/generated/ai-network-workbench.webp',
+  issuepack: '/images/generated/home-creative-workspace.webp',
+  autoscreenagent: '/images/generated/futurist-white-architecture.webp',
 };
 
 const labImages = [
@@ -48,6 +55,7 @@ const schema = [
   title="Yachenyi — Independent AI Software Studio"
   description="Yachenyi builds AI agents, automation systems, developer tools and AI-native software."
   schema={schema}
+  image="/images/generated/home-creative-workspace.webp"
 >
   <section class="hero hero-editorial">
     <div class="hero-copy">
@@ -106,11 +114,7 @@ const schema = [
       {projects.map((project, index) => (
         <a class:list={['project-card', { 'project-card-wide': index === 0 }]} href={`/projects/${project.id}/`}>
           <div class="project-card-media">
-            <img
-              src={index === 0 ? '/images/generated/futurist-white-architecture.webp' : '/images/generated/home-misty-mountains.webp'}
-              alt=""
-              loading="lazy"
-            />
+            <img src={projectImages[project.id] ?? '/images/generated/home-misty-mountains.webp'} alt="" loading="lazy" />
           </div>
           <div class="project-card-body">
             <div class="meta">{project.data.status}</div>
@@ -134,14 +138,7 @@ const schema = [
     <div class="service-grid">
       {services.map((service) => (
         <a class="service-card" href={`/services/${service.id}/`}>
-          <img
-            class="service-icon"
-            src={serviceIcons[service.id] ?? '/icons/generated/icon-concept-08.webp'}
-            alt=""
-            width="128"
-            height="128"
-            loading="lazy"
-          />
+          <img class="service-icon" src={serviceIcons[service.id]} alt="" width="128" height="128" loading="lazy" />
           <div>
             <h3>{service.data.title}</h3>
             <p>{service.data.summary}</p>

@@ -15,6 +15,12 @@ const { Content } = await render(post);
 const title = post.data.seo?.title ?? `${post.data.title} — Yachenyi Lab`;
 const description = post.data.seo?.description ?? post.data.summary;
 
+const images: Record<string, string> = {
+  'durable-project-state': '/images/generated/home-misty-mountains.webp',
+  'static-first-opc-site': '/images/generated/misty-blue-coast.webp',
+};
+const image = images[post.id] ?? '/images/generated/futurist-white-architecture.webp';
+
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
@@ -22,22 +28,30 @@ const schema = {
   description,
   datePublished: post.data.publishedAt.toISOString(),
   dateModified: (post.data.updatedAt ?? post.data.publishedAt).toISOString(),
-  author: {
-    '@type': 'Person',
-    name: 'Yachenyi',
-  },
+  author: { '@type': 'Person', name: 'Yachenyi' },
 };
 ---
 
-<BaseLayout title={title} description={description} noindex={post.data.seo?.noindex} schema={schema}>
-  <article class="prose prose-page">
-    <div class="eyebrow">Lab / Build Log</div>
-    <h1>{post.data.title}</h1>
-    <p class="lead">{post.data.summary}</p>
-    <div class="article-meta">
-      <span>{post.data.publishedAt.toISOString().slice(0, 10)}</span>
-      <span>{post.data.tags.join(' · ')}</span>
+<BaseLayout title={title} description={description} noindex={post.data.seo?.noindex} schema={schema} image={image}>
+  <section class="article-hero">
+    <div>
+      <div class="eyebrow">Lab / Build Log</div>
+      <h1 class="article-title">{post.data.title}</h1>
+      <p class="lead article-summary">{post.data.summary}</p>
     </div>
-    <Content />
-  </article>
+    <img class="article-hero-media" src={image} alt="" loading="eager" />
+  </section>
+
+  <section class="article-shell">
+    <aside class="article-aside">
+      <dl>
+        <div><dt>Published</dt><dd>{post.data.publishedAt.toISOString().slice(0, 10)}</dd></div>
+        <div><dt>Tags</dt><dd>{post.data.tags.join(' · ')}</dd></div>
+        <div><dt>Type</dt><dd>Build note</dd></div>
+      </dl>
+    </aside>
+    <article class="article-body">
+      <Content />
+    </article>
+  </section>
 </BaseLayout>

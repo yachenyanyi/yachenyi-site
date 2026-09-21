@@ -2,17 +2,20 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const projects = await getCollection('projects');
-const images = [
-  '/images/generated/futurist-white-architecture.webp',
-  '/images/generated/ai-network-workbench.webp',
-  '/images/generated/home-misty-mountains.webp',
-];
+const projects = (await getCollection('projects'))
+  .sort((a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf());
+
+const images: Record<string, string> = {
+  'deep-loopminder': '/images/generated/ai-network-workbench.webp',
+  issuepack: '/images/generated/home-creative-workspace.webp',
+  autoscreenagent: '/images/generated/futurist-white-architecture.webp',
+};
 ---
 
 <BaseLayout
   title="Projects — Yachenyi"
   description="Software, AI agent and automation projects built by Yachenyi."
+  image="/images/generated/ai-network-workbench.webp"
 >
   <section class="page-intro">
     <div class="eyebrow">Projects</div>
@@ -25,10 +28,10 @@ const images = [
       {projects.map((project, index) => (
         <a class:list={['project-card', { 'project-card-wide': index === 0 }]} href={`/projects/${project.id}/`}>
           <div class="project-card-media">
-            <img src={images[index % images.length]} alt="" loading="lazy" />
+            <img src={images[project.id] ?? '/images/generated/home-misty-mountains.webp'} alt="" loading="lazy" />
           </div>
           <div class="project-card-body">
-            <div class="meta">{project.data.status}</div>
+            <div class="meta">{project.data.status} · {project.data.updatedAt.toISOString().slice(0, 10)}</div>
             <h2>{project.data.title}</h2>
             <p>{project.data.summary}</p>
           </div>

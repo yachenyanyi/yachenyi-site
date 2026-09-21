@@ -14,13 +14,51 @@ const { service } = Astro.props;
 const { Content } = await render(service);
 const title = service.data.seo?.title ?? `${service.data.title} — Yachenyi`;
 const description = service.data.seo?.description ?? service.data.summary;
+const serviceIcons: Record<string, string> = {
+  'ai-agents': '/icons/services/ai-agents.webp',
+  automation: '/icons/services/automation.webp',
+  'web-systems': '/icons/services/web-systems.webp',
+};
+const icon = serviceIcons[service.id];
 ---
 
 <BaseLayout title={title} description={description} noindex={service.data.seo?.noindex}>
-  <article class="prose prose-page">
-    <div class="eyebrow">Service</div>
-    <h1>{service.data.title}</h1>
-    <p class="lead">{service.data.summary}</p>
-    <Content />
-  </article>
+  <section class="article-hero">
+    <div>
+      <div class="eyebrow">Service / 0{service.data.order}</div>
+      <h1 class="article-title">{service.data.title}</h1>
+      <p class="lead article-summary">{service.data.summary}</p>
+      <div class="hero-actions">
+        <a class="button button-dark" href="/contact/">Discuss a project</a>
+        <a class="text-link" href="/services/">All services →</a>
+      </div>
+    </div>
+    <div class="service-symbol" aria-hidden="true"><img src={icon} alt="" /></div>
+  </section>
+
+  <section class="article-shell">
+    <aside class="article-aside">
+      <dl>
+        <div><dt>Practice</dt><dd>{service.data.title}</dd></div>
+        <div><dt>Model</dt><dd>Independent / focused engagement</dd></div>
+        <div><dt>Principle</dt><dd>Smallest reliable system first</dd></div>
+      </dl>
+    </aside>
+    <article class="article-body">
+      <Content />
+    </article>
+  </section>
+
+  <style>
+    .service-symbol {
+      aspect-ratio: 4 / 3;
+      background: #eeeee9;
+      display: grid;
+      place-items: center;
+    }
+    .service-symbol img {
+      width: min(46%, 190px);
+      mix-blend-mode: multiply;
+    }
+  </style>
 </BaseLayout>

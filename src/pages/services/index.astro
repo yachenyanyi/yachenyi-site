@@ -4,9 +4,9 @@ import { getCollection } from 'astro:content';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const serviceIcons: Record<string, string> = {
-  'ai-agents': '/icons/generated/icon-concept-01.webp',
-  automation: '/icons/generated/icon-concept-03.webp',
-  'web-systems': '/icons/generated/icon-concept-06.webp',
+  'ai-agents': '/icons/services/ai-agents.webp',
+  automation: '/icons/services/automation.webp',
+  'web-systems': '/icons/services/web-systems.webp',
 };
 ---
 
@@ -24,7 +24,7 @@ const serviceIcons: Record<string, string> = {
     <div class="service-grid">
       {services.map((service) => (
         <a class="service-card" href={`/services/${service.id}/`}>
-          <img class="service-icon" src={serviceIcons[service.id] ?? '/icons/generated/icon-concept-08.webp'} alt="" loading="lazy" />
+          <img class="service-icon" src={serviceIcons[service.id]} alt="" loading="lazy" />
           <div>
             <div class="meta">0{service.data.order}</div>
             <h2>{service.data.title}</h2>
