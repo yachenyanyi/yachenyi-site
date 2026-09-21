@@ -168,9 +168,28 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--text); outline-
   transition: transform .22s ease, border-color .22s ease;
 }
 .project-card:hover { transform: translateY(-3px); border-color: #c8c8c0; }
-.project-card-wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1.4fr .8fr; }
+.project-card-wide {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+}
 .project-card-media { overflow: hidden; background: var(--soft); }
-.project-card-media img { width: 100%; height: auto; min-height: 0; aspect-ratio: 16 / 10; object-fit: cover; object-position: center; filter: saturate(.72); transition: transform .45s ease; }
+.project-card-media img {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(.72);
+  transition: transform .45s ease;
+}
+.project-card-wide .project-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 34px 32px;
+}
 .project-card:hover .project-card-media img { transform: scale(1.018); }
 .project-card-body { padding: 28px; }
 .project-card h2, .project-card h3, .service-card h2, .service-card h3, .lab-card h2, .lab-card h3 { font-size: 1.25rem; margin: 10px 0; font-weight: 600; }
