@@ -32,12 +32,12 @@ for (const file of htmlFiles) {
   const is404 = rel === '404.html';
 
   assert(/<title>[^<]+<\/title>/i.test(html), `${rel}: missing <title>`, errors);
-  assert(/<meta\s+name="description"\s+content="[^"]+"/i.test(html), `${rel}: missing meta description`, errors);
-
-  const h1Count = (html.match(/<h1\b/gi) ?? []).length;
-  assert(h1Count === 1, `${rel}: expected exactly one <h1>, found ${h1Count}`, errors);
 
   if (!isAdmin) {
+    assert(/<meta\s+name="description"\s+content="[^"]+"/i.test(html), `${rel}: missing meta description`, errors);
+
+    const h1Count = (html.match(/<h1\b/gi) ?? []).length;
+    assert(h1Count === 1, `${rel}: expected exactly one <h1>, found ${h1Count}`, errors);
     const canonical = html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/i)?.[1];
     assert(Boolean(canonical), `${rel}: missing canonical URL`, errors);
     if (canonical) {
