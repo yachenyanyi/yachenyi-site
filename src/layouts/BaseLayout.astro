@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { withBase } from '../lib/site';
 
 interface Props {
   title: string;
@@ -18,9 +19,12 @@ const {
 } = Astro.props;
 
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
-const socialImage = Astro.site ? new URL(image, Astro.site) : image;
+const socialImage = Astro.site ? new URL(withBase(image), Astro.site) : withBase(image);
 const path = Astro.url.pathname;
-const isCurrent = (prefix: string) => path === prefix || (prefix !== '/' && path.startsWith(prefix));
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const logicalPath = base && path.startsWith(base) ? (path.slice(base.length) || '/') : path;
+const isCurrent = (prefix: string) =>
+  logicalPath === prefix || (prefix !== '/' && logicalPath.startsWith(prefix));
 ---
 
 <!doctype html>
@@ -29,7 +33,7 @@ const isCurrent = (prefix: string) => path === prefix || (prefix !== '/' && path
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="theme-color" content="#f7f7f4" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
@@ -46,21 +50,21 @@ const isCurrent = (prefix: string) => path === prefix || (prefix !== '/' && path
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
 
-    {Astro.site && <link rel="sitemap" href="/sitemap-index.xml" />}
+    {Astro.site && <link rel="sitemap" href={withBase('/sitemap-index.xml')} />}
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
 
     <header class="site-header">
-      <a class="brand" href="/" aria-label="Yachenyi home">YACHENYI<span class="brand-dot">.</span></a>
+      <a class="brand" href={withBase('/')} aria-label="Yachenyi home">YACHENYI<span class="brand-dot">.</span></a>
       <nav aria-label="Primary">
-        <a href="/projects/" aria-current={isCurrent('/projects/') ? 'page' : undefined}>Projects</a>
-        <a href="/services/" aria-current={isCurrent('/services/') ? 'page' : undefined}>Services</a>
-        <a href="/lab/" aria-current={isCurrent('/lab/') ? 'page' : undefined}>Lab</a>
-        <a href="/about/" aria-current={isCurrent('/about/') ? 'page' : undefined}>About</a>
+        <a href={withBase('/projects/')} aria-current={isCurrent('/projects/') ? 'page' : undefined}>Projects</a>
+        <a href={withBase('/services/')} aria-current={isCurrent('/services/') ? 'page' : undefined}>Services</a>
+        <a href={withBase('/lab/')} aria-current={isCurrent('/lab/') ? 'page' : undefined}>Lab</a>
+        <a href={withBase('/about/')} aria-current={isCurrent('/about/') ? 'page' : undefined}>About</a>
       </nav>
-      <a class="header-contact" href="/contact/" aria-current={isCurrent('/contact/') ? 'page' : undefined}>Contact ↗</a>
+      <a class="header-contact" href={withBase('/contact/')} aria-current={isCurrent('/contact/') ? 'page' : undefined}>Contact ↗</a>
     </header>
 
     <main id="content">
@@ -73,10 +77,10 @@ const isCurrent = (prefix: string) => path === prefix || (prefix !== '/' && path
         <p>Independent AI Software Studio</p>
       </div>
       <div class="footer-links">
-        <a href="/projects/">Projects</a>
-        <a href="/lab/">Lab</a>
-        <a href="/facts/">Facts</a>
-        <a href="/contact/">Contact</a>
+        <a href={withBase('/projects/')}>Projects</a>
+        <a href={withBase('/lab/')}>Lab</a>
+        <a href={withBase('/facts/')}>Facts</a>
+        <a href={withBase('/contact/')}>Contact</a>
       </div>
       <p class="footer-meta">One person. AI-native. Software first.</p>
     </footer>
