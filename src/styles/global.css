@@ -23,7 +23,6 @@ a, p, li, dd { overflow-wrap: anywhere; }
 main { width: min(var(--max), calc(100% - (var(--page-gutter) * 2))); margin: 0 auto; }
 ::selection { background: #222; color: #fff; }
 
-html.i18n-pending body,
 html.i18n-reflowing body {
   visibility: hidden;
 }
