@@ -118,7 +118,7 @@ const isCurrent = (prefix: string) =>
       const originalHtml = new WeakMap();
       const originalAria = new WeakMap();
 
-      const applyLanguage = (lang) => {
+      const applyLanguage = (lang: string) => {
         const normalized = lang === 'zh' ? 'zh' : 'en';
         root.dataset.lang = normalized;
         root.lang = normalized === 'zh' ? 'zh-CN' : 'en';
