@@ -52,8 +52,12 @@ const isCurrent = (prefix: string) =>
 
     {Astro.site && <link rel="sitemap" href={withBase('/sitemap-index.xml')} />}
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    <script is:inline>
+      document.documentElement.classList.add('motion-ready');
+    </script>
   </head>
   <body>
+    <div class="page-loader" aria-hidden="true"><span></span></div>
     <a class="skip-link" href="#content">Skip to content</a>
 
     <header class="site-header">
@@ -84,5 +88,56 @@ const isCurrent = (prefix: string) =>
       </div>
       <p class="footer-meta">One person. AI-native. Software first.</p>
     </footer>
+
+    <script>
+      const root = document.documentElement;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const revealImages = () => {
+        document.querySelectorAll('img').forEach((image) => {
+          const reveal = () => image.classList.add('image-ready');
+          if (image.complete) reveal();
+          else {
+            image.addEventListener('load', reveal, { once: true });
+            image.addEventListener('error', reveal, { once: true });
+          }
+        });
+      };
+
+      const revealSections = () => {
+        const targets = document.querySelectorAll(
+          '.section, .about-grid, .contact-grid, .article-shell, .prose, .site-footer'
+        );
+
+        if (reduceMotion || !('IntersectionObserver' in window)) {
+          targets.forEach((target) => target.classList.add('is-revealed'));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.08, rootMargin: '0px 0px -7% 0px' }
+        );
+
+        targets.forEach((target) => observer.observe(target));
+      };
+
+      revealImages();
+      revealSections();
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => root.classList.add('page-ready'));
+      });
+
+      const complete = () => root.classList.add('page-complete');
+      if (document.readyState === 'complete') complete();
+      else window.addEventListener('load', complete, { once: true });
+    </script>
   </body>
 </html>
