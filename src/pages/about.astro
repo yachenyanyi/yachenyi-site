@@ -4,13 +4,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="About — Yachenyi"
-  description="About Yachenyi, an independent builder working on AI agents, automation and software systems."
+  description="Yachenyi is an independent AI software studio focused on agents, automation, developer tools and useful software systems."
+  image="/images/generated/home-creative-workspace.webp"
 >
-  <article class="prose">
+  <section class="page-intro">
     <div class="eyebrow">About</div>
-    <h1>Yachenyi</h1>
+    <h1 class="page-title">One builder.<br />A small studio.</h1>
     <p class="lead">
-      An independent software builder focused on AI agents, automation, developer tools and practical software systems.
+      Yachenyi is an independent software practice for building AI agents, automation, developer tools and focused web systems.
     </p>
-  </article>
+  </section>
+
+  <section class="about-grid">
+    <img
+      src="/images/generated/home-creative-workspace.webp"
+      alt="A quiet minimal workspace representing the Yachenyi studio"
+      loading="lazy"
+    />
+    <div class="about-copy">
+      <div class="eyebrow">Working model</div>
+      <h2>Small by design.</h2>
+      <p>
+        The studio is intentionally compact: fewer layers between a problem, the architecture and the finished software.
+        AI is used as engineering leverage, not as a substitute for clear system boundaries, testing or maintainability.
+      </p>
+      <p>
+        Projects usually begin with a concrete operational problem: context that keeps getting lost, repetitive work that
+        should be automated, or software that needs a simpler way to coordinate people, tools and models.
+      </p>
+
+      <div class="principles">
+        <div class="principle"><span>01</span><div><strong>Useful before impressive.</strong><p>Start from the repeated problem and the evidence that software can remove it.</p></div></div>
+        <div class="principle"><span>02</span><div><strong>Explicit state over hidden magic.</strong><p>Make workflows observable, resumable and understandable.</p></div></div>
+        <div class="principle"><span>03</span><div><strong>Static and simple when possible.</strong><p>Add runtime complexity only where the product genuinely needs it.</p></div></div>
+        <div class="principle"><span>04</span><div><strong>Build reusable systems.</strong><p>Turn one-off fixes into patterns, tools and infrastructure that compound over time.</p></div></div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

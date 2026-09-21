@@ -6,10 +6,21 @@ interface Props {
   description: string;
   noindex?: boolean;
   schema?: Record<string, unknown> | Record<string, unknown>[];
+  image?: string;
 }
 
-const { title, description, noindex = false, schema } = Astro.props;
+const {
+  title,
+  description,
+  noindex = false,
+  schema,
+  image = '/images/generated/yachenyi-brand-visual.webp',
+} = Astro.props;
+
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+const socialImage = Astro.site ? new URL(image, Astro.site) : image;
+const path = Astro.url.pathname;
+const isCurrent = (prefix: string) => path === prefix || (prefix !== '/' && path.startsWith(prefix));
 ---
 
 <!doctype html>
@@ -18,30 +29,41 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.u
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="theme-color" content="#f7f7f4" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     <link rel="canonical" href={canonical} />
+
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Yachenyi" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+
     {Astro.site && <link rel="sitemap" href="/sitemap-index.xml" />}
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
   </head>
   <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+
     <header class="site-header">
       <a class="brand" href="/" aria-label="Yachenyi home">YACHENYI<span class="brand-dot">.</span></a>
       <nav aria-label="Primary">
-        <a href="/projects/">Projects</a>
-        <a href="/services/">Services</a>
-        <a href="/lab/">Lab</a>
-        <a href="/about/">About</a>
+        <a href="/projects/" aria-current={isCurrent('/projects/') ? 'page' : undefined}>Projects</a>
+        <a href="/services/" aria-current={isCurrent('/services/') ? 'page' : undefined}>Services</a>
+        <a href="/lab/" aria-current={isCurrent('/lab/') ? 'page' : undefined}>Lab</a>
+        <a href="/about/" aria-current={isCurrent('/about/') ? 'page' : undefined}>About</a>
       </nav>
-      <a class="header-contact" href="/contact/">Contact ↗</a>
+      <a class="header-contact" href="/contact/" aria-current={isCurrent('/contact/') ? 'page' : undefined}>Contact ↗</a>
     </header>
 
-    <main>
+    <main id="content">
       <slot />
     </main>
 

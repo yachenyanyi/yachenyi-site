@@ -4,11 +4,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Contact — Yachenyi"
-  description="Contact Yachenyi about AI agents, automation, developer tools and software projects."
+  description="Contact Yachenyi about AI agents, automation, internal tools and focused software projects."
+  image="/images/generated/misty-blue-coast.webp"
 >
-  <article class="prose">
+  <section class="page-intro">
     <div class="eyebrow">Contact</div>
-    <h1>Let’s build something useful.</h1>
-    <p class="lead">Contact details and the project inquiry form will be added after the final domain and lead workflow are confirmed.</p>
-  </article>
+    <h1 class="page-title">Build something<br />useful.</h1>
+    <p class="lead">
+      Best fit: focused software work where AI, automation or a small custom system can remove real operational friction.
+    </p>
+  </section>
+
+  <section class="contact-grid">
+    <div>
+      <div class="eyebrow">A useful first message</div>
+      <h2>Start with the problem.</h2>
+      <p>
+        A short brief is enough: what currently happens, where the friction is, what already exists, and what a successful
+        outcome would look like. Architecture and implementation details can come after the problem is clear.
+      </p>
+    </div>
+
+    <div class="contact-options">
+      <a class="contact-option" href="https://github.com/yachenyanyi" rel="me">
+        <span><strong>GitHub</strong><small>Code, public projects and current build activity.</small></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a class="contact-option" href="/projects/">
+        <span><strong>Projects</strong><small>See the kind of systems currently being built.</small></span>
+        <span aria-hidden="true">→</span>
+      </a>
+      <a class="contact-option" href="/lab/">
+        <span><strong>Lab</strong><small>Architecture notes, experiments and implementation decisions.</small></span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
 </BaseLayout>

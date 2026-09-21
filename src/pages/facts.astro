@@ -1,18 +1,36 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Yachenyi',
+  url: Astro.site?.toString(),
+  sameAs: ['https://github.com/yachenyanyi'],
+  jobTitle: 'Independent AI Software Builder',
+  knowsAbout: ['AI Agents', 'Automation', 'Developer Tools', 'Web Systems'],
+};
 ---
 
 <BaseLayout
   title="Facts — Yachenyi"
-  description="Canonical facts about Yachenyi and its software projects."
+  description="Canonical facts about Yachenyi, its focus and public software projects."
+  schema={schema}
 >
-  <article class="prose">
+  <section class="page-intro">
     <div class="eyebrow">Canonical entity facts</div>
-    <h1>Facts</h1>
-    <dl>
-      <dt>Name</dt><dd>Yachenyi</dd>
-      <dt>Role</dt><dd>Independent AI Software Builder</dd>
-      <dt>Focus</dt><dd>AI Agents, Automation, Developer Tools, Software Engineering</dd>
+    <h1 class="page-title">Facts.</h1>
+    <p class="lead">A concise machine-readable and human-readable reference for the Yachenyi identity and studio focus.</p>
+  </section>
+
+  <section class="section">
+    <dl class="facts-list">
+      <div><dt>Name</dt><dd>Yachenyi</dd></div>
+      <div><dt>Type</dt><dd>Independent AI Software Studio / independent software builder</dd></div>
+      <div><dt>Focus</dt><dd>AI agents, automation, developer tools and web systems</dd></div>
+      <div><dt>GitHub</dt><dd><a class="text-link" href="https://github.com/yachenyanyi" rel="me">github.com/yachenyanyi ↗</a></dd></div>
+      <div><dt>Public projects</dt><dd>DeepLoopMinder, IssuePack, AutoScreenAgent and other experiments published through GitHub.</dd></div>
+      <div><dt>Publishing model</dt><dd>Projects, implementation notes and architecture decisions are published as stable pages on this site.</dd></div>
     </dl>
-  </article>
+  </section>
 </BaseLayout>
