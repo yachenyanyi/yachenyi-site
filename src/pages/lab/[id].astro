@@ -36,7 +36,7 @@ const schema = {
 <BaseLayout title={title} description={description} noindex={post.data.seo?.noindex} schema={schema} image={image}>
   <section class="article-hero">
     <div>
-      <div class="eyebrow">Lab / Build Log</div>
+      <div class="eyebrow" data-i18n="lab.eyebrow">Lab / Build Log</div>
       <h1 class="article-title">{post.data.title}</h1>
       <p class="lead article-summary">{post.data.summary}</p>
     </div>
@@ -46,9 +46,9 @@ const schema = {
   <section class="article-shell">
     <aside class="article-aside">
       <dl>
-        <div><dt>Published</dt><dd>{post.data.publishedAt.toISOString().slice(0, 10)}</dd></div>
-        <div><dt>Tags</dt><dd>{post.data.tags.join(' · ')}</dd></div>
-        <div><dt>Type</dt><dd>Build note</dd></div>
+        <div><dt data-i18n="lab.published">Published</dt><dd>{post.data.publishedAt.toISOString().slice(0, 10)}</dd></div>
+        <div><dt data-i18n="lab.tags">Tags</dt><dd>{post.data.tags.join(' · ')}</dd></div>
+        <div><dt data-i18n="lab.type">Type</dt><dd data-i18n="lab.type.value">Build note</dd></div>
       </dl>
     </aside>
     <article class="article-body">
