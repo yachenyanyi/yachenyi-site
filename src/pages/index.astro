@@ -34,6 +34,51 @@ const labImages = [
   '/images/generated/misty-blue-coast.webp',
 ];
 
+const studioSnapshot = [
+  { label: 'Mode', value: 'Independent' },
+  { label: 'Focus', value: 'AI-native systems' },
+  { label: 'Method', value: 'Smallest reliable system' },
+  { label: 'Output', value: 'Software + build notes' },
+];
+
+const process = [
+  {
+    number: '01',
+    title: 'Frame the real problem',
+    copy: 'Start from the repeated friction, the existing workflow and the evidence that software should exist at all.',
+  },
+  {
+    number: '02',
+    title: 'Prototype the smallest system',
+    copy: 'Prove the workflow with the fewest moving parts before adding orchestration, persistence or model complexity.',
+  },
+  {
+    number: '03',
+    title: 'Make state explicit',
+    copy: 'Keep context, decisions and progress observable so long-running software can be resumed, inspected and trusted.',
+  },
+  {
+    number: '04',
+    title: 'Harden what survives',
+    copy: 'Turn the useful prototype into maintainable software with clear boundaries, tests, documentation and automation.',
+  },
+];
+
+const focusAreas = [
+  {
+    title: 'Agent coordination',
+    copy: 'Long-running agent workflows, delegation and durable execution without losing project state.',
+  },
+  {
+    title: 'Context infrastructure',
+    copy: 'Reusable issue packages, structured evidence and compact context that survives across tools and sessions.',
+  },
+  {
+    title: 'Operational automation',
+    copy: 'Replacing repetitive software work with observable systems that remain understandable to a human operator.',
+  },
+];
+
 const schema = [
   {
     '@context': 'https://schema.org',
@@ -83,6 +128,15 @@ const schema = [
     </figure>
   </section>
 
+  <section class="studio-snapshot" aria-label="Studio snapshot">
+    {studioSnapshot.map((item) => (
+      <div class="snapshot-item">
+        <span>{item.label}</span>
+        <strong>{item.value}</strong>
+      </div>
+    ))}
+  </section>
+
   <section class="section split-feature">
     <div>
       <div class="eyebrow">Currently building</div>
@@ -127,6 +181,28 @@ const schema = [
     </div>
   </section>
 
+  <section class="section process-section">
+    <div class="process-intro">
+      <div class="eyebrow">How I work</div>
+      <h2 class="display-2">From repeated friction to a system.</h2>
+      <p class="section-copy">
+        The goal is not to add AI everywhere. It is to identify where software can remove repeated effort, then make that software explicit, observable and maintainable.
+      </p>
+    </div>
+
+    <div class="process-list">
+      {process.map((step) => (
+        <article class="process-step">
+          <span class="process-number">{step.number}</span>
+          <div>
+            <h3>{step.title}</h3>
+            <p>{step.copy}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
   <section class="section">
     <div class="section-heading">
       <div>
@@ -147,6 +223,30 @@ const schema = [
           <span class="card-arrow" aria-hidden="true">↗</span>
         </a>
       ))}
+    </div>
+  </section>
+
+  <section class="section focus-section">
+    <div class="focus-panel">
+      <div class="focus-heading">
+        <div>
+          <div class="eyebrow">Current focus</div>
+          <h2 class="display-2">Building the infrastructure around AI work.</h2>
+        </div>
+        <p>
+          Most current experiments sit one layer below the chatbot interface: orchestration, context, durable state and the operational tooling that makes model-driven work dependable.
+        </p>
+      </div>
+
+      <div class="focus-grid">
+        {focusAreas.map((area, index) => (
+          <article class="focus-item">
+            <span>0{index + 1}</span>
+            <h3>{area.title}</h3>
+            <p>{area.copy}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
