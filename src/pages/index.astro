@@ -35,31 +35,39 @@ const labImages = [
 ];
 
 const studioSnapshot = [
-  { label: 'Mode', value: 'Independent' },
-  { label: 'Focus', value: 'AI-native systems' },
-  { label: 'Method', value: 'Smallest reliable system' },
-  { label: 'Output', value: 'Software + build notes' },
+  { label: 'Mode', value: 'Independent', labelKey: 'home.snapshot.mode.label', valueKey: 'home.snapshot.mode.value' },
+  { label: 'Focus', value: 'AI-native systems', labelKey: 'home.snapshot.focus.label', valueKey: 'home.snapshot.focus.value' },
+  { label: 'Method', value: 'Smallest reliable system', labelKey: 'home.snapshot.method.label', valueKey: 'home.snapshot.method.value' },
+  { label: 'Output', value: 'Software + build notes', labelKey: 'home.snapshot.output.label', valueKey: 'home.snapshot.output.value' },
 ];
 
 const process = [
   {
     number: '01',
     title: 'Frame the real problem',
+    titleKey: 'home.process.1.title',
+    copyKey: 'home.process.1.copy',
     copy: 'Start from the repeated friction, the existing workflow and the evidence that software should exist at all.',
   },
   {
     number: '02',
     title: 'Prototype the smallest system',
+    titleKey: 'home.process.2.title',
+    copyKey: 'home.process.2.copy',
     copy: 'Prove the workflow with the fewest moving parts before adding orchestration, persistence or model complexity.',
   },
   {
     number: '03',
     title: 'Make state explicit',
+    titleKey: 'home.process.3.title',
+    copyKey: 'home.process.3.copy',
     copy: 'Keep context, decisions and progress observable so long-running software can be resumed, inspected and trusted.',
   },
   {
     number: '04',
     title: 'Harden what survives',
+    titleKey: 'home.process.4.title',
+    copyKey: 'home.process.4.copy',
     copy: 'Turn the useful prototype into maintainable software with clear boundaries, tests, documentation and automation.',
   },
 ];
@@ -67,14 +75,20 @@ const process = [
 const focusAreas = [
   {
     title: 'Agent coordination',
+    titleKey: 'home.focus.1.title',
+    copyKey: 'home.focus.1.copy',
     copy: 'Long-running agent workflows, delegation and durable execution without losing project state.',
   },
   {
     title: 'Context infrastructure',
+    titleKey: 'home.focus.2.title',
+    copyKey: 'home.focus.2.copy',
     copy: 'Reusable issue packages, structured evidence and compact context that survives across tools and sessions.',
   },
   {
     title: 'Operational automation',
+    titleKey: 'home.focus.3.title',
+    copyKey: 'home.focus.3.copy',
     copy: 'Replacing repetitive software work with observable systems that remain understandable to a human operator.',
   },
 ];
@@ -105,14 +119,14 @@ const schema = [
 >
   <section class="hero hero-editorial">
     <div class="hero-copy">
-      <div class="eyebrow">Independent AI Software Studio</div>
-      <h1>Ideas into<br />useful software.</h1>
-      <p class="lead">
+      <div class="eyebrow" data-i18n="home.hero.eyebrow">Independent AI Software Studio</div>
+      <h1 data-i18n="home.hero.title">Ideas into<br />useful software.</h1>
+      <p class="lead" data-i18n="home.hero.lead">
         AI agents, automation, developer tools and focused software systems — designed, built and documented by one independent builder.
       </p>
       <div class="hero-actions">
-        <a class="button button-dark" href={withBase('/projects/')}>View projects</a>
-        <a class="text-link" href={withBase('/lab/')}>Read the lab <span aria-hidden="true">↗</span></a>
+        <a class="button button-dark" href={withBase('/projects/')} data-i18n="home.hero.projects">View projects</a>
+        <a class="text-link" href={withBase('/lab/')} data-i18n="home.hero.lab">Read the lab <span aria-hidden="true">↗</span></a>
       </div>
     </div>
 
@@ -124,27 +138,27 @@ const schema = [
         height="1000"
         loading="eager"
       />
-      <figcaption>Independent, AI-native, deliberately small.</figcaption>
+      <figcaption data-i18n="home.hero.caption">Independent, AI-native, deliberately small.</figcaption>
     </figure>
   </section>
 
   <section class="studio-snapshot" aria-label="Studio snapshot">
     {studioSnapshot.map((item) => (
       <div class="snapshot-item">
-        <span>{item.label}</span>
-        <strong>{item.value}</strong>
+        <span data-i18n={item.labelKey}>{item.label}</span>
+        <strong data-i18n={item.valueKey}>{item.value}</strong>
       </div>
     ))}
   </section>
 
   <section class="section split-feature">
     <div>
-      <div class="eyebrow">Currently building</div>
-      <h2 class="display-2">Software that coordinates software work.</h2>
-      <p class="section-copy">
+      <div class="eyebrow" data-i18n="home.building.eyebrow">Currently building</div>
+      <h2 class="display-2" data-i18n="home.building.title">Software that coordinates software work.</h2>
+      <p class="section-copy" data-i18n="home.building.copy">
         Current experiments focus on long-running agent workflows, durable project state and practical automation that turns repetitive development work into reusable systems.
       </p>
-      <a class="text-link" href={withBase('/projects/deep-loopminder/')}>Explore DeepLoopMinder <span aria-hidden="true">↗</span></a>
+      <a class="text-link" href={withBase('/projects/deep-loopminder/')} data-i18n="home.building.link">Explore DeepLoopMinder <span aria-hidden="true">↗</span></a>
     </div>
     <img
       class="feature-image"
@@ -159,10 +173,10 @@ const schema = [
   <section class="section">
     <div class="section-heading">
       <div>
-        <div class="eyebrow">Selected work</div>
-        <h2 class="display-2">Projects</h2>
+        <div class="eyebrow" data-i18n="home.projects.eyebrow">Selected work</div>
+        <h2 class="display-2" data-i18n="home.projects.title">Projects</h2>
       </div>
-      <a class="text-link" href={withBase('/projects/')}>All projects <span aria-hidden="true">→</span></a>
+      <a class="text-link" href={withBase('/projects/')} data-i18n="home.projects.all">All projects <span aria-hidden="true">→</span></a>
     </div>
 
     <div class="project-grid">
@@ -183,9 +197,9 @@ const schema = [
 
   <section class="section process-section">
     <div class="process-intro">
-      <div class="eyebrow">How I work</div>
-      <h2 class="display-2">From repeated friction to a system.</h2>
-      <p class="section-copy">
+      <div class="eyebrow" data-i18n="home.process.eyebrow">How I work</div>
+      <h2 class="display-2" data-i18n="home.process.title">From repeated friction to a system.</h2>
+      <p class="section-copy" data-i18n="home.process.copy">
         The goal is not to add AI everywhere. It is to identify where software can remove repeated effort, then make that software explicit, observable and maintainable.
       </p>
     </div>
@@ -195,8 +209,8 @@ const schema = [
         <article class="process-step">
           <span class="process-number">{step.number}</span>
           <div>
-            <h3>{step.title}</h3>
-            <p>{step.copy}</p>
+            <h3 data-i18n={step.titleKey}>{step.title}</h3>
+            <p data-i18n={step.copyKey}>{step.copy}</p>
           </div>
         </article>
       ))}
@@ -206,10 +220,10 @@ const schema = [
   <section class="section">
     <div class="section-heading">
       <div>
-        <div class="eyebrow">What I build</div>
-        <h2 class="display-2">Services</h2>
+        <div class="eyebrow" data-i18n="home.services.eyebrow">What I build</div>
+        <h2 class="display-2" data-i18n="home.services.title">Services</h2>
       </div>
-      <a class="text-link" href={withBase('/services/')}>Details <span aria-hidden="true">→</span></a>
+      <a class="text-link" href={withBase('/services/')} data-i18n="home.services.details">Details <span aria-hidden="true">→</span></a>
     </div>
 
     <div class="service-grid">
@@ -230,10 +244,10 @@ const schema = [
     <div class="focus-panel">
       <div class="focus-heading">
         <div>
-          <div class="eyebrow">Current focus</div>
-          <h2 class="display-2">Building the infrastructure around AI work.</h2>
+          <div class="eyebrow" data-i18n="home.focus.eyebrow">Current focus</div>
+          <h2 class="display-2" data-i18n="home.focus.title">Building the infrastructure around AI work.</h2>
         </div>
-        <p>
+        <p data-i18n="home.focus.copy">
           Most current experiments sit one layer below the chatbot interface: orchestration, context, durable state and the operational tooling that makes model-driven work dependable.
         </p>
       </div>
@@ -242,8 +256,8 @@ const schema = [
         {focusAreas.map((area, index) => (
           <article class="focus-item">
             <span>0{index + 1}</span>
-            <h3>{area.title}</h3>
-            <p>{area.copy}</p>
+            <h3 data-i18n={area.titleKey}>{area.title}</h3>
+            <p data-i18n={area.copyKey}>{area.copy}</p>
           </article>
         ))}
       </div>
@@ -253,10 +267,10 @@ const schema = [
   <section class="section">
     <div class="section-heading">
       <div>
-        <div class="eyebrow">Notes from the lab</div>
-        <h2 class="display-2">Build in public.</h2>
+        <div class="eyebrow" data-i18n="home.lab.eyebrow">Notes from the lab</div>
+        <h2 class="display-2" data-i18n="home.lab.title">Build in public.</h2>
       </div>
-      <a class="text-link" href={withBase('/lab/')}>Open Lab <span aria-hidden="true">→</span></a>
+      <a class="text-link" href={withBase('/lab/')} data-i18n="home.lab.open">Open Lab <span aria-hidden="true">→</span></a>
     </div>
 
     <div class="lab-grid">
@@ -275,9 +289,9 @@ const schema = [
 
   <section class="section contact-panel">
     <div>
-      <div class="eyebrow">Have a project in mind?</div>
-      <h2 class="display-2">Build something useful.</h2>
+      <div class="eyebrow" data-i18n="home.cta.eyebrow">Have a project in mind?</div>
+      <h2 class="display-2" data-i18n="home.cta.title">Build something useful.</h2>
     </div>
-    <a class="button button-dark" href={withBase('/contact/')}>Start a conversation</a>
+    <a class="button button-dark" href={withBase('/contact/')} data-i18n="home.cta.button">Start a conversation</a>
   </section>
 </BaseLayout>
