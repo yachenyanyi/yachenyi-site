@@ -16,7 +16,9 @@ html { background: var(--bg); color: var(--text); scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
-p { text-wrap: pretty; }\nh1, h2, h3 { text-wrap: balance; }\na, p, li, dd { overflow-wrap: anywhere; }
+p { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+a, p, li, dd { overflow-wrap: anywhere; }
 main { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
 ::selection { background: #222; color: #fff; }
 
