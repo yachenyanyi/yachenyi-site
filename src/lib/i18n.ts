@@ -6,7 +6,7 @@ export const staticTranslations = {
     'nav.services': '服务',
     'nav.lab': '实验室',
     'nav.about': '关于',
-    'nav.contact': '联系',
+    'nav.contact': '联系 ↗',
     'footer.studio': '独立 AI 软件工作室',
     'footer.projects': '项目',
     'footer.lab': '实验室',
