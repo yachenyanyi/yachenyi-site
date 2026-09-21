@@ -31,3 +31,45 @@ collections:
           - { label: SEO Description, name: description, widget: text, required: false }
           - { label: No Index, name: noindex, widget: boolean, default: false }
       - { label: Body, name: body, widget: markdown }
+
+
+  - name: services
+    label: Services
+    folder: src/content/services
+    create: true
+    extension: md
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Order, name: order, widget: number, value_type: int, default: 0 }
+      - label: SEO
+        name: seo
+        widget: object
+        required: false
+        fields:
+          - { label: SEO Title, name: title, widget: string, required: false }
+          - { label: SEO Description, name: description, widget: text, required: false }
+          - { label: No Index, name: noindex, widget: boolean, default: false }
+      - { label: Body, name: body, widget: markdown }
+
+  - name: lab
+    label: Lab
+    folder: src/content/lab
+    create: true
+    extension: md
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Published At, name: publishedAt, widget: datetime, format: YYYY-MM-DD }
+      - { label: Updated At, name: updatedAt, widget: datetime, format: YYYY-MM-DD, required: false }
+      - { label: Tags, name: tags, widget: list, default: [] }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - label: SEO
+        name: seo
+        widget: object
+        required: false
+        fields:
+          - { label: SEO Title, name: title, widget: string, required: false }
+          - { label: SEO Description, name: description, widget: text, required: false }
+          - { label: No Index, name: noindex, widget: boolean, default: false }
+      - { label: Body, name: body, widget: markdown }
