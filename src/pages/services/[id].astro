@@ -21,9 +21,22 @@ const serviceIcons: Record<string, string> = {
   'web-systems': '/icons/services/web-systems.webp',
 };
 const icon = serviceIcons[service.id];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: service.data.title,
+  description,
+  provider: {
+    '@type': 'Person',
+    name: 'Yachenyi',
+    url: Astro.site?.toString(),
+  },
+  url: Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined,
+};
 ---
 
-<BaseLayout title={title} description={description} noindex={service.data.seo?.noindex}>
+<BaseLayout title={title} description={description} noindex={service.data.seo?.noindex} schema={schema}>
   <section class="article-hero">
     <div>
       <div class="eyebrow">Service / 0{service.data.order}</div>
