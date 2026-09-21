@@ -39,12 +39,12 @@ const schema = {
 <BaseLayout title={title} description={description} noindex={service.data.seo?.noindex} schema={schema}>
   <section class="article-hero">
     <div>
-      <div class="eyebrow">Service / 0{service.data.order}</div>
+      <div class="eyebrow"><span data-i18n="service.label">Service</span> / 0{service.data.order}</div>
       <h1 class="article-title">{service.data.title}</h1>
       <p class="lead article-summary">{service.data.summary}</p>
       <div class="hero-actions">
-        <a class="button button-dark" href={withBase('/contact/')}>Discuss a project</a>
-        <a class="text-link" href={withBase('/services/')}>All services →</a>
+        <a class="button button-dark" href={withBase('/contact/')} data-i18n="service.discuss">Discuss a project</a>
+        <a class="text-link" href={withBase('/services/')} data-i18n="service.all">All services →</a>
       </div>
     </div>
     <div class="service-symbol" aria-hidden="true"><img src={withBase(icon)} alt="" /></div>
@@ -53,9 +53,9 @@ const schema = {
   <section class="article-shell">
     <aside class="article-aside">
       <dl>
-        <div><dt>Practice</dt><dd>{service.data.title}</dd></div>
-        <div><dt>Model</dt><dd>Independent / focused engagement</dd></div>
-        <div><dt>Principle</dt><dd>Smallest reliable system first</dd></div>
+        <div><dt data-i18n="service.practice">Practice</dt><dd>{service.data.title}</dd></div>
+        <div><dt data-i18n="service.model">Model</dt><dd data-i18n="service.model.value">Independent / focused engagement</dd></div>
+        <div><dt data-i18n="service.principle">Principle</dt><dd data-i18n="service.principle.value">Smallest reliable system first</dd></div>
       </dl>
     </aside>
     <article class="article-body">
