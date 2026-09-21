@@ -9,18 +9,18 @@ import { withBase } from '../lib/site';
   image="/images/generated/misty-blue-coast.webp"
 >
   <section class="page-intro">
-    <div class="eyebrow">Contact</div>
-    <h1 class="page-title">Build something<br />useful.</h1>
-    <p class="lead">
+    <div class="eyebrow" data-i18n="contact.eyebrow">Contact</div>
+    <h1 class="page-title" data-i18n="contact.title">Build something<br />useful.</h1>
+    <p class="lead" data-i18n="contact.lead">
       Best fit: focused software work where AI, automation or a small custom system can remove real operational friction.
     </p>
   </section>
 
   <section class="contact-grid">
     <div>
-      <div class="eyebrow">A useful first message</div>
-      <h2>Start with the problem.</h2>
-      <p>
+      <div class="eyebrow" data-i18n="contact.first">A useful first message</div>
+      <h2 data-i18n="contact.problem">Start with the problem.</h2>
+      <p data-i18n="contact.copy">
         A short brief is enough: what currently happens, where the friction is, what already exists, and what a successful
         outcome would look like. Architecture and implementation details can come after the problem is clear.
       </p>
@@ -28,15 +28,15 @@ import { withBase } from '../lib/site';
 
     <div class="contact-options">
       <a class="contact-option" href="https://github.com/yachenyanyi" rel="me">
-        <span><strong>GitHub</strong><small>Code, public projects and current build activity.</small></span>
+        <span><strong>GitHub</strong><small data-i18n="contact.github.copy">Code, public projects and current build activity.</small></span>
         <span aria-hidden="true">↗</span>
       </a>
       <a class="contact-option" href={withBase('/projects/')}>
-        <span><strong>Projects</strong><small>See the kind of systems currently being built.</small></span>
+        <span><strong data-i18n="contact.projects.title">Projects</strong><small data-i18n="contact.projects.copy">See the kind of systems currently being built.</small></span>
         <span aria-hidden="true">→</span>
       </a>
       <a class="contact-option" href={withBase('/lab/')}>
-        <span><strong>Lab</strong><small>Architecture notes, experiments and implementation decisions.</small></span>
+        <span><strong data-i18n="contact.lab.title">Lab</strong><small data-i18n="contact.lab.copy">Architecture notes, experiments and implementation decisions.</small></span>
         <span aria-hidden="true">→</span>
       </a>
     </div>
