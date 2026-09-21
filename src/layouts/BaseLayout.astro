@@ -57,7 +57,7 @@ const isCurrent = (prefix: string) =>
     <script is:inline>
       (() => {
         const root = document.documentElement;
-        root.classList.add('motion-ready');
+        root.classList.add('motion-ready', 'i18n-pending');
         let lang = 'en';
         try {
           const saved = localStorage.getItem('yachenyi-language');
@@ -65,7 +65,9 @@ const isCurrent = (prefix: string) =>
           else if ((navigator.language || '').toLowerCase().startsWith('zh')) lang = 'zh';
         } catch {}
         root.dataset.lang = lang;
-        root.lang = lang === 'zh' ? 'zh-CN' : 'en';
+        // Keep the initial document in English metrics. The visible language is
+        // applied after the English geometry has been captured below.
+        root.lang = 'en';
       })();
     </script>
   </head>
@@ -115,42 +117,135 @@ const isCurrent = (prefix: string) =>
 
       const translationsNode = document.getElementById('static-i18n');
       const translations = translationsNode ? JSON.parse(translationsNode.textContent || '{}') : {};
-      const originalHtml = new WeakMap();
-      const originalAria = new WeakMap();
+      const originalHtml = new WeakMap<Element, string>();
+      const originalAria = new WeakMap<Element, string>();
 
-      const applyLanguage = (lang: string) => {
+      const translatableElements = () =>
+        Array.from(document.querySelectorAll<HTMLElement>('[data-i18n]'));
+
+      const rememberEnglish = () => {
+        translatableElements().forEach((element) => {
+          if (!originalHtml.has(element)) originalHtml.set(element, element.innerHTML);
+        });
+        document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((element) => {
+          if (!originalAria.has(element)) originalAria.set(element, element.getAttribute('aria-label') || '');
+        });
+      };
+
+      const restoreEnglishCopy = () => {
+        translatableElements().forEach((element) => {
+          const original = originalHtml.get(element);
+          if (original !== undefined) element.innerHTML = original;
+          element.style.removeProperty('font-size');
+        });
+      };
+
+      const unlockLanguageGeometry = () => {
+        translatableElements().forEach((element) => {
+          element.classList.remove('i18n-geometry-lock', 'i18n-inline-lock');
+          element.style.removeProperty('--i18n-lock-width');
+          element.style.removeProperty('--i18n-lock-height');
+          element.style.removeProperty('--i18n-base-font-size');
+          element.style.removeProperty('font-size');
+        });
+      };
+
+      const captureEnglishGeometry = () => {
+        unlockLanguageGeometry();
+        root.lang = 'en';
+        restoreEnglishCopy();
+
+        // Force one English layout pass before recording dimensions.
+        void document.body.offsetWidth;
+
+        translatableElements().forEach((element) => {
+          const rect = element.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0) return;
+
+          const style = getComputedStyle(element);
+          element.style.setProperty('--i18n-lock-width', `${rect.width}px`);
+          element.style.setProperty('--i18n-lock-height', `${rect.height}px`);
+          element.style.setProperty('--i18n-base-font-size', style.fontSize);
+          element.classList.add('i18n-geometry-lock');
+
+          if (style.display === 'inline') {
+            element.classList.add('i18n-inline-lock');
+          }
+        });
+      };
+
+      const fitTranslatedCopy = () => {
+        translatableElements().forEach((element) => {
+          const baseSize = Number.parseFloat(element.style.getPropertyValue('--i18n-base-font-size'));
+          if (!Number.isFinite(baseSize) || baseSize <= 0) return;
+
+          element.style.removeProperty('font-size');
+          let size = baseSize;
+          const minimum = baseSize * 0.82;
+
+          while (
+            size > minimum &&
+            (element.scrollHeight > element.clientHeight + 1 || element.scrollWidth > element.clientWidth + 1)
+          ) {
+            size -= 0.5;
+            element.style.fontSize = `${size}px`;
+          }
+        });
+      };
+
+      const applyLanguage = (lang: string, persist = true) => {
         const normalized = lang === 'zh' ? 'zh' : 'en';
         root.dataset.lang = normalized;
         root.lang = normalized === 'zh' ? 'zh-CN' : 'en';
 
-        document.querySelectorAll('[data-i18n]').forEach((element) => {
-          if (!originalHtml.has(element)) originalHtml.set(element, element.innerHTML);
+        translatableElements().forEach((element) => {
           const key = element.getAttribute('data-i18n');
           const translated = key && translations?.zh?.[key];
-          element.innerHTML = normalized === 'zh' && translated ? translated : originalHtml.get(element);
+          const original = originalHtml.get(element);
+          element.innerHTML = normalized === 'zh' && translated ? translated : (original ?? element.innerHTML);
+          element.style.removeProperty('font-size');
         });
 
-        document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
-          if (!originalAria.has(element)) originalAria.set(element, element.getAttribute('aria-label') || '');
+        document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((element) => {
           const key = element.getAttribute('data-i18n-aria');
           const translated = key && translations?.zh?.[key];
-          element.setAttribute('aria-label', normalized === 'zh' && translated ? translated : originalAria.get(element));
+          const original = originalAria.get(element) ?? '';
+          element.setAttribute('aria-label', normalized === 'zh' && translated ? translated : original);
         });
 
-        document.querySelectorAll('[data-lang-option]').forEach((button) => {
+        if (normalized === 'zh') fitTranslatedCopy();
+
+        document.querySelectorAll<HTMLButtonElement>('[data-lang-option]').forEach((button) => {
           const active = button.getAttribute('data-lang-option') === normalized;
           button.classList.toggle('is-active', active);
           button.setAttribute('aria-pressed', String(active));
         });
 
-        try { localStorage.setItem('yachenyi-language', normalized); } catch {}
+        if (persist) {
+          try { localStorage.setItem('yachenyi-language', normalized); } catch {}
+        }
       };
 
-      document.querySelectorAll('[data-lang-option]').forEach((button) => {
+      rememberEnglish();
+      captureEnglishGeometry();
+      applyLanguage(root.dataset.lang || 'en', false);
+      root.classList.remove('i18n-pending');
+
+      document.querySelectorAll<HTMLButtonElement>('[data-lang-option]').forEach((button) => {
         button.addEventListener('click', () => applyLanguage(button.getAttribute('data-lang-option') || 'en'));
       });
 
-      applyLanguage(root.dataset.lang || 'en');
+      let languageResizeTimer: number | undefined;
+      window.addEventListener('resize', () => {
+        window.clearTimeout(languageResizeTimer);
+        languageResizeTimer = window.setTimeout(() => {
+          const currentLanguage = root.dataset.lang || 'en';
+          root.classList.add('i18n-reflowing');
+          captureEnglishGeometry();
+          applyLanguage(currentLanguage, false);
+          root.classList.remove('i18n-reflowing');
+        }, 160);
+      });
 
       const revealImages = () => {
         document.querySelectorAll('img').forEach((image) => {
