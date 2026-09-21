@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { withBase } from '../lib/site';
+import { staticTranslations } from '../lib/i18n';
 
 interface Props {
   title: string;
@@ -52,23 +53,42 @@ const isCurrent = (prefix: string) =>
 
     {Astro.site && <link rel="sitemap" href={withBase('/sitemap-index.xml')} />}
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    <script id="static-i18n" type="application/json" set:html={JSON.stringify(staticTranslations)}></script>
     <script is:inline>
-      document.documentElement.classList.add('motion-ready');
+      (() => {
+        const root = document.documentElement;
+        root.classList.add('motion-ready');
+        let lang = 'en';
+        try {
+          const saved = localStorage.getItem('yachenyi-language');
+          if (saved === 'zh' || saved === 'en') lang = saved;
+          else if ((navigator.language || '').toLowerCase().startsWith('zh')) lang = 'zh';
+        } catch {}
+        root.dataset.lang = lang;
+        root.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      })();
     </script>
   </head>
   <body>
     <div class="page-loader" aria-hidden="true"><span></span></div>
-    <a class="skip-link" href="#content">Skip to content</a>
+    <a class="skip-link" href="#content" data-i18n="common.skip">Skip to content</a>
 
     <header class="site-header">
       <a class="brand" href={withBase('/')} aria-label="Yachenyi home">YACHENYI<span class="brand-dot">.</span></a>
-      <nav aria-label="Primary">
-        <a href={withBase('/projects/')} aria-current={isCurrent('/projects/') ? 'page' : undefined}>Projects</a>
-        <a href={withBase('/services/')} aria-current={isCurrent('/services/') ? 'page' : undefined}>Services</a>
-        <a href={withBase('/lab/')} aria-current={isCurrent('/lab/') ? 'page' : undefined}>Lab</a>
-        <a href={withBase('/about/')} aria-current={isCurrent('/about/') ? 'page' : undefined}>About</a>
+      <nav aria-label="Primary" data-i18n-aria="nav.primary">
+        <a href={withBase('/projects/')} aria-current={isCurrent('/projects/') ? 'page' : undefined} data-i18n="nav.projects">Projects</a>
+        <a href={withBase('/services/')} aria-current={isCurrent('/services/') ? 'page' : undefined} data-i18n="nav.services">Services</a>
+        <a href={withBase('/lab/')} aria-current={isCurrent('/lab/') ? 'page' : undefined} data-i18n="nav.lab">Lab</a>
+        <a href={withBase('/about/')} aria-current={isCurrent('/about/') ? 'page' : undefined} data-i18n="nav.about">About</a>
       </nav>
-      <a class="header-contact" href={withBase('/contact/')} aria-current={isCurrent('/contact/') ? 'page' : undefined}>Contact ↗</a>
+      <div class="header-tools">
+        <div class="language-switch" role="group" aria-label="Language">
+          <button type="button" data-lang-option="en" aria-pressed="false">EN</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" data-lang-option="zh" aria-pressed="false">中文</button>
+        </div>
+        <a class="header-contact" href={withBase('/contact/')} aria-current={isCurrent('/contact/') ? 'page' : undefined} data-i18n="nav.contact">Contact ↗</a>
+      </div>
     </header>
 
     <main id="content">
@@ -78,20 +98,59 @@ const isCurrent = (prefix: string) =>
     <footer class="site-footer">
       <div>
         <strong>YACHENYI</strong>
-        <p>Independent AI Software Studio</p>
+        <p data-i18n="footer.studio">Independent AI Software Studio</p>
       </div>
       <div class="footer-links">
-        <a href={withBase('/projects/')}>Projects</a>
-        <a href={withBase('/lab/')}>Lab</a>
-        <a href={withBase('/facts/')}>Facts</a>
-        <a href={withBase('/contact/')}>Contact</a>
+        <a href={withBase('/projects/')} data-i18n="footer.projects">Projects</a>
+        <a href={withBase('/lab/')} data-i18n="footer.lab">Lab</a>
+        <a href={withBase('/facts/')} data-i18n="footer.facts">Facts</a>
+        <a href={withBase('/contact/')} data-i18n="footer.contact">Contact</a>
       </div>
-      <p class="footer-meta">One person. AI-native. Software first.</p>
+      <p class="footer-meta" data-i18n="footer.tagline">One person. AI-native. Software first.</p>
     </footer>
 
     <script>
       const root = document.documentElement;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const translationsNode = document.getElementById('static-i18n');
+      const translations = translationsNode ? JSON.parse(translationsNode.textContent || '{}') : {};
+      const originalHtml = new WeakMap();
+      const originalAria = new WeakMap();
+
+      const applyLanguage = (lang) => {
+        const normalized = lang === 'zh' ? 'zh' : 'en';
+        root.dataset.lang = normalized;
+        root.lang = normalized === 'zh' ? 'zh-CN' : 'en';
+
+        document.querySelectorAll('[data-i18n]').forEach((element) => {
+          if (!originalHtml.has(element)) originalHtml.set(element, element.innerHTML);
+          const key = element.getAttribute('data-i18n');
+          const translated = key && translations?.zh?.[key];
+          element.innerHTML = normalized === 'zh' && translated ? translated : originalHtml.get(element);
+        });
+
+        document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
+          if (!originalAria.has(element)) originalAria.set(element, element.getAttribute('aria-label') || '');
+          const key = element.getAttribute('data-i18n-aria');
+          const translated = key && translations?.zh?.[key];
+          element.setAttribute('aria-label', normalized === 'zh' && translated ? translated : originalAria.get(element));
+        });
+
+        document.querySelectorAll('[data-lang-option]').forEach((button) => {
+          const active = button.getAttribute('data-lang-option') === normalized;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+
+        try { localStorage.setItem('yachenyi-language', normalized); } catch {}
+      };
+
+      document.querySelectorAll('[data-lang-option]').forEach((button) => {
+        button.addEventListener('click', () => applyLanguage(button.getAttribute('data-lang-option') || 'en'));
+      });
+
+      applyLanguage(root.dataset.lang || 'en');
 
       const revealImages = () => {
         document.querySelectorAll('img').forEach((image) => {
