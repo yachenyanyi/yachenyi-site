@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/site';
 ---
 
 <BaseLayout
@@ -30,11 +31,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <span><strong>GitHub</strong><small>Code, public projects and current build activity.</small></span>
         <span aria-hidden="true">↗</span>
       </a>
-      <a class="contact-option" href="/projects/">
+      <a class="contact-option" href={withBase('/projects/')}>
         <span><strong>Projects</strong><small>See the kind of systems currently being built.</small></span>
         <span aria-hidden="true">→</span>
       </a>
-      <a class="contact-option" href="/lab/">
+      <a class="contact-option" href={withBase('/lab/')}>
         <span><strong>Lab</strong><small>Architecture notes, experiments and implementation decisions.</small></span>
         <span aria-hidden="true">→</span>
       </a>

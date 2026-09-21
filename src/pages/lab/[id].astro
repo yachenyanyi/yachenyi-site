@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
+import { withBase } from '../../lib/site';
 
 export async function getStaticPaths() {
   const posts = (await getCollection('lab')).filter(({ data }) => !data.draft);
@@ -39,7 +40,7 @@ const schema = {
       <h1 class="article-title">{post.data.title}</h1>
       <p class="lead article-summary">{post.data.summary}</p>
     </div>
-    <img class="article-hero-media" src={image} alt="" loading="eager" />
+    <img class="article-hero-media" src={withBase(image)} alt="" loading="eager" />
   </section>
 
   <section class="article-shell">

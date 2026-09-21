@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { withBase } from '../../lib/site';
 
 const projects = (await getCollection('projects'))
   .sort((a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf());
@@ -26,9 +27,9 @@ const images: Record<string, string> = {
   <section class="section">
     <div class="project-grid">
       {projects.map((project, index) => (
-        <a class:list={['project-card', { 'project-card-wide': index === 0 }]} href={`/projects/${project.id}/`}>
+        <a class:list={['project-card', { 'project-card-wide': index === 0 }]} href={withBase(`/projects/${project.id}/`)}>
           <div class="project-card-media">
-            <img src={images[project.id] ?? '/images/generated/home-misty-mountains.webp'} alt="" loading="lazy" />
+            <img src={withBase(images[project.id] ?? '/images/generated/home-misty-mountains.webp')} alt="" loading="lazy" />
           </div>
           <div class="project-card-body">
             <div class="meta">{project.data.status} · {project.data.updatedAt.toISOString().slice(0, 10)}</div>

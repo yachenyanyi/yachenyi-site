@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { withBase } from '../../lib/site';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const serviceIcons: Record<string, string> = {
@@ -23,8 +24,8 @@ const serviceIcons: Record<string, string> = {
   <section class="section">
     <div class="service-grid">
       {services.map((service) => (
-        <a class="service-card" href={`/services/${service.id}/`}>
-          <img class="service-icon" src={serviceIcons[service.id]} alt="" loading="lazy" />
+        <a class="service-card" href={withBase(`/services/${service.id}/`)}>
+          <img class="service-icon" src={withBase(serviceIcons[service.id])} alt="" loading="lazy" />
           <div>
             <div class="meta">0{service.data.order}</div>
             <h2>{service.data.title}</h2>
