@@ -7,13 +7,16 @@ This repository is connected to the Cloudflare Pages project **yachenyi-site**.
 - Build command: `npm run build`
 - Output directory: `dist`
 - Root directory: repository root
-- Production URL: https://yachenyi-site.pages.dev
-- Production environment variable: `SITE_URL=https://yachenyi-site.pages.dev`
+- Production URL: https://www.yachenyanyi.top
+- Pages fallback URL: https://yachenyi-site.pages.dev
+- Custom domain: `www.yachenyanyi.top` (Cloudflare proxied CNAME -> `yachenyi-site.pages.dev`)
+- Root domain `yachenyanyi.top` stays on Studio-Misaki
+- Production environment variable: `SITE_URL=https://www.yachenyanyi.top`
 - Preview builds: enabled for non-production branches
 
 Cloudflare automatically builds and publishes when `main` receives a commit. Pull-request branches get preview deployments.
 
-The Cloudflare site is separate from the existing GitHub Pages publishing workflow. Do not repoint `yachenyanyi.top` or remove the old site without an explicit migration decision.
+The Cloudflare site is separate from the existing GitHub Pages publishing workflow. Do not repoint the apex `yachenyanyi.top` or remove the old site without an explicit migration decision.
 
 ## Check after deployment
 
