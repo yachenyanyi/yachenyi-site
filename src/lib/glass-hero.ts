@@ -1,3 +1,5 @@
+import { createGlassRotation } from './glass-rotation';
+
 /** A ray-marched rounded glass cube, sampling the actual typeset hero text. */
 export function setupGlassHero() {
   const stage = document.querySelector<HTMLElement>('.glass-title-stage');
@@ -8,13 +10,11 @@ export function setupGlassHero() {
   if (!gl) { setupGlassFallback(stage, canvas, title); return; }
   const vertex = `attribute vec2 position; varying vec2 uv; void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const fragment = `precision highp float;
-    varying vec2 uv; uniform sampler2D backdrop; uniform vec2 resolution; uniform vec2 angle;
-    mat3 rx(float a){float c=cos(a),s=sin(a);return mat3(1,0,0,0,c,s,0,-s,c);}
-    mat3 ry(float a){float c=cos(a),s=sin(a);return mat3(c,0,-s,0,1,0,s,0,c);}
+    varying vec2 uv; uniform sampler2D backdrop; uniform vec2 resolution; uniform mat3 rotation;
     float box(vec3 p){vec3 q=abs(p)-vec3(.60);return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-.075;}
     void main(){
       vec2 p=(uv-.5)*vec2(resolution.x/resolution.y,1.)*2.8;
-      mat3 rot=rx(angle.y)*ry(angle.x);
+      mat3 rot=rotation;
       vec3 ro=rot*vec3(0.,0.,4.5),rd=rot*normalize(vec3(p,-4.5));
       float t=0.;vec3 hit=ro;bool found=false;
       for(int i=0;i<64;i++){hit=ro+rd*t;float d=box(hit);if(d<.001){found=true;break;}t+=d;if(t>8.)break;}
@@ -58,9 +58,10 @@ export function setupGlassHero() {
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
   gl.uniform1i(gl.getUniformLocation(program,'backdrop'),0);
-  const resolution = gl.getUniformLocation(program,'resolution'), angle = gl.getUniformLocation(program,'angle');
+  const resolution = gl.getUniformLocation(program,'resolution'), rotationUniform = gl.getUniformLocation(program,'rotation');
+  const rotation = createGlassRotation();
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  let x = -.45, y = .28, speed = 0, last = 0, frame = 0, visible = true, paused = false, dragging = false;
+  let speed = 0, last = 0, frame = 0, visible = true, paused = false, dragging = false;
   let pointer: {id:number;x:number;y:number;time:number;startX:number;startY:number} | null = null;
   const paint = () => {
     const rect = stage.getBoundingClientRect();
@@ -90,7 +91,7 @@ export function setupGlassHero() {
     draw();
   };
   const draw = () => {
-    gl.uniform2f(angle,x,y);gl.disable(gl.SCISSOR_TEST);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniformMatrix3fv(rotationUniform,false,rotation.viewToLocal());gl.disable(gl.SCISSOR_TEST);gl.clear(gl.COLOR_BUFFER_BIT);
     // Restrict expensive ray marching to the cube's possible silhouette.
     const side=Math.min(canvas.width,Math.ceil(canvas.height*.98));
     gl.enable(gl.SCISSOR_TEST);gl.scissor(Math.floor((canvas.width-side)/2),0,side,canvas.height);
@@ -99,22 +100,22 @@ export function setupGlassHero() {
   const run = (time:number) => {
     frame=0;if(!visible || document.hidden) {last=0;return;}
     const dt=last?Math.min(64,time-last):0;last=time;
-    if(!pointer && !reduce.matches){x+=speed*1400*(1-Math.exp(-dt/1400));speed*=Math.exp(-dt/1400);if(!paused && Math.abs(speed)<.00005)x+=dt*.00014;}
+    if(!pointer && !reduce.matches){rotation.rotate(0,speed*1400*(1-Math.exp(-dt/1400)));speed*=Math.exp(-dt/1400);if(!paused && Math.abs(speed)<.00005)rotation.rotate(0,dt*.00014);}
     draw();if(pointer || (!reduce.matches && (!paused || Math.abs(speed)>.00001))) frame=requestAnimationFrame(run);else last=0;
   };
   const wake=()=>{if(!frame && visible && !document.hidden)frame=requestAnimationFrame(run);};
   canvas.addEventListener('pointerdown',event=>{if(!event.isPrimary || event.button!==0)return;pointer={id:event.pointerId,x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,time:event.timeStamp};speed=0;});
   canvas.addEventListener('pointermove',event=>{
     if(!pointer || event.pointerId!==pointer.id)return;
-    if(!dragging){if(Math.abs(event.clientX-pointer.startX)<6 || Math.abs(event.clientX-pointer.startX)<Math.abs(event.clientY-pointer.startY))return;dragging=true;canvas.setPointerCapture(event.pointerId);}
+    if(!dragging){if(Math.hypot(event.clientX-pointer.startX,event.clientY-pointer.startY)<6 || (event.pointerType==='touch' && Math.abs(event.clientX-pointer.startX)<Math.abs(event.clientY-pointer.startY)))return;dragging=true;canvas.setPointerCapture(event.pointerId);}
     event.preventDefault();const dx=event.clientX-pointer.x;if(dx===0 && event.clientY===pointer.y)return;speed=reduce.matches?0:Math.max(-.012,Math.min(.012,-dx/Math.max(1,event.timeStamp-pointer.time)*.012));
-    x-=dx*.012;y=Math.max(-1.1,Math.min(1.1,y+(event.clientY-pointer.y)*.008));pointer.x=event.clientX;pointer.y=event.clientY;pointer.time=event.timeStamp;draw();
+    rotation.rotate((event.clientY-pointer.y)*.008,-dx*.012);pointer.x=event.clientX;pointer.y=event.clientY;pointer.time=event.timeStamp;draw();
   });
   const release=(event:PointerEvent)=>{if(pointer?.id!==event.pointerId)return;pointer=null;dragging=false;if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);if(event.type!=='pointerup')speed=0;wake();};
   window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
   canvas.addEventListener('pointerenter',()=>{paused=true;});canvas.addEventListener('pointerleave',()=>{paused=false;wake();});
-  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(button=>button.addEventListener('click',()=>{x+=Number(button.dataset.glassTurn)*Math.PI/2;speed=0;draw();wake();}));
-  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{x=-.45;y=.28;speed=0;draw();});
+  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(button=>button.addEventListener('click',()=>{rotation.rotate(0,Number(button.dataset.glassTurn)*Math.PI/2);speed=0;draw();wake();}));
+  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{rotation.reset();speed=0;draw();});
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();cancelAnimationFrame(frame);stage.classList.remove('glass-ready');});
   document.addEventListener('visibilitychange',()=>{last=0;wake();});reduce.addEventListener('change',()=>{speed=0;last=0;wake();});
   document.addEventListener('site:language-change',()=>requestAnimationFrame(paint));
@@ -130,9 +131,10 @@ function setupGlassFallback(stage: HTMLElement, canvas: HTMLCanvasElement, title
   for(let i=0;i<6;i++){const face=document.createElement('div');face.className=`glass-fallback-face glass-fallback-face--${i}`;cube.append(face);}
   stage.append(cube);stage.classList.add('glass-fallback-ready');stage.dataset.glassRenderer='css';
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-  let x=-28,y=18,speed=0,last=0,frame=0,visible=true,paused=false;
+  const rotation=createGlassRotation();
+  let speed=0,last=0,frame=0,visible=true,paused=false;
   let pointer:{id:number;x:number;y:number;time:number;startX:number;startY:number;dragging:boolean}|null=null;
-  const draw=()=>{cube.style.transform=`translate(-50%,-50%) rotateX(${y}deg) rotateY(${x}deg)`;};
+  const draw=()=>{cube.style.transform=`translate(-50%,-50%) ${rotation.cssTransform()}`;};
   const copyText=()=>{
     const bounds=stage.getBoundingClientRect(),style=getComputedStyle(title);
     cube.style.setProperty('--glass-copy-width',`${bounds.width}px`);cube.style.setProperty('--glass-copy-font',style.fontSize);
@@ -142,21 +144,21 @@ function setupGlassFallback(stage: HTMLElement, canvas: HTMLCanvasElement, title
     });
   };
   const tick=(time:number)=>{frame=0;if(!visible||document.hidden){last=0;return;}const dt=last?Math.min(64,time-last):0;last=time;
-    if(!pointer&&!reduce.matches){x+=speed*1400*(1-Math.exp(-dt/1400));speed*=Math.exp(-dt/1400);if(!paused&&Math.abs(speed)<.002)x+=dt*.008;}
-    draw();if(!reduce.matches&&(!paused||Math.abs(speed)>.001))frame=requestAnimationFrame(tick);else last=0;
+    if(!pointer&&!reduce.matches){rotation.rotate(0,speed*1400*(1-Math.exp(-dt/1400)));speed*=Math.exp(-dt/1400);if(!paused&&Math.abs(speed)<.00005)rotation.rotate(0,dt*.00014);}
+    draw();if(!reduce.matches&&(!paused||Math.abs(speed)>.00001))frame=requestAnimationFrame(tick);else last=0;
   };
   const wake=()=>{if(!frame&&visible&&!document.hidden)frame=requestAnimationFrame(tick);};
   canvas.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,time:e.timeStamp,startX:e.clientX,startY:e.clientY,dragging:false};speed=0;});
   canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;
-    if(!pointer.dragging){if(Math.abs(e.clientX-pointer.startX)<6||Math.abs(e.clientX-pointer.startX)<Math.abs(e.clientY-pointer.startY))return;pointer.dragging=true;canvas.setPointerCapture(e.pointerId);}
+    if(!pointer.dragging){if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<6||(e.pointerType==='touch'&&Math.abs(e.clientX-pointer.startX)<Math.abs(e.clientY-pointer.startY)))return;pointer.dragging=true;canvas.setPointerCapture(e.pointerId);}
     e.preventDefault();const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(!dx&&!dy)return;
-    speed=reduce.matches?0:Math.max(-.65,Math.min(.65,-dx/Math.max(1,e.timeStamp-pointer.time)*.65));x-=dx*.65;y=Math.max(-65,Math.min(65,y+dy*.4));pointer.x=e.clientX;pointer.y=e.clientY;pointer.time=e.timeStamp;draw();
+    speed=reduce.matches?0:Math.max(-.012,Math.min(.012,-dx/Math.max(1,e.timeStamp-pointer.time)*.012));rotation.rotate(dy*.008,-dx*.012);pointer.x=e.clientX;pointer.y=e.clientY;pointer.time=e.timeStamp;draw();
   });
   const release=(e:PointerEvent)=>{if(pointer?.id!==e.pointerId)return;pointer=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(e.type!=='pointerup')speed=0;wake();};
   window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
   canvas.addEventListener('pointerenter',()=>{paused=true;});canvas.addEventListener('pointerleave',()=>{paused=false;wake();});
-  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(b=>b.addEventListener('click',()=>{x+=Number(b.dataset.glassTurn)*90;speed=0;draw();wake();}));
-  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{x=-28;y=18;speed=0;draw();});
+  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(b=>b.addEventListener('click',()=>{rotation.rotate(0,Number(b.dataset.glassTurn)*Math.PI/2);speed=0;draw();wake();}));
+  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{rotation.reset();speed=0;draw();});
   document.addEventListener('site:language-change',copyText);document.addEventListener('visibilitychange',()=>{last=0;wake();});
   reduce.addEventListener('change',()=>{speed=0;last=0;wake();});
   if(typeof ResizeObserver==='function')new ResizeObserver(copyText).observe(stage);else window.addEventListener('resize',copyText,{passive:true});
