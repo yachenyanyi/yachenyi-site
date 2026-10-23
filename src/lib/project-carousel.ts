@@ -33,7 +33,6 @@ export function setupProjectCarousel() {
   let frame = 0;
   let visible = false;
   let paused = false;
-  let hovering = false;
   let focused = false;
 
   const draw = () => {
@@ -52,11 +51,12 @@ export function setupProjectCarousel() {
       slot.style.pointerEvents = outside ? 'none' : 'auto';
     });
   };
-  const canRun = () => visible && !document.hidden && !reducedMotion.matches && !paused && !hovering && !focused;
+  const canRun = () => visible && !document.hidden && !reducedMotion.matches && !paused && !focused;
   const tick = (time: number) => {
     frame = 0;
     if (!canRun()) { previousTime = 0; return; }
-    if (previousTime) offset -= Math.min(time - previousTime, 50) * .036;
+    // Use elapsed time: capping each frame's delta made throttled browsers barely move.
+    if (previousTime) offset -= (time - previousTime) * .05;
     previousTime = time;
     draw();
     frame = requestAnimationFrame(tick);
@@ -79,10 +79,6 @@ export function setupProjectCarousel() {
   };
 
   toggle.addEventListener('click', () => { paused = !paused; sync(); });
-  viewport.addEventListener('pointerenter', (event) => {
-    if (event.pointerType === 'mouse') { hovering = true; sync(); }
-  });
-  viewport.addEventListener('pointerleave', () => { hovering = false; sync(); });
   viewport.addEventListener('focusin', (event) => {
     focused = true;
     const index = cards.indexOf(event.target as HTMLAnchorElement);
