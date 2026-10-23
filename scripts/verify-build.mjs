@@ -31,6 +31,24 @@ for (const file of htmlFiles) {
   const isAdmin = rel.startsWith('admin/');
   const is404 = rel === '404.html';
 
+  // One visual footer per page. The immersive, full-screen closing section
+  // belongs only to the home page; articles and details keep the compact one.
+  if (!isAdmin && !is404) {
+    const isHome = rel === 'index.html';
+    const immersiveCount = (html.match(/data-immersive-stage\b/g) ?? []).length;
+    const compactCount = (html.match(/class="site-footer"\b/g) ?? []).length;
+    assert(
+      immersiveCount === (isHome ? 1 : 0),
+      `${rel}: expected ${isHome ? 1 : 0} immersive footer, found ${immersiveCount}`,
+      errors
+    );
+    assert(
+      compactCount === (isHome ? 0 : 1),
+      `${rel}: expected ${isHome ? 0 : 1} compact footer, found ${compactCount}`,
+      errors
+    );
+  }
+
   assert(/<title>[^<]+<\/title>/i.test(html), `${rel}: missing <title>`, errors);
 
   if (!isAdmin) {
