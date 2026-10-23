@@ -1,8 +1,9 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const root = new URL('../dist/', import.meta.url);
-const rootPath = root.pathname;
+const rootPath = fileURLToPath(root);
 const expectedOrigin = (process.env.EXPECTED_SITE_ORIGIN ?? process.env.SITE_URL ?? 'https://www.yachenyanyi.top').replace(/\/+$/, '');
 const siteBase = (process.env.SITE_BASE ?? '').replace(/^\/*/, '/').replace(/\/+$/, '');
 
@@ -25,12 +26,35 @@ function assert(condition, message, errors) {
 const files = await walk(rootPath);
 const htmlFiles = files.filter((file) => file.endsWith('.html'));
 const errors = [];
+const fileSet = new Set(files);
 
 for (const file of htmlFiles) {
   const rel = relative(rootPath, file).split(sep).join('/');
   const html = await readFile(file, 'utf8');
   const isAdmin = rel.startsWith('admin/');
   const is404 = rel === '404.html';
+
+  // Validate actual assets and links, including subpath deployments.
+  for (const match of html.matchAll(/\b(?:src|href)="([^"]+)"/g)) {
+    const url = match[1].split(/[?#]/)[0];
+    if (!url || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(url)) continue;
+    if (url.startsWith('/') && siteBase && !url.startsWith(siteBase + '/')) {
+      errors.push(`${rel}: local URL bypasses deployment base: ${url}`);
+      continue;
+    }
+    const local = url.startsWith('/') ? url.slice(siteBase.length) : join('/', rel, '..', url);
+    const target = join(rootPath, decodeURIComponent(local));
+    const candidates = [target, join(target, 'index.html')];
+    assert(candidates.some((path) => fileSet.has(path)), `${rel}: missing local target ${url}`, errors);
+  }
+
+  const dictionary = html.match(/<script\b[^>]*id="static-i18n"[^>]*>([\s\S]*?)<\/script>/i)?.[1];
+  if (dictionary) {
+    const translations = JSON.parse(dictionary).zh;
+    for (const match of html.matchAll(/\bdata-i18n(?:-aria)?="([^"]+)"/g)) {
+      assert(typeof translations[match[1]] === 'string', `${rel}: missing translation ${match[1]}`, errors);
+    }
+  }
 
   // Every public page uses the shared footer; keep the retired homepage-only
   // footer out of generated output so content is consistent across routes.

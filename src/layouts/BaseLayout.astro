@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import '../styles/saas.css';
 import '../styles/glass-site.css';
 import { withBase } from '../lib/site';
 import { staticTranslations } from '../lib/i18n';
@@ -59,7 +58,7 @@ const isCurrent = (prefix: string) =>
     <script is:inline>
       (() => {
         const root = document.documentElement;
-        root.classList.add('motion-ready', 'i18n-pending');
+        root.classList.add('motion-ready');
         let lang = 'en';
         try {
           const saved = localStorage.getItem('yachenyi-language');
@@ -67,8 +66,6 @@ const isCurrent = (prefix: string) =>
           else if ((navigator.language || '').toLowerCase().startsWith('zh')) lang = 'zh';
         } catch {}
         root.dataset.lang = lang;
-        // Keep the initial document in English metrics. The visible language is
-        // applied after the English geometry has been captured below.
         root.lang = 'en';
       })();
     </script>
@@ -154,67 +151,6 @@ const isCurrent = (prefix: string) =>
         });
       };
 
-      const restoreEnglishCopy = () => {
-        translatableElements().forEach((element) => {
-          const original = originalHtml.get(element);
-          if (original !== undefined) element.innerHTML = original;
-          element.style.removeProperty('font-size');
-        });
-      };
-
-      const unlockLanguageGeometry = () => {
-        translatableElements().forEach((element) => {
-          element.classList.remove('i18n-geometry-lock', 'i18n-inline-lock');
-          element.style.removeProperty('--i18n-lock-width');
-          element.style.removeProperty('--i18n-lock-height');
-          element.style.removeProperty('--i18n-base-font-size');
-          element.style.removeProperty('font-size');
-        });
-      };
-
-      const captureEnglishGeometry = () => {
-        unlockLanguageGeometry();
-        root.lang = 'en';
-        restoreEnglishCopy();
-
-        // Force one English layout pass before recording dimensions.
-        void document.body.offsetWidth;
-
-        translatableElements().forEach((element) => {
-          const rect = element.getBoundingClientRect();
-          if (rect.width <= 0 || rect.height <= 0) return;
-
-          const style = getComputedStyle(element);
-          element.style.setProperty('--i18n-lock-width', `${rect.width}px`);
-          element.style.setProperty('--i18n-lock-height', `${rect.height}px`);
-          element.style.setProperty('--i18n-base-font-size', style.fontSize);
-          element.classList.add('i18n-geometry-lock');
-
-          if (style.display === 'inline') {
-            element.classList.add('i18n-inline-lock');
-          }
-        });
-      };
-
-      const fitTranslatedCopy = () => {
-        translatableElements().forEach((element) => {
-          const baseSize = Number.parseFloat(element.style.getPropertyValue('--i18n-base-font-size'));
-          if (!Number.isFinite(baseSize) || baseSize <= 0) return;
-
-          element.style.removeProperty('font-size');
-          let size = baseSize;
-          const minimum = baseSize * 0.82;
-
-          while (
-            size > minimum &&
-            (element.scrollHeight > element.clientHeight + 1 || element.scrollWidth > element.clientWidth + 1)
-          ) {
-            size -= 0.5;
-            element.style.fontSize = `${size}px`;
-          }
-        });
-      };
-
       const applyLanguage = (lang: string, persist = true) => {
         const normalized = lang === 'zh' ? 'zh' : 'en';
         root.dataset.lang = normalized;
@@ -225,7 +161,6 @@ const isCurrent = (prefix: string) =>
           const translated = key && translations?.zh?.[key];
           const original = originalHtml.get(element);
           element.innerHTML = normalized === 'zh' && translated ? translated : (original ?? element.innerHTML);
-          element.style.removeProperty('font-size');
         });
 
         document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((element) => {
@@ -235,13 +170,13 @@ const isCurrent = (prefix: string) =>
           element.setAttribute('aria-label', normalized === 'zh' && translated ? translated : original);
         });
 
-        if (normalized === 'zh') fitTranslatedCopy();
-
         document.querySelectorAll<HTMLButtonElement>('[data-lang-option]').forEach((button) => {
           const active = button.getAttribute('data-lang-option') === normalized;
           button.classList.toggle('is-active', active);
           button.setAttribute('aria-pressed', String(active));
         });
+
+        document.dispatchEvent(new CustomEvent('site:language-change'));
 
         if (persist) {
           try { localStorage.setItem('yachenyi-language', normalized); } catch {}
@@ -249,40 +184,15 @@ const isCurrent = (prefix: string) =>
       };
 
       rememberEnglish();
-      captureEnglishGeometry();
       applyLanguage(root.dataset.lang || 'en', false);
-      root.classList.remove('i18n-pending');
 
       document.querySelectorAll<HTMLButtonElement>('[data-lang-option]').forEach((button) => {
         button.addEventListener('click', () => applyLanguage(button.getAttribute('data-lang-option') || 'en'));
       });
 
-      let languageResizeTimer: number | undefined;
-      window.addEventListener('resize', () => {
-        window.clearTimeout(languageResizeTimer);
-        languageResizeTimer = window.setTimeout(() => {
-          const currentLanguage = root.dataset.lang || 'en';
-          root.classList.add('i18n-reflowing');
-          captureEnglishGeometry();
-          applyLanguage(currentLanguage, false);
-          root.classList.remove('i18n-reflowing');
-        }, 160);
-      });
-
-      const revealImages = () => {
-        document.querySelectorAll('img').forEach((image) => {
-          const reveal = () => image.classList.add('image-ready');
-          if (image.complete) reveal();
-          else {
-            image.addEventListener('load', reveal, { once: true });
-            image.addEventListener('error', reveal, { once: true });
-          }
-        });
-      };
-
       const revealSections = () => {
         const targets = document.querySelectorAll<HTMLElement>(
-          '[data-reveal], .page-intro, .article-hero, .section, .about-grid, .contact-grid, .article-shell, .prose, .facts-list, .site-footer'
+          '[data-reveal], .page-intro, .article-hero, .section, .about-grid, .contact-grid, .article-shell, .facts-list, .site-footer'
         );
 
         if (reduceMotion || !('IntersectionObserver' in window)) {
@@ -290,6 +200,7 @@ const isCurrent = (prefix: string) =>
           return;
         }
 
+        targets.forEach((target) => target.setAttribute('data-reveal', ''));
         root.classList.add('motion-enabled');
 
         const observer = new IntersectionObserver(
@@ -306,7 +217,6 @@ const isCurrent = (prefix: string) =>
         targets.forEach((target) => observer.observe(target));
       };
 
-      revealImages();
       revealSections();
 
       requestAnimationFrame(() => {

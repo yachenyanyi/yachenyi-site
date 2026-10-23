@@ -27,7 +27,7 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Astro check
         run: npm run check
@@ -36,6 +36,12 @@ jobs:
         run: npm run build
         env:
           SITE_URL: https://yachenyanyi.github.io
+          SITE_BASE: /yachenyi-site
+
+      - name: Verify generated site
+        run: npm run verify:build
+        env:
+          EXPECTED_SITE_ORIGIN: https://yachenyanyi.github.io
           SITE_BASE: /yachenyi-site
 
       - name: Upload Pages artifact

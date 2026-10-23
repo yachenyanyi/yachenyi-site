@@ -180,16 +180,21 @@ const schema = [
     }));
   });
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(({ target, isIntersecting }) => {
-      if (isIntersecting) visible.add(target);
-      else visible.delete(target);
-      const animation = surfaces.get(target);
-      if (isIntersecting && !reducedMotion.matches) animation?.play();
-      else animation?.pause();
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(({ target, isIntersecting }) => {
+        if (isIntersecting) visible.add(target);
+        else visible.delete(target);
+        const animation = surfaces.get(target);
+        if (isIntersecting && !reducedMotion.matches) animation?.play();
+        else animation?.pause();
+      });
     });
+    surfaces.forEach((_, surface) => observer.observe(surface));
+  } else surfaces.forEach((animation, surface) => {
+    visible.add(surface);
+    if (!reducedMotion.matches) animation.play();
   });
-  surfaces.forEach((_, surface) => observer.observe(surface));
   reducedMotion.addEventListener('change', () => {
     surfaces.forEach((animation, surface) => {
       if (reducedMotion.matches) {

@@ -5,6 +5,7 @@ export function setupProjectCarousel() {
   if (!viewport || !track || !toggle) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let motionAllowed = !reducedMotion.matches;
   const originals = Array.from(track.querySelectorAll<HTMLAnchorElement>('.home-project-card'));
   if (originals.length < 2) return;
 
@@ -51,7 +52,7 @@ export function setupProjectCarousel() {
       slot.style.pointerEvents = outside ? 'none' : 'auto';
     });
   };
-  const canRun = () => visible && !document.hidden && !reducedMotion.matches && !paused && !focused;
+  const canRun = () => visible && !document.hidden && motionAllowed && !paused && !focused;
   const tick = (time: number) => {
     frame = 0;
     if (!canRun()) { previousTime = 0; return; }
@@ -65,12 +66,16 @@ export function setupProjectCarousel() {
     if (frame) cancelAnimationFrame(frame);
     frame = 0;
     previousTime = 0;
-    viewport.classList.toggle('is-orbit-ready', !reducedMotion.matches);
-    toggle.hidden = reducedMotion.matches;
-    toggle.setAttribute('aria-pressed', `${paused}`);
-    toggle.setAttribute('aria-label', paused ? 'Resume project rotation' : 'Pause project rotation');
-    toggle.textContent = paused ? '▶' : 'Ⅱ';
-    if (!reducedMotion.matches) draw();
+    viewport.classList.toggle('is-orbit-ready', motionAllowed);
+    toggle.hidden = false;
+    const zh = document.documentElement.dataset.lang === 'zh';
+    const label = !motionAllowed
+      ? (zh ? '启用转动' : 'Enable rotation')
+      : paused ? (zh ? '继续转动' : 'Resume rotation') : (zh ? '暂停转动' : 'Pause rotation');
+    toggle.setAttribute('aria-pressed', `${!motionAllowed || paused}`);
+    toggle.setAttribute('aria-label', label);
+    toggle.textContent = `${!motionAllowed || paused ? '▶' : 'Ⅱ'} ${label}`;
+    if (motionAllowed) draw();
     else slots.forEach((slot) => {
       slot.style.removeProperty('opacity');
       slot.style.removeProperty('pointer-events');
@@ -78,7 +83,11 @@ export function setupProjectCarousel() {
     if (canRun()) frame = requestAnimationFrame(tick);
   };
 
-  toggle.addEventListener('click', () => { paused = !paused; sync(); });
+  toggle.addEventListener('click', () => {
+    if (!motionAllowed) { motionAllowed = true; paused = false; }
+    else paused = !paused;
+    sync();
+  });
   viewport.addEventListener('focusin', (event) => {
     focused = true;
     const index = cards.indexOf(event.target as HTMLAnchorElement);
@@ -89,13 +98,23 @@ export function setupProjectCarousel() {
     if (!viewport.contains(event.relatedTarget as Node | null)) { focused = false; sync(); }
   });
   document.addEventListener('visibilitychange', sync);
-  reducedMotion.addEventListener('change', sync);
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }).observe(viewport);
-  new ResizeObserver(() => {
+  reducedMotion.addEventListener('change', () => {
+    motionAllowed = !reducedMotion.matches;
+    paused = false;
+    sync();
+  });
+  document.addEventListener('site:language-change', sync);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }).observe(viewport);
+  } else visible = true;
+  const resize = () => {
     width = viewport.clientWidth;
     cardWidth = Math.min(330, Math.max(240, width * .29));
     track.style.setProperty('--orbit-card-width', `${cardWidth}px`);
     sync();
-  }).observe(viewport);
+  };
+  if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(viewport);
+  else window.addEventListener('resize', resize, { passive: true });
+  resize();
   sync();
 }

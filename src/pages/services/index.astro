@@ -25,7 +25,7 @@ const serviceIcons: Record<string, string> = {
     <div class="service-grid">
       {services.map((service) => (
         <a class="service-card" href={withBase(`/services/${service.id}/`)}>
-          <img class="service-icon" src={withBase(serviceIcons[service.id])} alt="" loading="lazy" />
+          <img class="service-icon" src={withBase(serviceIcons[service.id] ?? '/icons/services/web-systems.webp')} alt="" loading="lazy" width="92" height="92" />
           <div>
             <div class="meta">0{service.data.order}</div>
             <h2>{service.data.title}</h2>

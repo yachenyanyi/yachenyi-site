@@ -15,7 +15,7 @@ const projects = defineCollection({
     summary: z.string(),
     status: z.enum(['active', 'experimental', 'maintenance', 'archived']),
     featured: z.boolean().default(false),
-    github: z.string().url().optional(),
+    github: z.url().optional(),
     updatedAt: z.coerce.date(),
     seo: commonSeo.optional(),
   }),

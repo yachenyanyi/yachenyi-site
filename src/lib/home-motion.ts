@@ -17,7 +17,7 @@ export function setupHomeMotion() {
     if (heroVisible && !scrollFrame) scrollFrame = requestAnimationFrame(updateHero);
   };
   window.addEventListener('scroll', scheduleHero, { passive: true });
-  if (hero) {
+  if (hero && 'IntersectionObserver' in window) {
     new IntersectionObserver(([entry]) => {
       heroVisible = entry.isIntersecting;
       hero.classList.toggle('is-offscreen', !heroVisible);
@@ -29,7 +29,11 @@ export function setupHomeMotion() {
   cards.forEach((card) => {
     const preview = document.createElement('span');
     preview.className = 'card-motion-preview';
-    preview.textContent = 'View ↗';
+    const translatePreview = () => {
+      preview.textContent = document.documentElement.dataset.lang === 'zh' ? '查看 ↗' : 'View ↗';
+    };
+    translatePreview();
+    document.addEventListener('site:language-change', translatePreview);
     preview.setAttribute('aria-hidden', 'true');
     card.append(preview);
     let pointerFrame = 0;

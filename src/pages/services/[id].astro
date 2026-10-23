@@ -20,7 +20,7 @@ const serviceIcons: Record<string, string> = {
   automation: '/icons/services/automation.webp',
   'web-systems': '/icons/services/web-systems.webp',
 };
-const icon = serviceIcons[service.id];
+const icon = serviceIcons[service.id] ?? '/icons/services/web-systems.webp';
 
 const schema = {
   '@context': 'https://schema.org',
