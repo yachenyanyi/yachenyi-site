@@ -90,7 +90,7 @@ export function setupMorphNavigation() {
     const animation = panel.animate([from, entering
       ? { opacity: 1, transform: 'translateX(0) scale(1)', filter: 'blur(0px)' }
       : { opacity: 0, transform: `translateX(${-direction * 18}px) scale(.975)`, filter: 'blur(9px)' },
-    ], { duration: entering ? 420 : 220, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+    ], { duration: entering ? 760 : 440, easing: 'cubic-bezier(.22,.7,.18,1)', fill: 'both' });
     animations.set(panel, animation);
     animation.finished.then(() => {
       if (animations.get(panel) !== animation) return;
@@ -122,9 +122,9 @@ export function setupMorphNavigation() {
     shellAnimation?.cancel();
     if (!reduce.matches) shellAnimation = dropdown.animate([
       shellFrom,
-      { transform: `skewX(${direction * .8}deg) scale(1.008,.985)`, filter: 'blur(1px)', offset: .3 },
+      { transform: `skewX(${direction * .8}deg) scale(1.008,.985)`, filter: 'blur(1px)', offset: .4 },
       { transform: 'none', filter: 'blur(0px)' },
-    ], { duration: 460, easing: 'cubic-bezier(.22,1,.36,1)' });
+    ], { duration: 850, easing: 'cubic-bezier(.22,.7,.18,1)' });
   };
   triggers.forEach((trigger, index) => {
     trigger.addEventListener('pointerenter', () => { if (fine.matches) open(index); });
