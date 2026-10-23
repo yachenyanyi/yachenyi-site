@@ -11,184 +11,143 @@ const labPosts = (await getCollection('lab'))
   .filter(({ data }) => !data.draft)
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
   .slice(0, 2);
-const visuals: Record<string,string> = {
+const projectImages: Record<string, string> = {
   'deep-loopminder': '/images/generated/ai-network-workbench.webp',
   issuepack: '/images/generated/home-creative-workspace.webp',
   autoscreenagent: '/images/generated/futurist-white-architecture.webp',
 };
-const features = [
-  { icon: '◈', code: '/agents', tint: 'purple', title: 'AI Agent Systems', copy: 'Orchestration, sub-agents and long-running workflows that stay in control.', key: 'agents' },
-  { icon: '⌘', code: '/automation', tint: 'blue', title: 'Workflow Automation', copy: 'Replace repetitive steps with clear, observable, reliable pipelines.', key: 'automation' },
-  { icon: '▤', code: '/web', tint: 'teal', title: 'Web Systems', copy: 'Fast sites, internal tools and interfaces that serve real work.', key: 'web' },
-  { icon: '⧉', code: '/context', tint: 'amber', title: 'Context Infrastructure', copy: 'Make requirements, decisions and evidence reusable across tools.', key: 'context' },
-  { icon: '◎', code: '/governance', tint: 'pink', title: 'Project Governance', copy: 'Turn vague goals into explicit plans, verification and state.', key: 'governance' },
-  { icon: '↗', code: '/delivery', tint: 'indigo', title: 'Software Delivery', copy: 'Build, test, document and iterate with maintainability in mind.', key: 'delivery' },
-];
+const labImages: Record<string, string> = {
+  'durable-project-state': '/images/generated/home-misty-mountains.webp',
+  'static-first-opc-site': '/images/generated/misty-blue-coast.webp',
+};
 const schema = [
-  { '@context': 'https://schema.org', '@type': 'Person', name: 'Yachenyi', url: Astro.site?.toString(), jobTitle: 'Independent AI Software Builder', knowsAbout: ['AI Agents','Automation','Developer Tools','Software Engineering'] },
+  { '@context': 'https://schema.org', '@type': 'Person', name: 'Yachenyi', url: Astro.site?.toString(), jobTitle: 'Independent AI Software Builder', knowsAbout: ['AI Agents', 'Automation', 'Developer Tools', 'Software Engineering'] },
   { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Yachenyi', url: Astro.site?.toString() },
 ];
 ---
+
 <BaseLayout
   title="Yachenyi — Independent AI Software Studio"
   description="Yachenyi builds reliable AI agent systems, workflow automation, developer tools and focused web software."
   schema={schema}
   image="/images/generated/ai-network-workbench.webp"
 >
-  <section class="saas-hero" aria-labelledby="home-title">
-    <div class="saas-ambient saas-ambient-one" aria-hidden="true"></div>
-    <div class="saas-ambient saas-ambient-two" aria-hidden="true"></div>
-    <div class="saas-dots" aria-hidden="true"></div>
-    <div class="saas-hero-content">
-      <div class="saas-announcement"><span class="saas-live-dot" aria-hidden="true"></span><span data-i18n="home.saas.eyebrow">INDEPENDENT AI SOFTWARE STUDIO</span><span aria-hidden="true">↗</span></div>
-      <h1 id="home-title" class="saas-headline" data-i18n="home.saas.title">Build smarter software.<br /><span class="saas-gradient-text">Make every step count.</span></h1>
-      <p class="saas-hero-subtitle" data-i18n="home.saas.lead">From agent orchestration to everyday automation, I turn complex workflows into focused, reliable software — built to be understood, improved, and used.</p>
-      <div class="saas-hero-actions">
-        <a href={withBase('/projects/')} class="saas-button saas-button-primary"><span data-i18n="home.saas.action.projects">Explore projects</span><span aria-hidden="true">↗</span></a>
-        <a href={withBase('/contact/')} class="saas-button saas-button-secondary"><span data-i18n="home.saas.action.contact">Let's build together</span><span aria-hidden="true">→</span></a>
+  <section
+    class="immersive-hero"
+    aria-labelledby="home-title"
+    style={`--hero-image: url("${withBase('/images/generated/home-misty-mountains.webp')}")`}
+  >
+    <div class="immersive-hero__content">
+      <div class="hero-kicker" data-reveal>
+        <span class="hero-kicker__dot" aria-hidden="true"></span>
+        <span data-i18n="home.saas.eyebrow">Independent AI Software Studio</span>
       </div>
-      <div class="saas-hero-proof"><span class="saas-proof-line" aria-hidden="true"></span><span data-i18n="home.saas.proof">One independent builder · AI-native engineering · Practical by design</span></div>
+      <h1 id="home-title" class="immersive-title" data-reveal data-i18n="home.saas.title">
+        Build smarter software.<br /><span class="saas-gradient-text">Make every step count.</span>
+      </h1>
+      <p class="immersive-lead" data-reveal data-i18n="home.saas.lead">
+        From agent orchestration to everyday automation, I turn complex workflows into focused, reliable software — built to be understood, improved, and used.
+      </p>
+      <div class="hero-actions" data-reveal>
+        <a href={withBase('/projects/')} class="button button-accent">
+          <span data-i18n="home.saas.action.projects">Explore projects</span><span aria-hidden="true">↗</span>
+        </a>
+        <a href={withBase('/contact/')} class="button button-glass">
+          <span data-i18n="home.saas.action.contact">Let's build together</span><span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="hero-proof glass-panel" data-reveal>
+        <div><span data-i18n="home.proof.approach">Approach</span><strong data-i18n="home.proof.approach.value">Independent by design</strong></div>
+        <div><span data-i18n="home.proof.focus">Focus</span><strong data-i18n="home.proof.focus.value">AI-native systems</strong></div>
+        <div><span data-i18n="home.proof.standard">Standard</span><strong data-i18n="home.proof.standard.value">Small and reliable</strong></div>
+      </div>
+      <a class="hero-scroll" href="#selected-work" data-reveal>
+        <span class="hero-scroll__line" aria-hidden="true"></span>
+        <span data-i18n="home.scroll">Scroll to explore</span>
+      </a>
     </div>
-    <div class="saas-product-shell" role="group" aria-label="Conceptual illustration of the studio's software workflow">
-      <div class="saas-product-window">
-        <div class="saas-window-bar">
-          <div class="saas-window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-          <div class="saas-window-path">studio / workspace / overview</div>
-          <span class="saas-window-status"><span class="saas-live-dot" aria-hidden="true"></span> SYSTEM DESIGN</span>
-        </div>
-        <div class="saas-window-body">
-          <aside class="saas-app-sidebar" aria-hidden="true">
-            <div class="saas-app-logo"><span>Y.</span><strong>YACHENYI</strong></div>
-            <div class="saas-app-group">WORKSPACE</div>
-            <div class="saas-app-menu-item is-selected"><span>◫</span> Overview</div>
-            <div class="saas-app-menu-item"><span>▦</span> Projects</div>
-            <div class="saas-app-menu-item"><span>⌘</span> Agents</div>
-            <div class="saas-app-menu-item"><span>▤</span> Notes</div>
-            <div class="saas-app-group">BUILD</div>
-            <div class="saas-app-menu-item"><span>⧉</span> Context</div>
-            <div class="saas-app-menu-item"><span>◎</span> Evidence</div>
-            <div class="saas-sidebar-bottom"><span class="saas-live-dot"></span> Independent studio</div>
-          </aside>
-          <div class="saas-app-main">
-            <div class="saas-app-heading"><div><div class="saas-overline">YOUR WORK, MADE VISIBLE</div><h2>Build with clarity<span>.</span></h2></div><span class="saas-app-badge">WORKFLOW / 01</span></div>
-            <div class="saas-dashboard-grid">
-              <div class="saas-dashboard-card saas-dashboard-primary">
-                <div class="saas-dashboard-label"><span>Project lifecycle</span><span>↗</span></div>
-                <div class="saas-lifecycle">
-                  <div class="saas-lifecycle-step is-complete"><span>01</span><strong>Define</strong></div>
-                  <div class="saas-lifecycle-step is-complete"><span>02</span><strong>Plan</strong></div>
-                  <div class="saas-lifecycle-step is-current"><span>03</span><strong>Build</strong></div>
-                  <div class="saas-lifecycle-step"><span>04</span><strong>Verify</strong></div>
-                </div>
-                <div class="saas-dashboard-foot"><span>Goal → Evidence → Delivery</span><span>↗</span></div>
-              </div>
-              <div class="saas-dashboard-card saas-dashboard-side">
-                <div class="saas-dashboard-label">FOCUS AREAS</div>
-                <div class="saas-ring"><span>03<small>domains</small></span></div>
-                <div class="saas-ring-caption">Agents · Automation · Web</div>
-              </div>
-              <div class="saas-dashboard-card saas-dashboard-list">
-                <div class="saas-dashboard-label"><span>Selected projects</span><span>VIEW ALL ↗</span></div>
-                <div class="saas-project-line"><span class="saas-project-symbol">D</span><span>DeepLoopMinder<small>Multi-agent runtime</small></span><span class="saas-tiny-tag">ACTIVE</span></div>
-                <div class="saas-project-line"><span class="saas-project-symbol blue">I</span><span>IssuePack<small>Developer workflow</small></span><span class="saas-tiny-tag muted">TOOL</span></div>
-                <div class="saas-project-line"><span class="saas-project-symbol teal">A</span><span>AutoScreenAgent<small>Automation</small></span><span class="saas-tiny-tag muted">LAB</span></div>
-              </div>
-            </div>
+  </section>
+
+  <section class="home-section" id="selected-work" aria-labelledby="work-title">
+    <div class="section-heading section-heading--glass" data-reveal>
+      <div>
+        <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.work.label">Selected projects</span></span>
+        <h2 id="work-title" class="section-title" data-i18n="home.saas.work.title">Built in the open.<br /><span class="saas-soft-text">Made for the real world.</span></h2>
+      </div>
+      <a class="section-link" href={withBase('/projects/')}>
+        <span data-i18n="home.saas.work.link">All projects</span><span aria-hidden="true">↗</span>
+      </a>
+    </div>
+    <div class="home-project-grid">
+      {projects.map((project, index) => (
+        <a
+          class:list={['home-project-card', { 'home-project-card--featured': index === 0 }]}
+          href={withBase(`/projects/${project.id}/`)}
+          data-reveal
+          style={`--reveal-delay: ${index * 90}ms`}
+        >
+          <div class="home-project-card__image">
+            <img
+              src={withBase(projectImages[project.id] ?? '/images/generated/ai-network-workbench.webp')}
+              alt=""
+              loading="lazy"
+              width="1200"
+              height="750"
+            />
+            <span class="project-status">{project.data.status}</span>
+            <span class="project-arrow" aria-hidden="true">↗</span>
           </div>
-        </div>
+          <div class="home-project-card__body">
+            <span class="project-index">0{index + 1} / PROJECT</span>
+            <h3>{project.data.title}</h3>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-section home-notes" aria-labelledby="notes-title">
+    <div class="section-heading section-heading--glass" data-reveal>
+      <div>
+        <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.notes.label">From the lab</span></span>
+        <h2 id="notes-title" class="section-title" data-i18n="home.saas.notes.title">Notes from the workbench.</h2>
       </div>
-      <p class="saas-preview-disclaimer" data-i18n="home.saas.demo">A conceptual interface illustrating the workflow — not live operational metrics.</p>
+      <a class="section-link" href={withBase('/lab/')}>
+        <span data-i18n="home.saas.notes.link">Read the lab</span><span aria-hidden="true">↗</span>
+      </a>
     </div>
-  </section>
-
-  <section class="saas-signal-bar" aria-label="Studio at a glance">
-    <div><strong>03</strong><span data-i18n="home.saas.signal.projects">PUBLIC PROJECTS</span></div>
-    <span class="saas-signal-divider" aria-hidden="true"></span>
-    <div><strong>03</strong><span data-i18n="home.saas.signal.domains">CORE CAPABILITIES</span></div>
-    <span class="saas-signal-divider" aria-hidden="true"></span>
-    <div><strong>Astro</strong><span data-i18n="home.saas.signal.static">STATIC-FIRST WEB</span></div>
-    <span class="saas-signal-divider" aria-hidden="true"></span>
-    <div><strong>Open</strong><span data-i18n="home.saas.signal.approach">PUBLIC BUILD LOG</span></div>
-  </section>
-
-  <section class="saas-section" id="capabilities">
-    <div class="saas-section-head saas-centered">
-      <span class="saas-section-label"><span class="saas-label-dot"></span><span data-i18n="home.saas.capabilities.label">WHAT I BUILD</span></span>
-      <h2 data-i18n="home.saas.capabilities.title">Practical systems.<br /><span class="saas-soft-text">Thoughtfully engineered.</span></h2>
-      <p data-i18n="home.saas.capabilities.copy">A small studio with a focused toolkit — combining AI, automation and software engineering to solve the problems behind the interface.</p>
-    </div>
-    <div class="saas-feature-grid">
-      {features.map((feature) => (
-        <article class:list={['saas-feature-card','tint-' + feature.tint]}>
-          <div class="saas-feature-top"><span class="saas-feature-icon" aria-hidden="true">{feature.icon}</span><span class="saas-feature-code">{feature.code}</span></div>
-          <h3 data-i18n={'home.saas.feature.' + feature.key + '.title'}>{feature.title}</h3>
-          <p data-i18n={'home.saas.feature.' + feature.key + '.copy'}>{feature.copy}</p>
-          <div class="saas-feature-bottom"><span>YACHENYI / BUILD</span><span aria-hidden="true">↗</span></div>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="saas-section saas-work-section">
-    <div class="saas-section-head saas-section-head-split">
-      <div><span class="saas-section-label"><span class="saas-label-dot"></span><span data-i18n="home.saas.work.label">SELECTED WORK</span></span><h2 data-i18n="home.saas.work.title">Built in the open.<br /><span class="saas-soft-text">Made for the real world.</span></h2></div>
-      <div class="saas-section-aside"><p data-i18n="home.saas.work.copy">Projects that explore how agents, human decisions and everyday software can work better together.</p><a class="saas-text-link" href={withBase('/projects/')}><span data-i18n="home.saas.work.link">All projects</span> <span aria-hidden="true">↗</span></a></div>
-    </div>
-    <div class="saas-work-grid">
-      {projects.map((project, i) => (
-        <a class:list={['saas-work-card',{'saas-work-card-wide': i === 0}]} href={withBase('/projects/' + project.id + '/')}>
-          <div class="saas-work-visual"><img src={withBase(visuals[project.id] ?? '/images/generated/ai-network-workbench.webp')} alt="" loading="lazy" width="1200" height="750" /><span class="saas-work-index">0{i + 1}</span></div>
-          <div class="saas-work-detail"><div class="saas-work-meta"><span>PROJECT / {project.data.status.toUpperCase()}</span><span aria-hidden="true">↗</span></div><h3>{project.data.title}</h3><p>{project.data.summary}</p></div>
+    <div class="home-notes-grid">
+      {labPosts.map((post, index) => (
+        <a
+          class="home-note-card glass-panel"
+          href={withBase(`/lab/${post.id}/`)}
+          data-reveal
+          style={`--reveal-delay: ${index * 100}ms`}
+        >
+          <img
+            src={withBase(labImages[post.id] ?? '/images/generated/misty-blue-coast.webp')}
+            alt=""
+            loading="lazy"
+            width="1000"
+            height="620"
+          />
+          <div class="home-note-card__body">
+            <div class="note-meta"><span>{post.data.publishedAt.toISOString().slice(0, 10)}</span><span>{post.data.tags.slice(0, 2).join(' / ')}</span></div>
+            <h3>{post.data.title}</h3>
+            <span class="note-open" aria-hidden="true">↗</span>
+          </div>
         </a>
       ))}
     </div>
   </section>
 
-  <section class="saas-section saas-method-section">
-    <div class="saas-section-head saas-centered">
-      <span class="saas-section-label"><span class="saas-label-dot"></span><span data-i18n="home.saas.method.label">HOW I WORK</span></span>
-      <h2 data-i18n="home.saas.method.title">From an idea<br /><span class="saas-soft-text">to a dependable system.</span></h2>
-      <p data-i18n="home.saas.method.copy">No unnecessary machinery. Just a clear problem, the smallest useful implementation, and proof that it works.</p>
-    </div>
-    <div class="saas-steps-grid">
-      <article class="saas-step">
-        <div class="saas-step-num">01 <span>—</span></div><h3 data-i18n="home.saas.method.1.title">Understand the problem</h3><p data-i18n="home.saas.method.1.copy">Clarify the goal, constraints and what success actually looks like.</p>
-        <div class="saas-code-sample"><span class="saas-code-dim">$ project define</span><br/><span class="saas-code-green">✓ goal &amp; scope</span><br/><span class="saas-code-green">✓ success criteria</span></div>
-      </article>
-      <article class="saas-step">
-        <div class="saas-step-num">02 <span>—</span></div><h3 data-i18n="home.saas.method.2.title">Build the smallest useful thing</h3><p data-i18n="home.saas.method.2.copy">Prototype with simple components and make important state visible.</p>
-        <div class="saas-code-sample"><span class="saas-code-dim">$ workflow run</span><br/><span class="saas-code-purple">→ plan → implement</span><br/><span class="saas-code-green">✓ checkpoint saved</span></div>
-      </article>
-      <article class="saas-step">
-        <div class="saas-step-num">03 <span>—</span></div><h3 data-i18n="home.saas.method.3.title">Verify and keep improving</h3><p data-i18n="home.saas.method.3.copy">Use evidence, tests and feedback to make the result maintainable.</p>
-        <div class="saas-code-sample"><span class="saas-code-dim">$ project verify</span><br/><span class="saas-code-green">✓ tests completed</span><br/><span class="saas-code-green">✓ evidence attached</span></div>
-      </article>
-    </div>
-  </section>
-
-  <section class="saas-section saas-notes-section">
-    <div class="saas-section-head saas-section-head-split">
-      <div><span class="saas-section-label"><span class="saas-label-dot"></span><span data-i18n="home.saas.notes.label">FROM THE LAB</span></span><h2 data-i18n="home.saas.notes.title">Notes from<br /><span class="saas-soft-text">the workbench.</span></h2></div>
-      <div class="saas-section-aside"><p data-i18n="home.saas.notes.copy">Architecture decisions, experiments and notes from building AI-native software.</p><a class="saas-text-link" href={withBase('/lab/')}><span data-i18n="home.saas.notes.link">Read the lab</span> <span aria-hidden="true">↗</span></a></div>
-    </div>
-    <div class="saas-notes-grid">
-      {labPosts.map((post, i) => (
-        <a class="saas-note-card" href={withBase('/lab/' + post.id + '/')}>
-          <div class="saas-note-index">0{i + 1} / BUILD LOG <span aria-hidden="true">↗</span></div>
-          <div><div class="saas-note-date">{post.data.publishedAt.toISOString().slice(0, 10)}</div><h3>{post.data.title}</h3><p>{post.data.summary}</p></div>
-          <div class="saas-tags">{post.data.tags.slice(0, 3).map((tag) => <span>{tag}</span>)}</div>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <section class="saas-final-cta">
-    <div class="saas-cta-halo" aria-hidden="true"></div>
-    <div class="saas-cta-content">
-      <span class="saas-section-label"><span class="saas-label-dot"></span><span data-i18n="home.saas.cta.label">LET'S COLLABORATE</span></span>
-      <h2 data-i18n="home.saas.cta.title">Have a problem worth solving?<br/><span class="saas-gradient-text">Let's build something useful.</span></h2>
-      <p data-i18n="home.saas.cta.copy">A focused project starts with a good question. Tell me what isn't working, and we'll find the smallest reliable way forward.</p>
-      <a href={withBase('/contact/')} class="saas-button saas-button-primary"><span data-i18n="home.saas.cta.action">Start a conversation</span><span aria-hidden="true">↗</span></a>
-    </div>
+  <section class="home-contact glass-panel" data-reveal aria-labelledby="contact-title">
+    <div class="home-contact__glow" aria-hidden="true"></div>
+    <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.cta.label">Let's collaborate</span></span>
+    <h2 id="contact-title" data-i18n="home.saas.cta.title">Have a problem worth solving?<br /><span class="saas-gradient-text">Let's build something useful.</span></h2>
+    <p data-i18n="home.saas.cta.copy">A focused project starts with a good question. Tell me what isn't working, and we'll find the smallest reliable way forward.</p>
+    <a href={withBase('/contact/')} class="button button-accent">
+      <span data-i18n="home.saas.cta.action">Start a conversation</span><span aria-hidden="true">↗</span>
+    </a>
   </section>
 </BaseLayout>

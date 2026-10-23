@@ -4,7 +4,7 @@ export const GET: APIRoute = ({ site }) => {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const lines = [
     'User-agent: *',
-    `Allow: ${base || '/'}/`,
+    `Allow: ${base || ''}/`,
     `Disallow: ${base}/admin/`,
   ];
 

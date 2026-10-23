@@ -3,7 +3,8 @@ import { join, relative, sep } from 'node:path';
 
 const root = new URL('../dist/', import.meta.url);
 const rootPath = root.pathname;
-const expectedOrigin = process.env.EXPECTED_SITE_ORIGIN ?? 'https://yachenyi.com';
+const expectedOrigin = (process.env.EXPECTED_SITE_ORIGIN ?? process.env.SITE_URL ?? 'https://www.yachenyanyi.top').replace(/\/+$/, '');
+const siteBase = (process.env.SITE_BASE ?? '').replace(/^\/*/, '/').replace(/\/+$/, '');
 
 async function walk(dir) {
   const entries = await readdir(dir);
@@ -31,22 +32,13 @@ for (const file of htmlFiles) {
   const isAdmin = rel.startsWith('admin/');
   const is404 = rel === '404.html';
 
-  // One visual footer per page. The immersive, full-screen closing section
-  // belongs only to the home page; articles and details keep the compact one.
+  // Every public page uses the shared footer; keep the retired homepage-only
+  // footer out of generated output so content is consistent across routes.
   if (!isAdmin && !is404) {
-    const isHome = rel === 'index.html';
     const immersiveCount = (html.match(/<div\b[^>]*class="immersive-stage"[^>]*>/g) ?? []).length;
     const compactCount = (html.match(/<footer\b[^>]*class="site-footer"/g) ?? []).length;
-    assert(
-      immersiveCount === (isHome ? 1 : 0),
-      `${rel}: expected ${isHome ? 1 : 0} immersive footer, found ${immersiveCount}`,
-      errors
-    );
-    assert(
-      compactCount === (isHome ? 0 : 1),
-      `${rel}: expected ${isHome ? 0 : 1} compact footer, found ${compactCount}`,
-      errors
-    );
+    assert(immersiveCount === 0, `${rel}: unexpected legacy immersive footer`, errors);
+    assert(compactCount === 1, `${rel}: expected one shared footer, found ${compactCount}`, errors);
   }
 
   assert(/<title>[^<]+<\/title>/i.test(html), `${rel}: missing <title>`, errors);
@@ -59,7 +51,7 @@ for (const file of htmlFiles) {
     const canonical = html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/i)?.[1];
     assert(Boolean(canonical), `${rel}: missing canonical URL`, errors);
     if (canonical) {
-      assert(canonical.startsWith(expectedOrigin + '/'), `${rel}: canonical must use ${expectedOrigin}, got ${canonical}`, errors);
+      assert(canonical.startsWith(expectedOrigin + siteBase + '/'), `${rel}: canonical must use ${expectedOrigin}${siteBase}, got ${canonical}`, errors);
     }
   }
 
@@ -82,8 +74,8 @@ for (const file of htmlFiles) {
 const robotsPath = join(rootPath, 'robots.txt');
 const robots = await readFile(robotsPath, 'utf8').catch(() => '');
 assert(Boolean(robots), 'robots.txt: missing', errors);
-assert(robots.includes('Disallow: /admin/'), 'robots.txt: /admin/ must be disallowed', errors);
-assert(robots.includes(`Sitemap: ${expectedOrigin}/sitemap-index.xml`), 'robots.txt: production sitemap URL is missing or incorrect', errors);
+assert(robots.includes(`Disallow: ${siteBase}/admin/`), 'robots.txt: /admin/ must be disallowed', errors);
+assert(robots.includes(`Sitemap: ${expectedOrigin}${siteBase}/sitemap-index.xml`), 'robots.txt: production sitemap URL is missing or incorrect', errors);
 
 assert(files.some((file) => relative(rootPath, file).split(sep).join('/') === 'sitemap-index.xml'), 'sitemap-index.xml: missing', errors);
 
