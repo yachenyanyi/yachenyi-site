@@ -5,7 +5,7 @@ export function setupGlassHero() {
   const title = stage?.querySelector<HTMLElement>('h1');
   if (!stage || !canvas || !title) return;
   const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
-  if (!gl) return;
+  if (!gl) { setupGlassFallback(stage, canvas, title); return; }
   const vertex = `attribute vec2 position; varying vec2 uv; void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const fragment = `precision highp float;
     varying vec2 uv; uniform sampler2D backdrop; uniform vec2 resolution; uniform vec2 angle;
@@ -46,10 +46,10 @@ export function setupGlassHero() {
   };
   const vs = compile(gl.VERTEX_SHADER, vertex), fs = compile(gl.FRAGMENT_SHADER, fragment);
   const program = gl.createProgram();
-  if (!vs || !fs || !program) { gl.deleteShader(vs); gl.deleteShader(fs); gl.deleteProgram(program); return; }
+  if (!vs || !fs || !program) { gl.deleteShader(vs); gl.deleteShader(fs); gl.deleteProgram(program); setupGlassFallback(stage,canvas,title); return; }
   gl.attachShader(program, vs); gl.attachShader(program, fs); gl.linkProgram(program);
   gl.deleteShader(vs); gl.deleteShader(fs);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { gl.deleteProgram(program); return; }
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { gl.deleteProgram(program); setupGlassFallback(stage,canvas,title); return; }
   gl.useProgram(program);
   const buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
@@ -120,5 +120,46 @@ export function setupGlassHero() {
   document.addEventListener('site:language-change',()=>requestAnimationFrame(paint));
   if(typeof ResizeObserver==='function')new ResizeObserver(paint).observe(stage);else window.addEventListener('resize',paint,{passive:true});
   if(typeof IntersectionObserver==='function')new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;last=0;if(visible)wake();}).observe(stage);
-  document.fonts.ready.then(paint);paint();stage.classList.add('glass-ready');wake();
+  document.fonts.ready.then(paint);paint();stage.dataset.glassRenderer='webgl';stage.classList.add('glass-ready');wake();
+}
+
+
+/** Preserve a draggable glass volume on devices without a WebGL context. */
+function setupGlassFallback(stage: HTMLElement, canvas: HTMLCanvasElement, title: HTMLElement) {
+  const cube=document.createElement('div');cube.className='glass-fallback-cube';cube.setAttribute('aria-hidden','true');
+  for(let i=0;i<6;i++){const face=document.createElement('div');face.className=`glass-fallback-face glass-fallback-face--${i}`;cube.append(face);}
+  stage.append(cube);stage.classList.add('glass-fallback-ready');stage.dataset.glassRenderer='css';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+  let x=-28,y=18,speed=0,last=0,frame=0,visible=true,paused=false;
+  let pointer:{id:number;x:number;y:number;time:number;startX:number;startY:number;dragging:boolean}|null=null;
+  const draw=()=>{cube.style.transform=`translate(-50%,-50%) rotateX(${y}deg) rotateY(${x}deg)`;};
+  const copyText=()=>{
+    const bounds=stage.getBoundingClientRect(),style=getComputedStyle(title);
+    cube.style.setProperty('--glass-copy-width',`${bounds.width}px`);cube.style.setProperty('--glass-copy-font',style.fontSize);
+    cube.querySelectorAll('.glass-fallback-face').forEach(face=>{
+      const copy=document.createElement('div');copy.className='glass-face-text';copy.innerHTML=title.innerHTML;
+      copy.querySelectorAll('[data-i18n]').forEach(e=>e.removeAttribute('data-i18n'));face.replaceChildren(copy);
+    });
+  };
+  const tick=(time:number)=>{frame=0;if(!visible||document.hidden){last=0;return;}const dt=last?Math.min(64,time-last):0;last=time;
+    if(!pointer&&!reduce.matches){x+=speed*1400*(1-Math.exp(-dt/1400));speed*=Math.exp(-dt/1400);if(!paused&&Math.abs(speed)<.002)x+=dt*.008;}
+    draw();if(!reduce.matches&&(!paused||Math.abs(speed)>.001))frame=requestAnimationFrame(tick);else last=0;
+  };
+  const wake=()=>{if(!frame&&visible&&!document.hidden)frame=requestAnimationFrame(tick);};
+  canvas.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,time:e.timeStamp,startX:e.clientX,startY:e.clientY,dragging:false};speed=0;});
+  canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;
+    if(!pointer.dragging){if(Math.abs(e.clientX-pointer.startX)<6||Math.abs(e.clientX-pointer.startX)<Math.abs(e.clientY-pointer.startY))return;pointer.dragging=true;canvas.setPointerCapture(e.pointerId);}
+    e.preventDefault();const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(!dx&&!dy)return;
+    speed=reduce.matches?0:Math.max(-.65,Math.min(.65,dx/Math.max(1,e.timeStamp-pointer.time)*.65));x+=dx*.65;y=Math.max(-65,Math.min(65,y-dy*.4));pointer.x=e.clientX;pointer.y=e.clientY;pointer.time=e.timeStamp;draw();
+  });
+  const release=(e:PointerEvent)=>{if(pointer?.id!==e.pointerId)return;pointer=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(e.type!=='pointerup')speed=0;wake();};
+  window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+  canvas.addEventListener('pointerenter',()=>{paused=true;});canvas.addEventListener('pointerleave',()=>{paused=false;wake();});
+  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(b=>b.addEventListener('click',()=>{x+=Number(b.dataset.glassTurn)*90;speed=0;draw();wake();}));
+  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{x=-28;y=18;speed=0;draw();});
+  document.addEventListener('site:language-change',copyText);document.addEventListener('visibilitychange',()=>{last=0;wake();});
+  reduce.addEventListener('change',()=>{speed=0;last=0;wake();});
+  if(typeof ResizeObserver==='function')new ResizeObserver(copyText).observe(stage);else window.addEventListener('resize',copyText,{passive:true});
+  if(typeof IntersectionObserver==='function')new IntersectionObserver(([e])=>{visible=e.isIntersecting;last=0;if(visible)wake();}).observe(stage);
+  copyText();draw();wake();
 }
