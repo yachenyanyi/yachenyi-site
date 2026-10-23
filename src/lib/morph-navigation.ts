@@ -106,7 +106,7 @@ export function setupMorphNavigation() {
     const animation = panel.animate([from, entering
       ? { opacity: 1, transform: 'translateX(0)', filter: 'blur(0px)' }
       : { opacity: 0, transform: `translateX(${-direction * 26}px)`, filter: 'blur(9px)' },
-    ], { duration: entering ? 520 : 360, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+    ], { duration: entering ? 680 : 520, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
     animations.set(panel, animation);
     animation.finished.then(() => {
       if (animations.get(panel) !== animation) return;
