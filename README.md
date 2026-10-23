@@ -24,8 +24,8 @@ npm run verify:build
 - `src/pages`: homepage, projects, services, lab, about, contact and facts.
 - `src/content`: Markdown content collections and SEO fields.
 - `src/layouts/BaseLayout.astro`: shared navigation, language switch and footer.
-- `src/styles/global.css`: base structure and shared page layout.
-- `src/styles/glass-site.css`: current glass surfaces, responsive design and motion.
+- `src/styles/global.css`: base resets, typography and shared layout defaults.
+- `src/styles/site`: glass theme modules for the site shell, home, content pages, motion, hero and navigation.
 - `src/lib`: translations, base-path handling and homepage motion.
 - `public/admin`: Decap CMS scaffold. Remote authentication still requires an OAuth proxy; this is not a finished management backend.
 

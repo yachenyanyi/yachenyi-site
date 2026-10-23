@@ -1,0 +1,49 @@
+/* Halden-style shared surface: split discovery, image cards, then compact lists. */
+.site-header .morph-nav a { display:inline-flex;align-items:center;gap:6px; }
+.nav-chevron { font-size:.75rem;opacity:.5;transition:transform .3s; }
+.morph-nav a[aria-expanded="true"] { color:#eafff4; }
+.morph-nav a[aria-expanded="true"] .nav-chevron { transform:rotate(180deg); }
+.morph-dropdown { --nav-morph-duration:870ms;--nav-morph-easing:cubic-bezier(.25,.8,.25,1);position:absolute;top:calc(100% + 9px);z-index:60;overflow:hidden;border:1px solid #bce6d018;border-radius:13px;background:rgba(9,25,25,.92);backdrop-filter:blur(28px) saturate(120%);box-shadow:0 18px 55px #0004;transition:left var(--nav-morph-duration) var(--nav-morph-easing),width var(--nav-morph-duration) var(--nav-morph-easing),height var(--nav-morph-duration) var(--nav-morph-easing); }
+.morph-panel { position:absolute;left:0;top:0;box-sizing:border-box;z-index:1;padding:7px; }
+.morph-panel__links { display:grid;gap:3px;position:relative; }
+.morph-panel__links > a { position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:7px;color:#dce8e2;font-size:.85rem;transition:color .3s; }
+.morph-panel__links > a:hover { color:white; }
+.morph-link-arrow { opacity:.4;font-size:.75rem; }
+.morph-discover { display:grid;grid-template-columns:205px minmax(0,1fr);gap:4px;min-height:270px; }
+.morph-project-list { align-content:start;padding:0; }
+.morph-project-list > a { display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;padding:14px 12px;min-height:74px; }
+.morph-list-title { font-size:.84rem;font-weight:600; }
+.morph-project-list small { font-size:.71rem;line-height:1.5;color:#aabcb5;max-width:180px; }
+.morph-project-list > .morph-view-all { flex-direction:row;justify-content:space-between;min-height:0;padding:10px 12px;font-size:.7rem;color:#9fc5b2; }
+.morph-preview { position:relative;overflow:hidden;min-height:270px;border-radius:8px;background:#142824; }
+.morph-preview img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:blur(6px);transform:scale(1.035);transition:opacity .52s var(--nav-morph-easing),filter .6s var(--nav-morph-easing),transform .7s var(--nav-morph-easing); }
+.morph-preview img.is-active { opacity:1;filter:blur(0);transform:scale(1);z-index:1; }
+.morph-service-cards { grid-template-columns:repeat(3,minmax(0,1fr));gap:6px; }
+.morph-service-cards > a { min-height:225px;overflow:hidden;align-items:flex-end;padding:12px 10px;background:#19332d;isolation:isolate; }
+.morph-service-cards > a::after { content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(transparent 32%,#071412dd 100%); }
+.morph-service-cards img { position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--nav-morph-easing); }
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  .morph-service-cards a:hover img { transform:scale(1.08); }
+  .morph-preview:hover img.is-active { transform:scale(1.08); }
+}
+.morph-service-label { font-size:.8rem;font-weight:550;line-height:1.4; }
+.morph-service-cards .morph-link-arrow { position:absolute;top:11px;right:10px;color:#fff;opacity:.9; }
+.morph-simple-list { padding:3px; }
+.morph-simple-list > .morph-view-all { font-size:.7rem;color:#9fc5b2;border-top:1px solid #ffffff0c;border-radius:0;margin-top:3px; }
+.morph-highlight { position:absolute;left:0;top:0;z-index:0;pointer-events:none;border:0;border-radius:7px;background:rgba(192,223,214,.085);opacity:0;transition:transform .36s cubic-bezier(.22,1,.36,1),width .36s cubic-bezier(.22,1,.36,1),height .36s cubic-bezier(.22,1,.36,1),opacity .22s ease; }
+.morph-highlight.is-visible { opacity:1; }
+@media(max-width:760px) {
+  .site-header .morph-nav { gap:clamp(12px,4vw,24px); }
+  .morph-discover { grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:260px; }
+  .morph-project-list > a { min-height:78px;padding:10px 8px; }
+  .morph-list-title { font-size:.72rem; }
+  .morph-project-list small { font-size:.62rem; }
+  .morph-preview { min-height:260px; }
+  .morph-service-cards { grid-template-columns:1fr; }
+  .morph-service-cards > a { min-height:92px;align-items:center;padding-left:85px; }
+  .morph-service-cards img { width:72px; }
+  .morph-service-cards > a::after { background:linear-gradient(90deg,transparent,#07141299 85px); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .morph-dropdown,.morph-highlight,.morph-preview img,.nav-chevron,.morph-service-cards img { transition:none; }
+}

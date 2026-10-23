@@ -1,0 +1,142 @@
+:root {
+  color-scheme: dark;
+  --bg: #08110f;
+  --surface: rgba(255, 255, 255, .075);
+  --text: #f5f7f4;
+  --muted: #b1beb7;
+  --line: rgba(235, 247, 240, .16);
+  --soft: rgba(255, 255, 255, .08);
+  --ink-soft: #c1cbc5;
+  --max: 1440px;
+  --page-gutter: clamp(16px, 4vw, 60px);
+  --glass: rgba(255, 255, 255, .1);
+  --glass-strong: rgba(13, 25, 22, .78);
+  --accent: #00bc7d;
+  --accent-hover: #00a66e;
+  --accent-soft: #97edc4;
+  --glass-border: rgba(244, 255, 248, .19);
+  --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .08);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html {
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--bg);
+  scroll-behavior: smooth;
+  scrollbar-color: rgba(151, 237, 196, .35) #0b1512;
+}
+html.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  min-width: 320px;
+  overflow-x: clip;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse 65% 35% at 50% -10%, rgba(42, 102, 81, .2), transparent 76%),
+    radial-gradient(ellipse 48% 28% at 100% 42%, rgba(20, 77, 66, .11), transparent 76%),
+    linear-gradient(180deg, #0a1512 0%, #08110f 48%, #0a1411 100%);
+}
+
+/* A quiet photographic backdrop gives the homepage glass something to refract. */
+body.home-page { isolation: isolate; }
+body.home-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at 12% 65%, rgba(51, 143, 113, .2), transparent 65%),
+    linear-gradient(180deg, rgba(8, 17, 15, .83), rgba(8, 17, 15, .72) 55%, rgba(8, 17, 15, .87)),
+    var(--ambient-image);
+  background-size: cover;
+  background-position: center;
+}
+
+::selection { background: rgba(0, 188, 125, .5); color: #fff; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 4px; }
+main { width: min(var(--max), calc(100% - var(--page-gutter) * 2)); }
+
+.glass-panel {
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  background: var(--glass);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(40px) saturate(135%);
+}
+
+/* Navigation */
+.site-header {
+  position: sticky;
+  top: 14px;
+  z-index: 50;
+  width: min(var(--max), calc(100% - var(--page-gutter) * 2));
+  min-height: 70px;
+  margin: 14px auto 0;
+  padding: 0 22px;
+  grid-template-columns: 1fr auto auto;
+  gap: clamp(20px, 4vw, 58px);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background: rgba(9, 20, 17, .68);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .17), inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(24px) saturate(135%);
+}
+
+.site-header .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: #f8fbf8;
+  font-size: .9rem;
+  font-weight: 850;
+  letter-spacing: .14em;
+}
+.site-header .brand:before {
+  content: "Y";
+  width: 27px;
+  height: 27px;
+  display: inline-grid;
+  place-items: center;
+  margin-right: 9px;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.09em;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #d7f7e7, #60caa0);
+  box-shadow: 0 4px 18px rgba(0, 188, 125, .21);
+}
+.site-header .brand-dot { color: var(--accent); }
+.site-header nav { gap: clamp(18px, 2.4vw, 36px); }
+.site-header nav a, .header-contact {
+  color: #c1ccc5;
+  font-size: .83rem;
+  font-weight: 550;
+  transition: color .2s ease, background .2s ease;
+}
+.site-header nav a:hover, .site-header nav a[aria-current="page"] { color: #fff; }
+html[lang="zh-CN"] [data-i18n] { font-family: inherit; }
+.language-switch {
+  padding: 5px 8px;
+  color: #c1ccc5;
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .055);
+}
+.language-switch button { padding: 4px 5px; font-weight: 700; text-decoration: none !important; }
+.language-switch button:hover, .language-switch button.is-active { color: #fff; }
+.header-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 11px;
+  padding: 10px 16px;
+  border: 1px solid rgba(151, 237, 196, .35);
+  border-radius: 999px;
+  color: #eafff4;
+  background: rgba(0, 188, 125, .16);
+}
+.header-contact:hover { color: #fff; background: rgba(0, 188, 125, .28); }
+
