@@ -1,35 +1,48 @@
 ---
 import { withBase } from '../lib/site';
 const { logicalPath = '/' } = Astro.props;
-const groups = [
-  { id: 'projects', label: 'Projects', key: 'nav.projects', href: '/projects/', width: 560, links: [
-    ['DeepLoopMinder', '', '/projects/deep-loopminder/', 'ai-network-workbench.webp'],
-    ['IssuePack', '', '/projects/issuepack/', 'home-creative-workspace.webp'],
-    ['AutoScreenAgent', '', '/projects/autoscreenagent/', 'futurist-white-architecture.webp'],
-  ] },
-  { id: 'services', label: 'Services', key: 'nav.services', href: '/services/', width: 360, links: [
-    ['AI agent systems', 'nav.agent', '/services/ai-agents/'],
-    ['Workflow automation', 'nav.automation', '/services/automation/'],
-    ['Web software', 'nav.web', '/services/web-systems/'],
-  ] },
-  { id: 'lab', label: 'Lab', key: 'nav.lab', href: '/lab/', width: 410, links: [
-    ['Durable project state', 'nav.state', '/lab/durable-project-state/'],
-    ['Static-first studio', 'nav.static', '/lab/static-first-opc-site/'],
-  ] },
-  { id: 'about', label: 'About', key: 'nav.about', href: '/about/', width: 290, links: [
-    ['About the studio', 'nav.studio', '/about/'],
-    ['Facts & details', 'footer.facts', '/facts/'],
-    ['Start a conversation ↗', 'home.saas.cta.action', '/contact/'],
-  ] },
+const projects = [
+  { title:'DeepLoopMinder', href:'/projects/deep-loopminder/', image:'ai-network-workbench.webp', description:'Agent orchestration and durable project state.', key:'nav.project.agent' },
+  { title:'IssuePack', href:'/projects/issuepack/', image:'home-creative-workspace.webp', description:'Turn scattered conversations into clear issue packages.', key:'nav.project.issue' },
+  { title:'AutoScreenAgent', href:'/projects/autoscreenagent/', image:'futurist-white-architecture.webp', description:'Explore natural-language Android automation.', key:'nav.project.screen' },
 ];
+const groups = [
+  { id:'projects', label:'Projects', key:'nav.projects', href:'/projects/', width:560 },
+  { id:'services', label:'Services', key:'nav.services', href:'/services/', width:490 },
+  { id:'lab', label:'Lab', key:'nav.lab', href:'/lab/', width:290 },
+  { id:'about', label:'About', key:'nav.about', href:'/about/', width:250 },
+];
+const services = [
+  { label:'AI agent systems', key:'nav.agent', href:'/services/ai-agents/', image:'ai-network-workbench.webp' },
+  { label:'Workflow automation', key:'nav.automation', href:'/services/automation/', image:'home-creative-workspace.webp' },
+  { label:'Web software', key:'nav.web', href:'/services/web-systems/', image:'futurist-white-architecture.webp' },
+];
+const lists: Record<string, string[][]> = {
+  lab:[['Durable project state','nav.state','/lab/durable-project-state/'],['Static-first studio','nav.static','/lab/static-first-opc-site/']],
+  about:[['About the studio','nav.studio','/about/'],['Facts & details','footer.facts','/facts/'],['Start a conversation','home.saas.cta.action','/contact/']],
+};
 ---
 <nav class="morph-nav" aria-label="Primary" data-i18n-aria="nav.primary">
   {groups.map(group => <a href={withBase(group.href)} data-nav-trigger={group.id} aria-expanded="false" aria-controls={`nav-panel-${group.id}`} aria-current={logicalPath.startsWith(group.href) ? 'page' : undefined}><span data-i18n={group.key}>{group.label}</span><span class="nav-chevron" aria-hidden="true">⌄</span></a>)}
 </nav>
 <div class="morph-dropdown" hidden>
-  {groups.map(group => <section id={`nav-panel-${group.id}`} class:list={['morph-panel', {'morph-panel--projects': group.id === 'projects'}]} data-panel={group.id} data-width={group.width} hidden aria-label={group.label} data-i18n-aria={group.key}>
-    <div class="morph-panel__heading"><span data-i18n={group.key}>{group.label}</span><a href={withBase(group.href)}><span data-i18n="nav.viewall">View all</span> ↗</a></div>
-    <div class="morph-panel__links">{group.links.map(([label,key,href,image]) => <a href={withBase(href)}>{image && <img src={withBase(`/images/generated/${image}`)} width="320" height="200" alt="" loading="lazy" />}<span data-i18n={key || undefined}>{label}</span><span class="morph-link-arrow" aria-hidden="true">↗</span></a>)}</div>
+  {groups.map(group => <section id={`nav-panel-${group.id}`} class:list={['morph-panel', `morph-panel--${group.id}`]} data-panel={group.id} data-width={group.width} hidden aria-label={group.label} data-i18n-aria={group.key}>
+    {group.id === 'projects' ? <div class="morph-discover">
+      <div class="morph-panel__links morph-project-list">
+        {projects.map((project,index) => <a href={withBase(project.href)} data-preview-index={index} class:list={{'is-preview-active':index===0}}>
+          <span class="morph-list-title">{project.title}</span><small data-i18n={project.key}>{project.description}</small>
+        </a>)}
+        <a class="morph-view-all" href={withBase(group.href)}><span data-i18n="nav.viewall">View all</span> ↗</a>
+      </div>
+      <div class="morph-preview" aria-hidden="true">
+        {projects.map((project,index)=><img src={withBase(`/images/generated/${project.image}`)} class:list={{'is-active':index===0}} data-preview-image={index} alt="" width="640" height="640" loading="lazy" />)}
+      </div>
+    </div> : group.id === 'services' ? <div class="morph-panel__links morph-service-cards">
+      {services.map(service=><a href={withBase(service.href)}><img src={withBase(`/images/generated/${service.image}`)} width="320" height="480" alt="" loading="lazy" /><span class="morph-service-label" data-i18n={service.key}>{service.label}</span><span class="morph-link-arrow" aria-hidden="true">↗</span></a>)}
+    </div> : <div class="morph-panel__links morph-simple-list">
+      {lists[group.id].map(([label,key,href])=><a href={withBase(href)}><span data-i18n={key}>{label}</span><span class="morph-link-arrow" aria-hidden="true">↗</span></a>)}
+      <a class="morph-view-all" href={withBase(group.href)}><span data-i18n="nav.viewall">View all</span> ↗</a>
+    </div>}
   </section>)}
 </div>
 <script>

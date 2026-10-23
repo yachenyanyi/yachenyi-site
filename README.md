@@ -58,6 +58,6 @@ See [deployment details](docs/deployment/cloudflare-pages.md).
 
 ### Navigation and glass hero
 
-The header uses one shared frosted dropdown that changes position and size between project, service, lab and studio previews. Desktop hover opens it; touch opens it on the first tap; the original page links remain usable. Arrow Down opens the panel for keyboard users and Escape returns focus to its trigger.
+The header uses one shared frosted dropdown that changes position and size between a project discovery list with a shared image preview, service image cards, and compact lab and studio lists. Project hover links a sliding selection to a blurred image crossfade; menu contents travel and crossfade while the outer glass stays clear. Desktop hover opens it; touch opens it on the first tap; the original page links remain usable. Arrow Down opens the panel for keyboard users and Escape returns focus to its trigger.
 
 The homepage title remains semantic HTML with a WebGL rounded-glass volume layered in front. It refracts a texture sampled from the actual typeset heading, supports dragging, inertial rotation and angle controls, and redraws after language or size changes. Rendering pauses outside the viewport and automatic motion respects reduced-motion preferences. Without WebGL a CSS 3D glass cube with magnified title fragments preserves dragging and angle controls; the semantic heading remains visible. These are original implementations inspired by MotionSites Halden and Design World public previews.

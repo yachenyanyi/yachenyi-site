@@ -1,5 +1,8 @@
 export const staticTranslations = {
   zh: {
+    'nav.project.agent': '智能体协作与可持续的项目状态。',
+    'nav.project.issue': '把分散的对话整理为清晰的问题包。',
+    'nav.project.screen': '探索自然语言驱动的安卓自动化。',
     'nav.viewall': '查看全部',
     'nav.agent': 'AI 智能体系统',
     'nav.automation': '工作流自动化',
