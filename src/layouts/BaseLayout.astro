@@ -73,7 +73,10 @@ const isCurrent = (prefix: string) =>
       })();
     </script>
   </head>
-  <body>
+  <body
+    class:list={{ 'home-page': logicalPath === '/' }}
+    style={logicalPath === '/' ? `--ambient-image: url("${withBase('/images/generated/home-misty-mountains.webp')}")` : undefined}
+  >
     <div class="page-loader" aria-hidden="true"><span></span></div>
     <a class="skip-link" href="#content" data-i18n="common.skip">Skip to content</a>
 

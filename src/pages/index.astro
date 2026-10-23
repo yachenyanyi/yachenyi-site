@@ -56,7 +56,7 @@ const schema = [
           <span data-i18n="home.saas.action.contact">Let's build together</span><span aria-hidden="true">→</span>
         </a>
       </div>
-      <div class="hero-proof glass-panel" data-reveal>
+      <div class="hero-proof glass-panel flowing-gradient" data-reveal>
         <div><span data-i18n="home.proof.approach">Approach</span><strong data-i18n="home.proof.approach.value">Independent by design</strong></div>
         <div><span data-i18n="home.proof.focus">Focus</span><strong data-i18n="home.proof.focus.value">AI-native systems</strong></div>
         <div><span data-i18n="home.proof.standard">Standard</span><strong data-i18n="home.proof.standard.value">Small and reliable</strong></div>
@@ -97,7 +97,7 @@ const schema = [
             <span class="project-status">{project.data.status}</span>
             <span class="project-arrow" aria-hidden="true">↗</span>
           </div>
-          <div class="home-project-card__body">
+          <div class="home-project-card__body flowing-gradient">
             <span class="project-index">0{index + 1} / PROJECT</span>
             <h3>{project.data.title}</h3>
           </div>
@@ -131,7 +131,7 @@ const schema = [
             width="1000"
             height="620"
           />
-          <div class="home-note-card__body">
+          <div class="home-note-card__body flowing-gradient">
             <div class="note-meta"><span>{post.data.publishedAt.toISOString().slice(0, 10)}</span><span>{post.data.tags.slice(0, 2).join(' / ')}</span></div>
             <h3>{post.data.title}</h3>
             <span class="note-open" aria-hidden="true">↗</span>
@@ -141,7 +141,7 @@ const schema = [
     </div>
   </section>
 
-  <section class="home-contact glass-panel" data-reveal aria-labelledby="contact-title">
+  <section class="home-contact glass-panel flowing-gradient" data-reveal aria-labelledby="contact-title">
     <div class="home-contact__glow" aria-hidden="true"></div>
     <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.cta.label">Let's collaborate</span></span>
     <h2 id="contact-title" data-i18n="home.saas.cta.title">Have a problem worth solving?<br /><span class="saas-gradient-text">Let's build something useful.</span></h2>
@@ -151,3 +151,43 @@ const schema = [
     </a>
   </section>
 </BaseLayout>
+
+<script>
+  import anime from 'animejs';
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const surfaces = new Map<Element, ReturnType<typeof anime>>();
+  const visible = new Set<Element>();
+
+  document.querySelectorAll<HTMLElement>('.flowing-gradient').forEach((surface, index) => {
+    surfaces.set(surface, anime({
+      targets: surface,
+      backgroundPosition: ['0% 50%, 0% 0%, 0% 0%', '100% 50%, 0% 0%, 0% 0%'],
+      duration: 2600,
+      delay: (index % 3) * 180,
+      easing: 'easeInOutSine',
+      loop: true,
+      direction: 'alternate',
+      autoplay: false,
+    }));
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) visible.add(target);
+      else visible.delete(target);
+      const animation = surfaces.get(target);
+      if (isIntersecting && !reducedMotion.matches) animation?.play();
+      else animation?.pause();
+    });
+  });
+  surfaces.forEach((_, surface) => observer.observe(surface));
+  reducedMotion.addEventListener('change', () => {
+    surfaces.forEach((animation, surface) => {
+      if (reducedMotion.matches) {
+        animation.pause();
+        animation.seek(0);
+      } else if (visible.has(surface)) animation.play();
+    });
+  });
+</script>

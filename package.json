@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "latest",
+    "animejs": "3.2.2",
     "astro": "latest"
   },
   "devDependencies": {
     "@astrojs/check": "latest",
+    "@types/animejs": "^3.1.13",
     "typescript": "latest"
   }
 }
