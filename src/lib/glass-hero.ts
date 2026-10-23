@@ -136,7 +136,7 @@ function setupGlassFallback(stage: HTMLElement, canvas: HTMLCanvasElement, title
   const copyText=()=>{
     const bounds=stage.getBoundingClientRect(),style=getComputedStyle(title);
     cube.style.setProperty('--glass-copy-width',`${bounds.width}px`);cube.style.setProperty('--glass-copy-font',style.fontSize);
-    cube.querySelectorAll('.glass-fallback-face').forEach(face=>{
+    cube.querySelectorAll('.glass-fallback-face--0, .glass-fallback-face--2').forEach(face=>{
       const copy=document.createElement('div');copy.className='glass-face-text';copy.innerHTML=title.innerHTML;
       copy.querySelectorAll('[data-i18n]').forEach(e=>e.removeAttribute('data-i18n'));face.replaceChildren(copy);
     });

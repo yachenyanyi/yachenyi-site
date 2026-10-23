@@ -801,3 +801,6 @@ html.motion-enabled .home-page [data-reveal].is-revealed { transform: translateY
 .glass-fallback-ready .glass-title-canvas { z-index:3; }
 .glass-fallback-ready .glass-controls { z-index:4; }
 @media(max-width:760px) { .glass-fallback-cube { --glass-side:115px; } }
+
+.glass-fallback-face--0,.glass-fallback-face--2 { background:linear-gradient(145deg,rgba(25,56,46,.88),rgba(26,55,49,.76)); }
+.glass-fallback-face--4 .glass-face-text,.glass-fallback-face--5 .glass-face-text { display:none; }
