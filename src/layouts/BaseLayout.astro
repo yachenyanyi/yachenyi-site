@@ -4,6 +4,7 @@ import '../styles/saas.css';
 import '../styles/light-wide.css';
 import { withBase } from '../lib/site';
 import { staticTranslations } from '../lib/i18n';
+import ImmersiveGlassFooter from '../components/ImmersiveGlassFooter.astro';
 
 interface Props {
   title: string;
@@ -112,6 +113,8 @@ const isCurrent = (prefix: string) =>
       </div>
       <p class="footer-meta" data-i18n="footer.tagline">One person. AI-native. Software first.</p>
     </footer>
+
+    <ImmersiveGlassFooter />
 
     <script>
       const root = document.documentElement;

@@ -1,0 +1,204 @@
+---
+import { withBase } from '../lib/site';
+
+interface Props { className?: string }
+const { className = '' } = Astro.props;
+const year = new Date().getUTCFullYear();
+const links = {
+  explore: [
+    { en: 'Selected projects', zh: '精选项目', url: withBase('/projects/') },
+    { en: 'What I build', zh: '服务与能力', url: withBase('/services/') },
+    { en: 'Build log', zh: '实验记录', url: withBase('/lab/') },
+    { en: 'About the studio', zh: '关于工作室', url: withBase('/about/') },
+  ],
+  projects: [
+    { name: 'DeepLoopMinder', url: withBase('/projects/deep-loopminder/') },
+    { name: 'IssuePack', url: withBase('/projects/issuepack/') },
+    { name: 'AutoScreenAgent', url: withBase('/projects/autoscreenagent/') },
+  ],
+  connect: [
+    { en: 'Start a conversation', zh: '开始沟通', url: withBase('/contact/') },
+    { en: 'Canonical facts', zh: '基本信息', url: withBase('/facts/') },
+    { en: 'GitHub profile', zh: 'GitHub 主页', url: 'https://github.com/yachenyanyi' },
+  ],
+};
+---
+<section class:list={['immersive-footer', className]} aria-label="Yachenyi studio closing section">
+  <div class="immersive-stage" data-immersive-stage>
+    <div class="immersive-photo" style={'background-image: url("' + withBase('/images/generated/home-misty-mountains.webp') + '");'} aria-hidden="true"></div>
+    <div class="immersive-shading" aria-hidden="true"></div>
+
+    <div class="immersive-hero">
+      <div class="hero-message" data-immersive-reveal="headline">
+        <div class="hero-eyebrow">
+          <span class="eyebrow-dot" aria-hidden="true"></span>
+          <span>YACHENYI</span><span class="eyebrow-separator" aria-hidden="true"></span>
+          <span class="im-en">INDEPENDENT AI SOFTWARE STUDIO</span><span class="im-zh" lang="zh-CN">独立 AI 软件工作室</span>
+        </div>
+        <h2>
+          <span class="im-en" lang="en">The next chapter<br />starts with an idea.</span>
+          <span class="im-zh" lang="zh-CN">下一段旅程，<br />从一个想法开始。</span>
+        </h2>
+        <p class="hero-description">
+          <span class="im-en" lang="en">AI agents, practical automation and focused software systems.<br class="wide-only" /> Built thoughtfully. Made to be useful.</span>
+          <span class="im-zh" lang="zh-CN">AI 智能体、工作流自动化与专注的 Web 系统。<br class="wide-only" />认真构建，让软件真正解决问题。</span>
+        </p>
+      </div>
+      <div class="contact-pill" data-immersive-reveal="cta">
+        <div class="contact-prompt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h16v11H4z"/><path d="m4 7 8 6 8-6"/></svg>
+          <span class="im-en">Have a project in mind?</span><span class="im-zh" lang="zh-CN">有想一起实现的项目吗？</span>
+        </div>
+        <a href={withBase('/contact/')} class="pill-action">
+          <span class="im-en">LET'S TALK</span><span class="im-zh" lang="zh-CN">开始沟通</span><span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <p class="hero-footnote"><span class="im-en">One person. AI-native. Software first.</span><span class="im-zh" lang="zh-CN">一个人，AI 原生，软件优先。</span></p>
+    </div>
+
+    <div class="glass-card" data-immersive-reveal="glass">
+      <div class="glass-columns">
+        <div class="glass-brand">
+          <a class="brand-lockup" href={withBase('/')} aria-label="Yachenyi home">
+            <span class="brand-mark" aria-hidden="true">Y<span>.</span></span><span>YACHENYI</span>
+          </a>
+          <p><span class="im-en">An independent AI software studio building reliable agents, developer tools and automation for real work.</span><span class="im-zh" lang="zh-CN">独立 AI 软件工作室，专注可靠的智能体系统、开发者工具与真实场景中的自动化。</span></p>
+          <span class="brand-status"><span aria-hidden="true"></span><span class="im-en">Independent by design</span><span class="im-zh" lang="zh-CN">独立开发 · 持续构建</span></span>
+        </div>
+
+        <nav class="glass-link-column" aria-label="Explore Yachenyi">
+          <h3><span class="im-en">Explore</span><span class="im-zh" lang="zh-CN">探索</span></h3>
+          <ul>{links.explore.map(item=><li><a href={item.url}><span class="im-en">{item.en}</span><span class="im-zh" lang="zh-CN">{item.zh}</span></a></li>)}</ul>
+        </nav>
+        <nav class="glass-link-column" aria-label="Yachenyi projects">
+          <h3><span class="im-en">Projects</span><span class="im-zh" lang="zh-CN">项目</span></h3>
+          <ul>{links.projects.map(item=><li><a href={item.url}>{item.name}</a></li>)}</ul>
+        </nav>
+        <nav class="glass-link-column" aria-label="Contact Yachenyi">
+          <h3><span class="im-en">Connect</span><span class="im-zh" lang="zh-CN">联系与资源</span></h3>
+          <ul>{links.connect.map(item=><li><a href={item.url} target={item.url.startsWith('https://') ? '_blank' : undefined} rel={item.url.startsWith('https://') ? 'noopener noreferrer' : undefined}><span class="im-en">{item.en}</span><span class="im-zh" lang="zh-CN">{item.zh}</span></a></li>)}</ul>
+        </nav>
+      </div>
+
+      <div class="glass-bottom">
+        <div class="story-socials">
+          <span><span class="im-en">The story continues:</span><span class="im-zh" lang="zh-CN">探索仍在继续：</span></span>
+          <div class="social-links">
+            <a href="https://github.com/yachenyanyi" target="_blank" rel="noopener noreferrer" aria-label="Yachenyi on GitHub" title="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.82c.56.1.76-.24.76-.54v-2.1c-3.1.68-3.76-1.32-3.76-1.32-.5-1.28-1.24-1.63-1.24-1.63-1.02-.69.08-.68.08-.68 1.13.08 1.73 1.17 1.73 1.17 1.01 1.71 2.64 1.21 3.29.93.1-.73.39-1.22.71-1.5-2.47-.28-5.08-1.24-5.08-5.52 0-1.22.44-2.21 1.16-2.99-.12-.28-.5-1.42.11-2.95 0 0 .95-.3 3.08 1.14a10.74 10.74 0 0 1 5.6 0c2.13-1.44 3.08-1.14 3.08-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.29-2.61 5.23-5.1 5.51.4.34.76 1 .76 2.03v3c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>
+            </a>
+            <a href={withBase('/projects/')} aria-label="Browse Yachenyi projects" title="Projects">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M9 9v11"/></svg>
+            </a>
+            <a href={withBase('/lab/')} aria-label="Read Yachenyi lab notes" title="Lab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3.5h11l3 3v14H5zM15.5 3.5v4h3.5M8 12h8M8 16h8"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="copyright">© {year} YACHENYI <span class="slash">/</span> <span class="im-en">Made with intention.</span><span class="im-zh" lang="zh-CN">认真构建每一行代码。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .immersive-footer { width:100%; display:block; margin:0; padding:0; color:#fff; font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+  .immersive-footer * { box-sizing:border-box; }
+  .immersive-stage { position:relative; isolation:isolate; display:flex; flex-direction:column; min-height:max(800px,100svh); margin:8px; border-radius:20px; overflow:hidden; background:#172832; box-shadow:0 16px 60px rgba(15,29,42,.14); }
+  .immersive-photo { position:absolute; z-index:-3; inset:0; background-size:cover; background-position:center 48%; filter:contrast(1.1) saturate(.7); transform:scale(1.02); }
+  .immersive-shading { position:absolute; z-index:-2; inset:0; background:linear-gradient(180deg,rgba(7,20,29,.64),rgba(8,26,32,.49) 40%,rgba(6,20,27,.66) 67%,rgba(5,16,24,.84)),radial-gradient(ellipse at 50% 10%,rgba(63,109,124,.15),transparent 75%); }
+  .immersive-hero { min-height:430px; padding:88px 28px 52px; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+  .hero-message { max-width:1040px; }
+  .hero-eyebrow { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; color:rgba(255,255,255,.8); font-size:11px; font-weight:750; letter-spacing:.14em; }
+  .eyebrow-dot { width:7px; height:7px; background:#34dba2; border-radius:50%; box-shadow:0 0 12px rgba(47,225,160,.43); }
+  .eyebrow-separator { height:13px; width:1px; background:rgba(255,255,255,.4); }
+  .hero-message h2 { margin:27px 0 21px; color:#fff; font-size:clamp(48px,5.7vw,80px); line-height:1.04; font-weight:800; letter-spacing:-.048em; text-shadow:0 4px 26px rgba(0,0,0,.16); }
+  .hero-description { font-size:clamp(13px,1.2vw,16px); line-height:1.85; color:rgba(255,255,255,.82); margin:0; }
+  .contact-pill { width:min(100%,520px); min-height:64px; margin:37px auto 0; padding:5px; display:flex; align-items:center; justify-content:space-between; gap:6px; border-radius:999px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.18); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); box-shadow:0 12px 32px rgba(0,10,20,.13); }
+  .contact-prompt { flex:1; min-width:0; display:flex; gap:10px; padding-left:19px; align-items:center; text-align:left; font-size:14px; color:rgba(255,255,255,.87); }
+  .contact-prompt svg { width:18px; height:18px; flex:none; }
+  .pill-action { min-height:54px; padding:0 24px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; gap:10px; background:#00bc7d; color:#fff; text-decoration:none; font-size:12px; font-weight:800; letter-spacing:.08em; white-space:nowrap; transition:background .2s ease,transform .2s ease; }
+  .pill-action:hover { background:#00a66e; color:#fff; transform:translateY(-1px); }
+  .hero-footnote { margin:20px 0 0; font-size:11px; letter-spacing:.06em; color:rgba(255,255,255,.59); }
+  .glass-card { position:relative; z-index:2; margin:0 20px 20px; padding:40px; background:rgba(255,255,255,.11); border:1px solid rgba(255,255,255,.23); border-radius:24px; -webkit-backdrop-filter:blur(32px); backdrop-filter:blur(32px); box-shadow:0 24px 70px rgba(0,8,15,.18),inset 0 1px rgba(255,255,255,.08); }
+  .glass-columns { display:grid; grid-template-columns:minmax(240px,1.4fr) repeat(3,minmax(130px,.7fr)); column-gap:clamp(24px,4vw,62px); row-gap:32px; align-items:start; }
+  .brand-lockup { display:inline-flex; align-items:center; gap:11px; color:#fff; text-decoration:none; font-size:19px; font-weight:850; letter-spacing:-.035em; }
+  .brand-lockup:hover { color:#fff; }
+  .brand-mark { width:38px; height:38px; border-radius:11px; display:grid; place-items:center; background:rgba(255,255,255,.94); color:#1b2a2c; font-weight:900; font-size:22px; letter-spacing:-.16em; }
+  .brand-mark span { color:#00bc7d; }
+  .glass-brand p { max-width:300px; margin:18px 0; color:rgba(255,255,255,.66); font-size:13px; line-height:1.78; }
+  .brand-status { display:inline-flex; align-items:center; gap:8px; color:rgba(255,255,255,.74); font-size:11px; }
+  .brand-status>span:first-child { width:6px; height:6px; border-radius:50%; background:#34dba2; box-shadow:0 0 10px rgba(42,220,153,.4); }
+  .glass-link-column h3 { color:#fff; margin:7px 0 18px; font-size:13px; font-weight:700; }
+  .glass-link-column ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px; }
+  .glass-link-column a { color:rgba(255,255,255,.7); font-size:13px; text-decoration:none; line-height:1.45; transition:color .2s ease,transform .2s ease; display:inline-block; }
+  .glass-link-column a:hover { color:#fff; transform:translateX(2px); }
+  .glass-bottom { display:flex; justify-content:space-between; align-items:center; gap:20px; border-top:1px solid rgba(255,255,255,.17); margin-top:37px; padding-top:22px; }
+  .story-socials { display:flex; align-items:center; gap:17px; flex-wrap:wrap; }
+  .story-socials>span,.copyright { font-size:12px; color:rgba(255,255,255,.62); }
+  .social-links { display:flex; gap:12px; }
+  .social-links a { width:34px; height:34px; display:grid; place-items:center; color:#fff; border:1px solid rgba(255,255,255,.25); border-radius:50%; background:rgba(255,255,255,.04); transition:background .2s ease,transform .2s ease; }
+  .social-links a:hover { background:rgba(255,255,255,.18); color:#fff; transform:translateY(-2px); }
+  .social-links svg { width:15px; height:15px; }
+  .copyright { text-align:right; line-height:1.6; }
+  .slash { color:rgba(255,255,255,.3); margin:0 7px; }
+  .pill-action:focus-visible,.glass-link-column a:focus-visible,.social-links a:focus-visible,.brand-lockup:focus-visible { outline:2px solid #b4f5db; outline-offset:4px; }
+  .im-zh { display:none; }
+  :global(html[data-lang="zh"]) .im-en { display:none; }
+  :global(html[data-lang="zh"]) .im-zh { display:inline; }
+  /* Only hide after JS initializes the observer; progressive enhancement. */
+  .has-scroll-reveal [data-immersive-reveal] { opacity:0; transform:translateY(16px); transition:opacity .8s ease-out, transform .8s cubic-bezier(.22,1,.36,1); }
+  .has-scroll-reveal [data-immersive-reveal="cta"] { transition-delay:.15s; }
+  .has-scroll-reveal [data-immersive-reveal="glass"] { transform:none; transition:opacity 1s ease-out .15s; }
+  .has-scroll-reveal [data-immersive-reveal].in-view { opacity:1; transform:none; }
+  @media(max-width:1000px) {
+    .glass-columns { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .glass-brand { grid-column:1/-1; }
+    .glass-brand p { max-width:460px; }
+  }
+  @media(max-width:767px) {
+    .immersive-stage { min-height:800px; border-radius:18px; margin:7px; }
+    .immersive-hero { min-height:430px; padding:73px 20px 50px; }
+    .hero-message h2 { font-size:clamp(42px,8vw,58px); }
+    .hero-eyebrow { font-size:10px; letter-spacing:.1em; }
+    .wide-only { display:none; }
+    .glass-card { margin:0 12px 12px; padding:30px; border-radius:20px; }
+    .glass-columns { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 20px; }
+    .glass-brand { grid-column:1/-1; }
+    .glass-bottom { flex-direction:column; align-items:flex-start; }
+    .copyright { text-align:left; }
+  }
+  @media(max-width:480px) {
+    .immersive-hero { min-height:390px; padding:63px 15px 39px; }
+    .hero-message h2 { font-size:clamp(38px,10vw,48px); }
+    .hero-description { font-size:13px; }
+    .contact-pill { width:100%; min-height:58px; }
+    .contact-prompt { font-size:11px; padding-left:10px; gap:7px; }
+    .contact-prompt svg { width:16px; height:16px; }
+    .pill-action { min-height:48px; padding:0 15px; font-size:10px; gap:6px; }
+    .glass-card { padding:23px; }
+    .glass-link-column a { font-size:12px; }
+  }
+  @media(prefers-reduced-motion:reduce) {
+    .has-scroll-reveal [data-immersive-reveal] { opacity:1!important; transform:none!important; transition:none!important; }
+    .pill-action,.glass-link-column a,.social-links a { transition:none!important; }
+  }
+</style>
+<script>
+  const stage = document.querySelector<HTMLElement>('[data-immersive-stage]');
+  if (stage) {
+    const revealNodes = Array.from(stage.querySelectorAll<HTMLElement>('[data-immersive-reveal]'));
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      stage.classList.add('has-scroll-reveal');
+      const observer = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        }
+      }, { threshold:0.05, rootMargin:'0px 0px -30px 0px' });
+      revealNodes.forEach(el => observer.observe(el));
+    }
+  }
+</script>
