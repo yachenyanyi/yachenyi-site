@@ -100,7 +100,7 @@ export function setupMorphNavigation() {
   const transitionPanel = (panel: HTMLElement, entering: boolean, direction: number, wasHidden = false) => {
     const style = getComputedStyle(panel);
     const motion = getComputedStyle(dropdown);
-    const duration = parseFloat(motion.getPropertyValue('--nav-morph-duration')) || 1200;
+    const duration = parseFloat(motion.getPropertyValue('--nav-morph-duration')) || 500;
     const easing = motion.getPropertyValue('--nav-morph-easing').trim() || 'ease';
     const from = wasHidden ? { opacity: 0, transform: `translateX(${direction * 18}px)`, filter: 'blur(5px)' }
       : { opacity: style.opacity, transform: style.transform, filter: style.filter };
