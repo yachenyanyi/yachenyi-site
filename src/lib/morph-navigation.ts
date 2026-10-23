@@ -122,6 +122,8 @@ export function setupMorphNavigation() {
     const wasHidden = Boolean(panels[index].hidden);
     clearHighlight();
     active = index;
+    // Move keyboard focus out before making the outgoing panel inert.
+    if (previous >= 0 && panels[previous].contains(document.activeElement)) triggers[index].focus({ preventScroll: true });
     panels.forEach((panel, i) => {
       panel.inert = i !== index;
       panel.style.pointerEvents = i === index ? '' : 'none';
