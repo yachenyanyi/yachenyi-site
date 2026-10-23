@@ -41,7 +41,7 @@ a:focus-visible, button:focus-visible { outline-color: #736ad9; }
    At 1440px the old right glow made document.scrollWidth=1525px. */
 body { display: flow-root; }
 .saas-hero { overflow-x: clip; }
-.saas-ambient-one { left: 50%; max-width: 100%; transform: translateX(-50%); }
+.saas-hero .saas-ambient-one { left: 50%; max-width: 100%; transform: translateX(-50%); }
 .saas-ambient-two { right: 0; width: min(540px, 48vw); }
 .saas-dots { inset: 0 0 auto; }
 
