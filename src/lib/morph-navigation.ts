@@ -99,14 +99,17 @@ export function setupMorphNavigation() {
   };
   const transitionPanel = (panel: HTMLElement, entering: boolean, direction: number, wasHidden = false) => {
     const style = getComputedStyle(panel);
-    const from = wasHidden ? { opacity: 0, transform: `translateX(${direction * 32}px)`, filter: 'blur(9px)' }
+    const motion = getComputedStyle(dropdown);
+    const duration = parseFloat(motion.getPropertyValue('--nav-morph-duration')) || 780;
+    const easing = motion.getPropertyValue('--nav-morph-easing').trim() || 'ease';
+    const from = wasHidden ? { opacity: 0, transform: `translateX(${direction * 18}px)`, filter: 'blur(5px)' }
       : { opacity: style.opacity, transform: style.transform, filter: style.filter };
     animations.get(panel)?.cancel();
     if (reduce.matches) { panel.hidden = !entering; return; }
     const animation = panel.animate([from, entering
       ? { opacity: 1, transform: 'translateX(0)', filter: 'blur(0px)' }
-      : { opacity: 0, transform: `translateX(${-direction * 26}px)`, filter: 'blur(9px)' },
-    ], { duration: entering ? 680 : 520, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+      : { opacity: 0, transform: `translateX(${-direction * 14}px)`, filter: 'blur(5px)' },
+    ], { duration: entering ? duration : duration * .7, easing, fill: 'both' });
     animations.set(panel, animation);
     animation.finished.then(() => {
       if (animations.get(panel) !== animation) return;
@@ -126,6 +129,7 @@ export function setupMorphNavigation() {
     if (previous >= 0 && panels[previous].contains(document.activeElement)) triggers[index].focus({ preventScroll: true });
     panels.forEach((panel, i) => {
       panel.inert = i !== index;
+      panel.style.zIndex = i === index ? '2' : '1';
       panel.style.pointerEvents = i === index ? '' : 'none';
       if (i !== index && i !== previous) { animations.get(panel)?.cancel(); animations.delete(panel); panel.hidden = true; }
     });

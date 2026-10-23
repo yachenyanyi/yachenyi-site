@@ -60,8 +60,8 @@ export function setupHomeMotion() {
         const y = clientY - rect.top;
         card.style.setProperty('--preview-x', `${Math.max(42, Math.min(rect.width - 42, x))}px`);
         card.style.setProperty('--preview-y', `${Math.max(26, Math.min(rect.height - 26, y))}px`);
-        card.style.setProperty('--image-x', `${(x / rect.width - .5) * 12}px`);
-        card.style.setProperty('--image-y', `${(y / rect.height - .5) * 10}px`);
+        card.style.setProperty('--image-x', `${(x / rect.width - .5) * 8}px`);
+        card.style.setProperty('--image-y', `${(y / rect.height - .5) * 6}px`);
         card.classList.add('is-pointer-active');
       });
     });
