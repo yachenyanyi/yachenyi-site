@@ -43,9 +43,18 @@ const schema = [
         <span class="hero-kicker__dot" aria-hidden="true"></span>
         <span data-i18n="home.saas.eyebrow">Independent AI Software Studio</span>
       </div>
-      <h1 id="home-title" class="immersive-title" data-reveal data-i18n="home.saas.title">
+      <div class="glass-title-stage">
+      <h1 id="home-title" class="immersive-title" data-i18n="home.saas.title">
         Build smarter software.<br /><span class="saas-gradient-text">Make every step count.</span>
       </h1>
+        <canvas class="glass-title-canvas" aria-hidden="true"></canvas>
+        <div class="glass-controls">
+          <span data-i18n="glass.hint">Drag glass · Release to spin</span>
+          <button type="button" data-glass-turn="-1" aria-label="Rotate glass left" data-i18n-aria="glass.left">←</button>
+          <button type="button" data-glass-reset aria-label="Reset glass angle" data-i18n-aria="glass.reset">↺</button>
+          <button type="button" data-glass-turn="1" aria-label="Rotate glass right" data-i18n-aria="glass.right">→</button>
+        </div>
+      </div>
       <p class="immersive-lead" data-reveal data-i18n="home.saas.lead">
         From agent orchestration to everyday automation, I turn complex workflows into focused, reliable software — built to be understood, improved, and used.
       </p>
@@ -160,6 +169,9 @@ const schema = [
   import { setupProjectCarousel } from '../lib/project-carousel';
   import { setupSmoothScroll } from '../lib/smooth-scroll';
 
+  import { setupGlassHero } from '../lib/glass-hero';
+
+  setupGlassHero();
   setupSmoothScroll();
   setupProjectCarousel();
   setupHomeMotion();

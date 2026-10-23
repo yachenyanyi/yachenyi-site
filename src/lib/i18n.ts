@@ -1,5 +1,16 @@
 export const staticTranslations = {
   zh: {
+    'nav.viewall': '查看全部',
+    'nav.agent': 'AI 智能体系统',
+    'nav.automation': '工作流自动化',
+    'nav.web': '网站与应用',
+    'nav.state': '可持续的项目状态',
+    'nav.static': '静态优先的工作室',
+    'nav.studio': '关于工作室',
+    'glass.hint': '拖动玻璃 · 松手旋转',
+    'glass.left': '向左转动玻璃',
+    'glass.right': '向右转动玻璃',
+    'glass.reset': '重置玻璃角度',
     'home.carousel.hint': '左右拖动浏览 · 上下滚动轻转',
     'common.skip': '跳到正文',
     'nav.primary': '主导航',

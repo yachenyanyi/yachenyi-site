@@ -1,0 +1,38 @@
+---
+import { withBase } from '../lib/site';
+const { logicalPath = '/' } = Astro.props;
+const groups = [
+  { id: 'projects', label: 'Projects', key: 'nav.projects', href: '/projects/', width: 560, links: [
+    ['DeepLoopMinder', '', '/projects/deep-loopminder/', 'ai-network-workbench.webp'],
+    ['IssuePack', '', '/projects/issuepack/', 'home-creative-workspace.webp'],
+    ['AutoScreenAgent', '', '/projects/autoscreenagent/', 'futurist-white-architecture.webp'],
+  ] },
+  { id: 'services', label: 'Services', key: 'nav.services', href: '/services/', width: 360, links: [
+    ['AI agent systems', 'nav.agent', '/services/ai-agents/'],
+    ['Workflow automation', 'nav.automation', '/services/automation/'],
+    ['Web software', 'nav.web', '/services/web-systems/'],
+  ] },
+  { id: 'lab', label: 'Lab', key: 'nav.lab', href: '/lab/', width: 410, links: [
+    ['Durable project state', 'nav.state', '/lab/durable-project-state/'],
+    ['Static-first studio', 'nav.static', '/lab/static-first-opc-site/'],
+  ] },
+  { id: 'about', label: 'About', key: 'nav.about', href: '/about/', width: 290, links: [
+    ['About the studio', 'nav.studio', '/about/'],
+    ['Facts & details', 'footer.facts', '/facts/'],
+    ['Start a conversation ↗', 'home.saas.cta.action', '/contact/'],
+  ] },
+];
+---
+<nav class="morph-nav" aria-label="Primary" data-i18n-aria="nav.primary">
+  {groups.map(group => <a href={withBase(group.href)} data-nav-trigger={group.id} aria-expanded="false" aria-controls={`nav-panel-${group.id}`} aria-current={logicalPath.startsWith(group.href) ? 'page' : undefined}><span data-i18n={group.key}>{group.label}</span><span class="nav-chevron" aria-hidden="true">⌄</span></a>)}
+</nav>
+<div class="morph-dropdown" hidden>
+  {groups.map(group => <section id={`nav-panel-${group.id}`} class:list={['morph-panel', {'morph-panel--projects': group.id === 'projects'}]} data-panel={group.id} data-width={group.width} hidden aria-label={group.label} data-i18n-aria={group.key}>
+    <div class="morph-panel__heading"><span data-i18n={group.key}>{group.label}</span><a href={withBase(group.href)}><span data-i18n="nav.viewall">View all</span> ↗</a></div>
+    <div class="morph-panel__links">{group.links.map(([label,key,href,image]) => <a href={withBase(href)}>{image && <img src={withBase(`/images/generated/${image}`)} width="320" height="200" alt="" loading="lazy" />}<span data-i18n={key || undefined}>{label}</span><span class="morph-link-arrow" aria-hidden="true">↗</span></a>)}</div>
+  </section>)}
+</div>
+<script>
+  import { setupMorphNavigation } from '../lib/morph-navigation';
+  setupMorphNavigation();
+</script>

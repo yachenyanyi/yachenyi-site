@@ -1,4 +1,5 @@
 ---
+import MorphNavigation from '../components/MorphNavigation.astro';
 import '../styles/global.css';
 import '../styles/glass-site.css';
 import { withBase } from '../lib/site';
@@ -79,12 +80,7 @@ const isCurrent = (prefix: string) =>
 
     <header class="site-header">
       <a class="brand" href={withBase('/')} aria-label="Yachenyi home">YACHENYI<span class="brand-dot">.</span></a>
-      <nav aria-label="Primary" data-i18n-aria="nav.primary">
-        <a href={withBase('/projects/')} aria-current={isCurrent('/projects/') ? 'page' : undefined} data-i18n="nav.projects">Projects</a>
-        <a href={withBase('/services/')} aria-current={isCurrent('/services/') ? 'page' : undefined} data-i18n="nav.services">Services</a>
-        <a href={withBase('/lab/')} aria-current={isCurrent('/lab/') ? 'page' : undefined} data-i18n="nav.lab">Lab</a>
-        <a href={withBase('/about/')} aria-current={isCurrent('/about/') ? 'page' : undefined} data-i18n="nav.about">About</a>
-      </nav>
+      <MorphNavigation logicalPath={logicalPath} />
       <div class="header-tools">
         <div class="language-switch" role="group" aria-label="Language">
           <button type="button" data-lang-option="en" aria-pressed="false">EN</button>
