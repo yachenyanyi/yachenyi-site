@@ -35,7 +35,7 @@ for (const file of htmlFiles) {
   // belongs only to the home page; articles and details keep the compact one.
   if (!isAdmin && !is404) {
     const isHome = rel === 'index.html';
-    const immersiveCount = (html.match(/data-immersive-stage\b/g) ?? []).length;
+    const immersiveCount = (html.match(/<div\b[^>]*class="immersive-stage"[^>]*>/g) ?? []).length;
     const compactCount = (html.match(/<footer\b[^>]*class="site-footer"/g) ?? []).length;
     assert(
       immersiveCount === (isHome ? 1 : 0),
