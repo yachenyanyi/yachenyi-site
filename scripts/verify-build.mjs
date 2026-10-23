@@ -36,7 +36,7 @@ for (const file of htmlFiles) {
   if (!isAdmin && !is404) {
     const isHome = rel === 'index.html';
     const immersiveCount = (html.match(/data-immersive-stage\b/g) ?? []).length;
-    const compactCount = (html.match(/class="site-footer"\b/g) ?? []).length;
+    const compactCount = (html.match(/<footer\b[^>]*class="site-footer"/g) ?? []).length;
     assert(
       immersiveCount === (isHome ? 1 : 0),
       `${rel}: expected ${isHome ? 1 : 0} immersive footer, found ${immersiveCount}`,
