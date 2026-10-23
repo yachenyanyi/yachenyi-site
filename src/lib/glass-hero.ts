@@ -107,8 +107,8 @@ export function setupGlassHero() {
   canvas.addEventListener('pointermove',event=>{
     if(!pointer || event.pointerId!==pointer.id)return;
     if(!dragging){if(Math.abs(event.clientX-pointer.startX)<6 || Math.abs(event.clientX-pointer.startX)<Math.abs(event.clientY-pointer.startY))return;dragging=true;canvas.setPointerCapture(event.pointerId);}
-    event.preventDefault();const dx=event.clientX-pointer.x;if(dx===0 && event.clientY===pointer.y)return;speed=reduce.matches?0:Math.max(-.012,Math.min(.012,dx/Math.max(1,event.timeStamp-pointer.time)*.012));
-    x+=dx*.012;y=Math.max(-1.1,Math.min(1.1,y+(event.clientY-pointer.y)*.008));pointer.x=event.clientX;pointer.y=event.clientY;pointer.time=event.timeStamp;draw();
+    event.preventDefault();const dx=event.clientX-pointer.x;if(dx===0 && event.clientY===pointer.y)return;speed=reduce.matches?0:Math.max(-.012,Math.min(.012,-dx/Math.max(1,event.timeStamp-pointer.time)*.012));
+    x-=dx*.012;y=Math.max(-1.1,Math.min(1.1,y+(event.clientY-pointer.y)*.008));pointer.x=event.clientX;pointer.y=event.clientY;pointer.time=event.timeStamp;draw();
   });
   const release=(event:PointerEvent)=>{if(pointer?.id!==event.pointerId)return;pointer=null;dragging=false;if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);if(event.type!=='pointerup')speed=0;wake();};
   window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
@@ -150,7 +150,7 @@ function setupGlassFallback(stage: HTMLElement, canvas: HTMLCanvasElement, title
   canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;
     if(!pointer.dragging){if(Math.abs(e.clientX-pointer.startX)<6||Math.abs(e.clientX-pointer.startX)<Math.abs(e.clientY-pointer.startY))return;pointer.dragging=true;canvas.setPointerCapture(e.pointerId);}
     e.preventDefault();const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(!dx&&!dy)return;
-    speed=reduce.matches?0:Math.max(-.65,Math.min(.65,dx/Math.max(1,e.timeStamp-pointer.time)*.65));x+=dx*.65;y=Math.max(-65,Math.min(65,y-dy*.4));pointer.x=e.clientX;pointer.y=e.clientY;pointer.time=e.timeStamp;draw();
+    speed=reduce.matches?0:Math.max(-.65,Math.min(.65,-dx/Math.max(1,e.timeStamp-pointer.time)*.65));x-=dx*.65;y=Math.max(-65,Math.min(65,y+dy*.4));pointer.x=e.clientX;pointer.y=e.clientY;pointer.time=e.timeStamp;draw();
   });
   const release=(e:PointerEvent)=>{if(pointer?.id!==e.pointerId)return;pointer=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(e.type!=='pointerup')speed=0;wake();};
   window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
