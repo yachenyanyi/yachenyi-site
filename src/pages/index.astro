@@ -78,13 +78,12 @@ const schema = [
         <span data-i18n="home.saas.work.link">All projects</span><span aria-hidden="true">↗</span>
       </a>
     </div>
+    <div class="project-carousel" data-reveal>
     <div class="home-project-grid">
       {projects.map((project, index) => (
         <a
           class:list={['home-project-card', { 'home-project-card--featured': index === 0 }]}
           href={withBase(`/projects/${project.id}/`)}
-          data-reveal
-          style={`--reveal-delay: ${index * 90}ms`}
         >
           <div class="home-project-card__image">
             <img
@@ -103,6 +102,10 @@ const schema = [
           </div>
         </a>
       ))}
+    </div>
+    </div>
+    <div class="project-carousel-controls">
+      <button class="project-rotation-toggle" type="button" data-project-rotation hidden aria-label="Pause project rotation" aria-pressed="false">Ⅱ</button>
     </div>
   </section>
 
@@ -155,7 +158,9 @@ const schema = [
 <script>
   import anime from 'animejs';
   import { setupHomeMotion } from '../lib/home-motion';
+  import { setupProjectCarousel } from '../lib/project-carousel';
 
+  setupProjectCarousel();
   setupHomeMotion();
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');

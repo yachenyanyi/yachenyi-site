@@ -233,6 +233,51 @@ main { width: min(var(--max), calc(100% - var(--page-gutter) * 2)); }
 .project-index { color: rgba(193, 214, 200, .56); font: 10px ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .09em; }
 .home-project-card h3 { margin: 0; color: #f6f9f6; font-size: clamp(1rem, 1.4vw, 1.22rem); font-weight: 620; letter-spacing: -.035em; text-align: right; }
 
+/* An open horizontal arc, with depth and angled edges like the motion reference. */
+.project-carousel { position: relative; }
+.project-orbit-slot { display: contents; }
+[data-orbit-copy] { display: none; }
+.project-carousel.is-orbit-ready {
+  overflow: hidden;
+  padding: 12px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.is-orbit-ready .home-project-grid {
+  display: block;
+  position: relative;
+  height: clamp(340px, 32vw, 410px);
+  perspective: 1100px;
+}
+.is-orbit-ready .project-orbit-slot {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--orbit-card-width, 300px);
+}
+.is-orbit-ready .home-project-card { display: flex; width: 100%; border-radius: 18px; }
+.is-orbit-ready .home-project-card::before { aspect-ratio: 16 / 10; }
+.is-orbit-ready .home-project-card:hover { transform: none; }
+.is-orbit-ready .home-project-card__body { flex-direction: column; align-items: flex-start; gap: 10px; min-height: 96px; padding: 17px 18px; }
+.is-orbit-ready .home-project-card h3 { text-align: left; font-size: 1.12rem; }
+.project-carousel-controls { display: flex; justify-content: center; margin-top: 8px; }
+.project-rotation-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  color: #f4fff9;
+  font: inherit;
+  cursor: pointer;
+}
+.project-rotation-toggle[hidden] { display: none; }
+.project-rotation-toggle:hover { background: rgba(255, 255, 255, .16); }
+
 .home-notes { padding-top: clamp(88px, 10vw, 144px); }
 .home-notes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .home-note-card { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(170px, .78fr) 1.22fr; min-height: 220px; overflow: hidden; border-radius: 24px; color: var(--text); background: #14211c; -webkit-backdrop-filter: none; backdrop-filter: none; transition: transform .22s ease, border-color .22s ease; }
