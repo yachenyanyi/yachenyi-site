@@ -146,11 +146,20 @@ const links = {
   .im-zh { display:none; }
   :global(html[data-lang="zh"]) .im-en { display:none; }
   :global(html[data-lang="zh"]) .im-zh { display:inline; }
-  /* Only hide after JS initializes the observer; progressive enhancement. */
-  .has-scroll-reveal [data-immersive-reveal] { opacity:0; transform:translateY(16px); transition:opacity .8s ease-out, transform .8s cubic-bezier(.22,1,.36,1); }
-  .has-scroll-reveal [data-immersive-reveal="cta"] { transition-delay:.15s; }
-  .has-scroll-reveal [data-immersive-reveal="glass"] { transform:none; transition:opacity 1s ease-out .15s; }
-  .has-scroll-reveal [data-immersive-reveal].in-view { opacity:1; transform:none; }
+  /* Motion is enhancement, never a prerequisite for displaying content.
+     The previous opacity:0 until IntersectionObserver runs could leave this
+     entire footer blank when rendering, navigating or saving a screenshot. */
+  @keyframes immersiveFadeUp {
+    from { opacity:0; transform:translateY(16px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes immersiveFadeIn {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+  [data-immersive-reveal].in-view { animation:immersiveFadeUp .8s cubic-bezier(.22,1,.36,1) both; }
+  [data-immersive-reveal="cta"].in-view { animation-delay:.13s; }
+  [data-immersive-reveal="glass"].in-view { animation:immersiveFadeIn 1s ease-out .16s both; }
   @media(max-width:1000px) {
     .glass-columns { grid-template-columns:repeat(3,minmax(0,1fr)); }
     .glass-brand { grid-column:1/-1; }
@@ -163,8 +172,11 @@ const links = {
     .hero-eyebrow { font-size:10px; letter-spacing:.1em; }
     .wide-only { display:none; }
     .glass-card { margin:0 12px 12px; padding:30px; border-radius:20px; }
-    .glass-columns { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 20px; }
-    .glass-brand { grid-column:1/-1; }
+    /* Single-column mobile stack as intended in the supplied footer spec. */
+    .glass-columns { grid-template-columns:minmax(0,1fr); gap:27px; }
+    .glass-brand { grid-column:auto; }
+    .glass-link-column h3 { margin:3px 0 12px; }
+    .glass-link-column ul { gap:9px; }
     .glass-bottom { flex-direction:column; align-items:flex-start; }
     .copyright { text-align:left; }
   }
@@ -180,7 +192,7 @@ const links = {
     .glass-link-column a { font-size:12px; }
   }
   @media(prefers-reduced-motion:reduce) {
-    .has-scroll-reveal [data-immersive-reveal] { opacity:1!important; transform:none!important; transition:none!important; }
+    [data-immersive-reveal].in-view { animation:none!important; }
     .pill-action,.glass-link-column a,.social-links a { transition:none!important; }
   }
 </style>
@@ -189,7 +201,6 @@ const links = {
   if (stage) {
     const revealNodes = Array.from(stage.querySelectorAll<HTMLElement>('[data-immersive-reveal]'));
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-      stage.classList.add('has-scroll-reveal');
       const observer = new IntersectionObserver(entries => {
         for (const entry of entries) {
           if (entry.isIntersecting) {

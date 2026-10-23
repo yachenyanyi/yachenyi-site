@@ -37,6 +37,14 @@ body {
 ::selection { background: #bcb5fa; color: #182449; }
 a:focus-visible, button:focus-visible { outline-color: #736ad9; }
 
+/* Keep the decorative hero glows inside the page canvas.
+   At 1440px the old right glow made document.scrollWidth=1525px. */
+body { display: flow-root; }
+.saas-hero { overflow-x: clip; }
+.saas-hero .saas-ambient-one { left: 50%; max-width: 100%; transform: translateX(-50%); }
+.saas-ambient-two { right: 0; width: min(540px, 48vw); }
+.saas-dots { inset: 0 0 auto; }
+
 /* Header */
 .site-header {
   width: min(var(--max), calc(100% - var(--page-gutter) * 2));

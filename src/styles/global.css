@@ -579,8 +579,9 @@ html.motion-ready.page-complete .page-loader {
   html.motion-ready .hero-visual,
   html.motion-ready .page-intro > *,
   html.motion-ready .article-hero > * {
-    opacity: 0;
-    transform: translateY(14px);
+    /* Visible even before JS sets page-ready. The animation itself fades in. */
+    opacity: 1;
+    transform: none;
   }
 
   html.motion-ready.page-ready .site-header {
@@ -608,7 +609,7 @@ html.motion-ready.page-complete .page-loader {
     animation: pageReveal .68s cubic-bezier(.22, 1, .36, 1) .18s both;
   }
 
-  html.motion-ready img { opacity: 0; }
+  html.motion-ready img { opacity: 1; }
   html.motion-ready img.image-ready {
     animation: imageReveal .56s ease both;
   }
@@ -619,8 +620,9 @@ html.motion-ready.page-complete .page-loader {
   html.motion-ready .article-shell,
   html.motion-ready .prose,
   html.motion-ready .site-footer {
-    opacity: 0;
-    transform: translateY(22px);
+    /* Scroll reveals are progressive enhancement, not visibility gates. */
+    opacity: 1;
+    transform: none;
   }
   html.motion-ready .section.is-revealed,
   html.motion-ready .about-grid.is-revealed,
@@ -634,8 +636,8 @@ html.motion-ready.page-complete .page-loader {
   html.motion-ready .project-card,
   html.motion-ready .service-card,
   html.motion-ready .lab-card {
-    opacity: 0;
-    transform: translateY(14px);
+    opacity: 1;
+    transform: none;
   }
   html.motion-ready .is-revealed .project-card,
   html.motion-ready .is-revealed .service-card,
