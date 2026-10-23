@@ -32,6 +32,7 @@ export function setupProjectCarousel() {
   let cardWidth = 260;
   const spacing = () => cardWidth + (width < 600 ? 38 : 68);
   let offset = 0;
+  const inertiaDecayMs = 1400;
   let velocity = 0;
   let previousTime = 0;
   let frame = 0;
@@ -76,8 +77,8 @@ export function setupProjectCarousel() {
       const acceleration = Math.exp(-elapsed / 180);
       offset += targetSpeed * elapsed + (autoSpeed - targetSpeed) * 180 * (1 - acceleration);
       autoSpeed = targetSpeed + (autoSpeed - targetSpeed) * acceleration;
-      offset += velocity * 520 * (1 - Math.exp(-elapsed / 520));
-      velocity *= Math.exp(-elapsed / 520);
+      offset += velocity * inertiaDecayMs * (1 - Math.exp(-elapsed / inertiaDecayMs));
+      velocity *= Math.exp(-elapsed / inertiaDecayMs);
       const scrollStep = scrollRemainder * (1 - Math.exp(-elapsed / 140));
       offset += scrollStep;
       scrollRemainder -= scrollStep;
@@ -85,10 +86,10 @@ export function setupProjectCarousel() {
         velocity = 0;
         // Critically damped spring: settle on a project without oscillation or frame-rate dependence.
         const displacement = offset - snapTarget;
-        const joint = snapSpeed + .012 * displacement;
-        const decay = Math.exp(-.012 * elapsed);
+        const joint = snapSpeed + .008 * displacement;
+        const decay = Math.exp(-.008 * elapsed);
         offset = snapTarget + (displacement + joint * elapsed) * decay;
-        snapSpeed = (snapSpeed - .012 * joint * elapsed) * decay;
+        snapSpeed = (snapSpeed - .008 * joint * elapsed) * decay;
         if (Math.abs(offset - snapTarget) < .35 && Math.abs(snapSpeed) < .005) {
           offset = snapTarget;
           snapTarget = null;
@@ -177,7 +178,7 @@ export function setupProjectCarousel() {
       focused = false;
       if (!reducedMotion.matches && event.type === 'pointerup') {
         // Predict the end of the fling, then draw it toward the nearest project.
-        snapTarget = Math.round((offset + velocity * 520) / spacing()) * spacing();
+        snapTarget = Math.round((offset + velocity * inertiaDecayMs) / spacing()) * spacing();
         snapSpeed = 0;
       }
       window.setTimeout(() => { suppressClick = false; }, 0);
@@ -192,7 +193,8 @@ export function setupProjectCarousel() {
   viewport.addEventListener('dragstart', (event) => event.preventDefault());
   cards.forEach((card, index) => {
     card.addEventListener('pointerenter', (event) => {
-      if (event.pointerType !== 'mouse' || pointer || performance.now() < hoverDelayUntil) return;
+      // Cards passing beneath the released pointer must not interrupt the fling.
+      if (event.pointerType !== 'mouse' || pointer || snapTarget !== null || performance.now() < hoverDelayUntil) return;
       hovered?.classList.remove('is-hovered');
       hovered = slots[index];
       hovered.classList.add('is-hovered');
