@@ -1,5 +1,6 @@
 export const staticTranslations = {
   zh: {
+    'home.carousel.hint': '左右拖动浏览 · 上下滚动轻转',
     'common.skip': '跳到正文',
     'nav.primary': '主导航',
     'nav.projects': '项目',
@@ -106,9 +107,7 @@ export const staticTranslations = {
     'home.proof.focus.value': 'AI 原生系统',
     'home.proof.standard': '标准',
     'home.proof.standard.value': '小而可靠',
-    'home.scroll': '向下探索',
     'home.saas.work.label': '精选项目',
-    'home.saas.work.title': '在实践中构建。<br /><span class="saas-soft-text">为真实场景而做。</span>',
     'home.saas.work.link': '所有项目',
     'home.saas.notes.label': '实验记录',
     'home.saas.notes.title': '来自工作台的<br /><span class="saas-soft-text">工程笔记。</span>',

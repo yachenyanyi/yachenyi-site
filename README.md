@@ -31,10 +31,15 @@ npm run verify:build
 
 ## Motion
 
-The homepage selected-project cards form a moving perspective arc. A visible
-rotation button pauses/resumes it. Systems requesting reduced motion start with
-a static grid and can explicitly enable rotation using the same button.
-Keyboard focus pauses moving cards so project links remain usable.
+The homepage uses a full-height landing stage with a perspective project ribbon
+beneath the introduction. Drag horizontally to browse; vertical page scrolling
+nudges the ribbon. A normal click still opens the project, while a drag suppresses
+accidental navigation. Touch gestures keep vertical page scrolling available.
+
+The rotation control pauses/resumes automatic motion and remembers the explicit
+choice in local storage. Reduced-motion systems start with a static arc that is
+still manually draggable; automatic rotation and scroll coupling require opt-in.
+Keyboard focus pauses moving cards and brings the focused project to the center.
 
 ## Deployment
 

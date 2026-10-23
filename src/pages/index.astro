@@ -32,6 +32,7 @@ const schema = [
   schema={schema}
   image="/images/generated/ai-network-workbench.webp"
 >
+  <div class="landing-stage">
   <section
     class="immersive-hero"
     aria-labelledby="home-title"
@@ -61,18 +62,13 @@ const schema = [
         <div><span data-i18n="home.proof.focus">Focus</span><strong data-i18n="home.proof.focus.value">AI-native systems</strong></div>
         <div><span data-i18n="home.proof.standard">Standard</span><strong data-i18n="home.proof.standard.value">Small and reliable</strong></div>
       </div>
-      <a class="hero-scroll" href="#selected-work" data-reveal>
-        <span class="hero-scroll__line" aria-hidden="true"></span>
-        <span data-i18n="home.scroll">Scroll to explore</span>
-      </a>
     </div>
   </section>
 
-  <section class="home-section" id="selected-work" aria-labelledby="work-title">
+  <section class="home-section project-strip" id="selected-work" aria-labelledby="work-title">
     <div class="section-heading section-heading--glass" data-reveal>
       <div>
-        <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.work.label">Selected projects</span></span>
-        <h2 id="work-title" class="section-title" data-i18n="home.saas.work.title">Built in the open.<br /><span class="saas-soft-text">Made for the real world.</span></h2>
+        <h2 id="work-title" class="section-title" data-i18n="home.saas.work.label">Selected projects</h2>
       </div>
       <a class="section-link" href={withBase('/projects/')}>
         <span data-i18n="home.saas.work.link">All projects</span><span aria-hidden="true">↗</span>
@@ -105,11 +101,14 @@ const schema = [
     </div>
     </div>
     <div class="project-carousel-controls">
+      <p class="project-interaction-hint" data-i18n="home.carousel.hint">Drag to explore · Scroll to turn</p>
       <button class="project-rotation-toggle" type="button" data-project-rotation hidden aria-label="Pause project rotation" aria-pressed="false">Ⅱ</button>
     </div>
   </section>
 
-  <section class="home-section home-notes" aria-labelledby="notes-title">
+  </div>
+
+  <section id="studio-notes" class="home-section home-notes" aria-labelledby="notes-title">
     <div class="section-heading section-heading--glass" data-reveal>
       <div>
         <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.notes.label">From the lab</span></span>
