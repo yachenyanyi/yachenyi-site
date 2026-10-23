@@ -137,6 +137,7 @@ export function setupProjectCarousel() {
   viewport.addEventListener('pointerdown', (event) => {
     if (!event.isPrimary || event.button !== 0 || pointer) return;
     suppressClick = false;
+    focused = false;
     velocity = 0;
     autoSpeed = 0;
     snapTarget = null;
@@ -159,6 +160,8 @@ export function setupProjectCarousel() {
     }
     event.preventDefault();
     const dx = event.clientX - pointer.x;
+    // Some browsers send a stationary move just before release. Keep the last moving sample.
+    if (dx === 0) return;
     velocity = velocity * .35 + Math.max(-2.4, Math.min(2.4, dx / Math.max(1, event.timeStamp - pointer.time))) * .65;
     offset += dx;
     pointer.x = event.clientX;
@@ -168,7 +171,9 @@ export function setupProjectCarousel() {
   const release = (event: PointerEvent) => {
     if (!pointer || event.pointerId !== pointer.id) return;
     const dragged = pointer.dragging;
-    if (!dragged || reducedMotion.matches || event.type === 'pointercancel' || event.timeStamp - pointer.time > 160) velocity = 0;
+    const allowInertia = !reducedMotion.matches || preference === true;
+    if (!dragged || !allowInertia || event.type === 'pointercancel') velocity = 0;
+    else velocity *= Math.exp(-Math.max(0, event.timeStamp - pointer.time) / 320);
     if (dragged) hoverDelayUntil = performance.now() + 700;
     pointer = null;
     if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
@@ -176,7 +181,7 @@ export function setupProjectCarousel() {
     if (dragged) {
       suppressClick = true;
       focused = false;
-      if (!reducedMotion.matches && event.type === 'pointerup') {
+      if (allowInertia && event.type === 'pointerup') {
         // Predict the end of the fling, then draw it toward the nearest project.
         snapTarget = Math.round((offset + velocity * inertiaDecayMs) / spacing()) * spacing();
         snapSpeed = 0;
@@ -214,7 +219,8 @@ export function setupProjectCarousel() {
     if (suppressClick) { event.preventDefault(); event.stopPropagation(); }
   }, true);
   viewport.addEventListener('focusin', (event) => {
-    if (pointer) return;
+    // Mouse focus after release must not cancel a fling; only keyboard focus centers a card.
+    if (pointer || !(event.target instanceof HTMLElement) || !event.target.matches(':focus-visible')) return;
     focused = true;
     velocity = 0;
     autoSpeed = 0;
