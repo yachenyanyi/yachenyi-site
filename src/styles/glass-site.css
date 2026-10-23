@@ -804,3 +804,17 @@ html.motion-enabled .home-page [data-reveal].is-revealed { transform: translateY
 
 .glass-fallback-face--0,.glass-fallback-face--2 { background:linear-gradient(145deg,rgba(25,56,46,.88),rgba(26,55,49,.76)); }
 .glass-fallback-face--4 .glass-face-text,.glass-fallback-face--5 .glass-face-text { display:none; }
+
+/* Retargetable blur crossfades and a single, delayed hover surface. */
+.morph-dropdown { transition:left .46s cubic-bezier(.22,1,.36,1),width .46s cubic-bezier(.22,1,.36,1),height .46s cubic-bezier(.22,1,.36,1);transform-origin:50% 0; }
+.morph-panel { position:absolute;left:0;top:0;box-sizing:border-box;z-index:1; }
+.morph-panel__links > a { transition:color .32s ease,background .32s ease; }
+.has-shared-highlight .morph-panel__links > a:hover,
+.has-shared-highlight .morph-panel__links > a:focus-visible { background:transparent;transform:none; }
+.morph-highlight { position:absolute;left:0;top:0;z-index:0;pointer-events:none;border:1px solid rgba(185,240,210,.2);border-radius:12px;background:radial-gradient(circle at var(--highlight-x,50%) var(--highlight-y,50%),rgba(175,239,208,.13),rgba(175,239,208,.035) 80%);box-shadow:inset 0 1px 0 #ffffff12;opacity:0;transition:transform .38s cubic-bezier(.2,.8,.2,1),width .38s cubic-bezier(.2,.8,.2,1),height .38s cubic-bezier(.2,.8,.2,1),opacity .24s ease;will-change:transform; }
+.morph-highlight.is-visible { opacity:1; }
+.morph-panel--projects img { transition:transform .5s cubic-bezier(.2,.8,.2,1) .08s,filter .4s ease .08s; }
+.morph-panel--projects a:hover img { transform:scale(1.025);filter:brightness(1.06); }
+@media(prefers-reduced-motion:reduce) {
+  .morph-dropdown,.morph-highlight,.morph-panel--projects img { transition:none; }
+}
