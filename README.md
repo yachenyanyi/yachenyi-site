@@ -33,13 +33,17 @@ npm run verify:build
 
 The homepage uses a full-height landing stage with a perspective project ribbon
 beneath the introduction. Drag horizontally to browse; vertical page scrolling
-nudges the ribbon. A normal click still opens the project, while a drag suppresses
+nudges the ribbon with a damped follow-through. Drag release coasts and settles
+on the nearest project; hovering eases the card face upright and pauses the
+ribbon while it is being inspected. A normal click still opens the project, while a drag suppresses
 accidental navigation. Touch gestures keep vertical page scrolling available.
 
 The rotation control pauses/resumes automatic motion and remembers the explicit
 choice in local storage. Reduced-motion systems start with a static arc that is
 still manually draggable; automatic rotation and scroll coupling require opt-in.
 Keyboard focus pauses moving cards and brings the focused project to the center.
+The homepage uses Lenis for wheel smoothing, retaining native touch scrolling
+and the system reduced-motion preference.
 
 ## Deployment
 
