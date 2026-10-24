@@ -39,11 +39,14 @@ export function createLiquidRenderer() {
       vec2 shift=bent.xy/max(-bent.z,.2)*material.z;
       vec2 split=outward*edge*edge*material.w;
       vec3 color=sampleGlass(uv,shift,split);
-      float rim=pow(edge,6.);
+      // Broad, curved reflections roll into the face instead of forming a hard rim.
+      float rim=pow(edge,4.);
       vec3 lamp=normalize(vec3(light.x*1.1,light.y*1.1,1.1));
-      float spec=pow(max(0.,dot(reflect(vec3(0.,0.,-1.),normal),lamp)),22.);
-      float gleam=pow(max(0.,dot(normal,lamp)),12.)*edge;
-      color=color*(1.-shade)+vec3(.88,.97,1.)*(rim*.18+spec*.13+gleam*.08);
+      float facing=max(0.,dot(reflect(vec3(0.,0.,-1.),normal),lamp));
+      float spec=pow(facing,9.);
+      float softSpec=pow(facing,3.)*smoothstep(0.,.55,edge);
+      float gleam=pow(max(0.,dot(normal,lamp)),6.)*sin(edge*1.5707963);
+      color=color*(1.-shade)+vec3(.92,.98,1.)*(rim*.12+spec*.16+softSpec*.10+gleam*.11);
       float coverage=1.-smoothstep(-1.,0.,d);
       gl_FragColor=vec4(color,coverage*opacity);
     }`;

@@ -10,10 +10,10 @@
   --liquid-light-y: 0%;
   position: relative;
   isolation: isolate;
-  border: 1px solid rgba(244, 255, 251, .32);
+  border: 1px solid rgba(244, 255, 251, .24);
   border-radius: var(--liquid-radius);
   background: rgba(244, 255, 251, .035);
-  box-shadow: 0 16px 40px rgba(0, 9, 7, .16), inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(255, 255, 255, .12);
+  box-shadow: 0 16px 40px rgba(0, 9, 7, .16), inset 0 1px 2px rgba(255, 255, 255, .36), inset 0 5px 12px rgba(238, 255, 251, .10), inset 0 -4px 10px rgba(223, 249, 255, .07);
   -webkit-backdrop-filter: blur(3px) saturate(130%);
   backdrop-filter: blur(3px) saturate(130%);
 }
@@ -49,7 +49,9 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at var(--liquid-light-x) var(--liquid-light-y), rgba(255, 255, 255, .13), transparent 62%);
+  background:
+    radial-gradient(ellipse 85% 90% at var(--liquid-light-x) var(--liquid-light-y), rgba(255, 255, 255, .17), rgba(241, 255, 252, .055) 38%, transparent 72%),
+    linear-gradient(180deg, rgba(246, 255, 253, .07), transparent 36%, transparent 70%, rgba(226, 248, 255, .035));
   pointer-events: none;
 }
 
@@ -60,7 +62,7 @@
   z-index: 2;
   border: 1px solid transparent;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255, 255, 255, .72), rgba(205, 247, 255, .12) 34%, rgba(255, 255, 255, .06) 64%, rgba(255, 255, 255, .42)) border-box;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .50), rgba(221, 250, 255, .15) 34%, rgba(255, 255, 255, .08) 64%, rgba(255, 255, 255, .30)) border-box;
   -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
