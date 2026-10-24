@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+  as?: 'div' | 'section';
+  image?: string;
+  variant?: 'panel' | 'strip';
+}
+
+const { as: Tag = 'div', image, variant = 'panel', class: className, ...attributes } = Astro.props;
+---
+
+<Tag {...attributes} class:list={[className, 'liquid-glass', `liquid-glass--${variant}`]} data-liquid-glass data-liquid-image={image}>
+  <span class="liquid-glass__optics" aria-hidden="true"><canvas></canvas></span>
+  <slot />
+</Tag>
+
+<script>
+  import { setupLiquidGlass } from '../lib/liquid-glass';
+  setupLiquidGlass();
+</script>

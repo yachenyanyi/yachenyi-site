@@ -34,36 +34,8 @@
   font-weight: 610;
 }
 
-.home-page .hero-proof {
-  background: linear-gradient(135deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .035)),
-    rgba(9, 24, 20, .36);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 -1px 0 rgba(255, 255, 255, .035), 0 16px 40px rgba(0, 0, 0, .2);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  backdrop-filter: blur(24px) saturate(150%);
-}
-
-.home-page .hero-proof {
-  border-color: rgba(244, 255, 248, .28);
-}
-
 .home-page .hero-proof span {
   color: rgba(232, 245, 237, .78);
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-
-  .home-page .hero-proof {
-    background: #20352e;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-
-  .home-page .hero-proof {
-    background: #20352e;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
 }
 
 .home-page .hero-proof {

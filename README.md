@@ -32,6 +32,8 @@ npm run verify:build
 
 ## Motion
 
+The homepage proof bar, project captions, studio-note captions and contact panel share `src/components/LiquidGlass.astro`. Its rounded lens refraction, RGB dispersion, transparency and pointer lighting are maintained centrally in `src/styles/components/liquid-glass/` and `src/lib/liquid-glass/`; changing this material updates every instance. The footer keeps its existing material. See `src/lib/liquid-glass/README.md` for usage, defaults, rendering limits and fallback behavior.
+
 The homepage uses a full-height landing stage with a perspective project ribbon
 beneath the introduction. Drag horizontally to browse; vertical page scrolling
 nudges the ribbon with a damped follow-through. Drag release coasts and settles

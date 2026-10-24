@@ -5,9 +5,10 @@
 | 目录 | 职责 |
 | --- | --- |
 | `foundation/` | 设计变量、文档默认值、基础重置、全站无障碍规则 |
-| `shared/` | 明确启用的文字、区块标题、玻璃表面、渐变和出现动画 |
+| `shared/` | 明确启用的文字、区块标题、基础玻璃表面和出现动画 |
 | `components/navigation/` | 页头、语言切换、导航菜单、连续变形及其响应式规则 |
 | `components/glass-cube/` | 玻璃方块、文字层级、CSS 降级及其响应式规则 |
+| `components/liquid-glass/` | `LiquidGlass.astro` 共用液态玻璃材质，统一调整透镜、透明度、色散及高光；不影响页脚 |
 | `components/hero/` | 首页介绍区域及其 `proof.css` 信息栏 |
 | `components/project-carousel/` | 首页轮播及其 `card.css` 项目卡片 |
 | `components/studio-notes/` | 首页实验室卡片和网格 |

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LiquidGlass from '../components/LiquidGlass.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '../lib/site';
 
@@ -60,11 +61,11 @@ const schema = [
           <span data-i18n="home.saas.action.contact">Let's build together</span><span aria-hidden="true">→</span>
         </a>
       </div>
-      <div class="hero-proof glass-panel flowing-gradient" data-reveal>
+      <LiquidGlass class="hero-proof" data-reveal>
         <div><span data-i18n="home.proof.approach">Approach</span><strong data-i18n="home.proof.approach.value">Independent by design</strong></div>
         <div><span data-i18n="home.proof.focus">Focus</span><strong data-i18n="home.proof.focus.value">AI-native systems</strong></div>
         <div><span data-i18n="home.proof.standard">Standard</span><strong data-i18n="home.proof.standard.value">Small and reliable</strong></div>
-      </div>
+      </LiquidGlass>
     </div>
   </section>
 
@@ -83,6 +84,7 @@ const schema = [
         <a
           class:list={['home-project-card', { 'home-project-card--featured': index === 0 }]}
           href={withBase(`/projects/${project.id}/`)}
+          data-liquid-scene
         >
           <div class="home-project-card__image">
             <img
@@ -91,14 +93,15 @@ const schema = [
               loading="lazy"
               width="1200"
               height="750"
+              data-liquid-source
             />
             <span class="project-status">{project.data.status}</span>
             <span class="project-arrow" aria-hidden="true">↗</span>
           </div>
-          <div class="home-project-card__body flowing-gradient">
+          <LiquidGlass class="home-project-card__body" variant="strip" image={withBase(projectImages[project.id] ?? '/images/generated/ai-network-workbench.webp')}>
             <span class="project-index">0{index + 1} / PROJECT</span>
             <h3>{project.data.title}</h3>
-          </div>
+          </LiquidGlass>
         </a>
       ))}
     </div>
@@ -126,6 +129,7 @@ const schema = [
         <a
           class="home-note-card glass-panel"
           href={withBase(`/lab/${post.id}/`)}
+          data-liquid-scene
           data-reveal
           style={`--reveal-delay: ${index * 100}ms`}
         >
@@ -135,30 +139,29 @@ const schema = [
             loading="lazy"
             width="1000"
             height="620"
+            data-liquid-source
           />
-          <div class="home-note-card__body flowing-gradient">
+          <LiquidGlass class="home-note-card__body" variant="strip" image={withBase(labImages[post.id] ?? '/images/generated/misty-blue-coast.webp')}>
             <div class="note-meta"><span>{post.data.publishedAt.toISOString().slice(0, 10)}</span><span>{post.data.tags.slice(0, 2).join(' / ')}</span></div>
             <h3>{post.data.title}</h3>
             <span class="note-open" aria-hidden="true">↗</span>
-          </div>
+          </LiquidGlass>
         </a>
       ))}
     </div>
   </section>
 
-  <section class="home-contact glass-panel flowing-gradient" data-reveal aria-labelledby="contact-title">
-    <div class="home-contact__glow" aria-hidden="true"></div>
+  <LiquidGlass as="section" class="home-contact" data-reveal aria-labelledby="contact-title">
     <span class="section-eyebrow"><span class="section-eyebrow__dot" aria-hidden="true"></span><span data-i18n="home.saas.cta.label">Let's collaborate</span></span>
     <h2 id="contact-title" data-i18n="home.saas.cta.title">Have a problem worth solving?<br /><span class="saas-gradient-text">Let's build something useful.</span></h2>
     <p data-i18n="home.saas.cta.copy">A focused project starts with a good question. Tell me what isn't working, and we'll find the smallest reliable way forward.</p>
     <a href={withBase('/contact/')} class="button button-accent">
       <span data-i18n="home.saas.cta.action">Start a conversation</span><span aria-hidden="true">↗</span>
     </a>
-  </section>
+  </LiquidGlass>
 </BaseLayout>
 
 <script>
-  import anime from 'animejs';
   import { setupHomeMotion } from '../lib/home-motion';
   import { setupProjectCarousel } from '../lib/project-carousel';
   import { setupSmoothScroll } from '../lib/smooth-scroll';
@@ -170,44 +173,4 @@ const schema = [
   setupProjectCarousel();
   setupHomeMotion();
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const surfaces = new Map<Element, ReturnType<typeof anime>>();
-  const visible = new Set<Element>();
-
-  document.querySelectorAll<HTMLElement>('.flowing-gradient').forEach((surface, index) => {
-    surfaces.set(surface, anime({
-      targets: surface,
-      backgroundPosition: ['0% 50%, 0% 0%, 0% 0%', '100% 50%, 0% 0%, 0% 0%'],
-      duration: 2600,
-      delay: (index % 3) * 180,
-      easing: 'easeInOutSine',
-      loop: true,
-      direction: 'alternate',
-      autoplay: false,
-    }));
-  });
-
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(({ target, isIntersecting }) => {
-        if (isIntersecting) visible.add(target);
-        else visible.delete(target);
-        const animation = surfaces.get(target);
-        if (isIntersecting && !reducedMotion.matches) animation?.play();
-        else animation?.pause();
-      });
-    });
-    surfaces.forEach((_, surface) => observer.observe(surface));
-  } else surfaces.forEach((animation, surface) => {
-    visible.add(surface);
-    if (!reducedMotion.matches) animation.play();
-  });
-  reducedMotion.addEventListener('change', () => {
-    surfaces.forEach((animation, surface) => {
-      if (reducedMotion.matches) {
-        animation.pause();
-        animation.seek(0);
-      } else if (visible.has(surface)) animation.play();
-    });
-  });
 </script>
