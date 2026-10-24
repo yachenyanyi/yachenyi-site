@@ -3,7 +3,7 @@ import { createGlassRotation } from './glass-rotation';
 type GlassRotation = ReturnType<typeof createGlassRotation>;
 type GlassRenderer = { resize: () => void; draw: (rotation: GlassRotation) => void };
 
-/** Decorative glass behind the title, gently following the pointer across the hero. */
+/** Decorative glass with independent auto-rotation and input-specific pointer following. */
 export function setupGlassHero() {
   const stage = document.querySelector<HTMLElement>('.glass-title-stage');
   const canvas = stage?.querySelector<HTMLCanvasElement>('canvas');
@@ -13,19 +13,20 @@ export function setupGlassHero() {
   let renderer = createWebGLRenderer(canvas) ?? createCSSRenderer(stage);
   const rotation = createGlassRotation();
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const fine = matchMedia('(any-hover: hover) and (any-pointer: fine)');
   let targetX = 0, targetY = 0, x = 0, y = 0;
-  let frame = 0, last = 0, visible = true, idleTime = 0;
-  const animated = () => !reduce.matches && fine.matches;
+  let frame = 0, last = 0, visible = true, idleTime = 0, autoYaw = 0;
+  const animated = () => !reduce.matches;
 
   const draw = () => {
     rotation.reset();
+    rotation.rotate(0, autoYaw);
     // Viewer axes: right increases yaw; down decreases pitch, without accumulating turns.
     const driftX = animated() ? Math.sin(idleTime / 2800) : 0;
     const driftY = animated() ? Math.sin(idleTime / 3600) : 0;
     rotation.rotate(-y * .22 + driftY * .025, x * .32 + driftX * .035);
     stage.style.setProperty('--glass-offset-x', `${x * 22 + driftX * 1.8}px`);
     stage.style.setProperty('--glass-offset-y', `${y * 14 + driftY * 1.2}px`);
+    stage.dataset.glassMotion = reduce.matches ? 'reduced' : visible && !document.hidden ? 'running' : 'paused';
     renderer.draw(rotation);
   };
   const run = (time: number) => {
@@ -38,6 +39,8 @@ export function setupGlassHero() {
     const dt = last ? Math.min(64, time - last) : 16;
     last = time;
     if (animated()) idleTime += dt;
+    // About 39 seconds per revolution; independent of hover/precision capabilities.
+    autoYaw = (autoYaw + dt * .00016) % (Math.PI * 2);
     const ease = 1 - Math.exp(-dt / 150);
     x += (targetX - x) * ease;
     y += (targetY - y) * ease;
@@ -51,25 +54,38 @@ export function setupGlassHero() {
     if (!frame && visible && !document.hidden) frame = requestAnimationFrame(run);
   };
   const reset = () => { targetX = targetY = 0; wake(); };
-  hero.addEventListener('pointermove', event => {
-    if (!['mouse', 'pen'].includes(event.pointerType) || !animated()) return;
-    const rect = hero.getBoundingClientRect();
-    targetX = Math.max(-1, Math.min(1, (event.clientX - rect.left) / rect.width * 2 - 1));
-    targetY = Math.max(-1, Math.min(1, (event.clientY - rect.top) / rect.height * 2 - 1));
+  window.addEventListener('pointermove', event => {
+    const input = event.pointerType || 'mouse';
+    stage.dataset.glassInput = input;
+    // Real events also work with a mouse attached to a tablet or touch-primary computer.
+    // Pen contact and fingers belong to normal page gestures; only hovering pointers follow.
+    if (input === 'touch' || (input === 'pen' && (event.buttons !== 0 || event.pressure > 0))) {
+      reset(); return;
+    }
+    if (!['mouse', 'pen'].includes(input) || !animated()) return;
+    targetX = Math.max(-1, Math.min(1, event.clientX / innerWidth * 2 - 1));
+    targetY = Math.max(-1, Math.min(1, event.clientY / innerHeight * 2 - 1));
     wake();
   }, { passive: true });
-  hero.addEventListener('pointerleave', reset);
-  hero.addEventListener('pointercancel', reset);
+  window.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'touch' || event.pointerType === 'pen') {
+      stage.dataset.glassInput = event.pointerType; reset();
+    }
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', reset);
+  window.addEventListener('pointercancel', reset);
   window.addEventListener('blur', reset);
   window.addEventListener('scroll', wake, { passive: true });
-  const stop = () => { cancelAnimationFrame(frame); frame = 0; last = 0; };
+  const stop = () => {
+    cancelAnimationFrame(frame); frame = 0; last = 0;
+    stage.dataset.glassMotion = reduce.matches ? 'reduced' : 'paused';
+  };
   const preferenceChanged = () => {
-    if (reduce.matches || !fine.matches) {
+    if (reduce.matches) {
       stop(); targetX = targetY = x = y = idleTime = 0; draw();
     } else wake();
   };
   reduce.addEventListener('change', preferenceChanged);
-  fine.addEventListener('change', preferenceChanged);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stop();
     else reset();
