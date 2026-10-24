@@ -1,39 +1,27 @@
-/* Text remains semantic HTML; WebGL adds a refractive volume in front of it. */
+/* The cube sits above the hero background and below the real, selectable title. */
 .glass-title-stage { position:relative;display:grid;place-items:center;isolation:isolate;min-height:clamp(190px,21vh,240px);margin:4px 0 6px; }
-.home-page .glass-title-stage .immersive-title { width:100%;margin:10px auto 30px;pointer-events:none; }
-.glass-title-canvas { position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:pan-y pinch-zoom;cursor:grab;opacity:0;transition:opacity .6s; }
-.glass-title-canvas:active { cursor:grabbing; }
+.home-page .glass-title-stage .immersive-title { position:relative;z-index:1;width:100%;margin:10px auto 30px; }
+.glass-title-canvas { position:absolute;left:0;top:50%;width:100%;height:clamp(340px,36vw,460px);z-index:0;pointer-events:none;transform:translate3d(var(--glass-offset-x,0px),calc(-50% + var(--glass-offset-y,0px)),0);opacity:0;transition:opacity .6s; }
 .glass-ready .glass-title-canvas { opacity:1; }
-.glass-controls { display:none;position:absolute;z-index:3;bottom:0;left:50%;transform:translateX(-50%);align-items:center;gap:6px;white-space:nowrap; }
-.glass-ready .glass-controls { display:flex; }
-.glass-controls > span { color:#c6dbce9c;font-size:.6rem;letter-spacing:.07em;margin-right:8px; }
-.glass-controls button { width:28px;height:28px;border:1px solid #c7e9d52b;border-radius:50%;background:#12332b77;color:#d6f2e2;cursor:pointer;transition:background .2s,transform .2s; }
-.glass-controls button:hover { background:#29664d88;transform:translateY(-2px); }
-@media(max-width:760px) {
-  .site-header .morph-nav { gap:clamp(12px,4vw,24px); }
-  .glass-title-stage { min-height:210px; }
-  .home-page .glass-title-stage .immersive-title { font-size:clamp(2.1rem,7.5vw,3.5rem); }
-  .glass-controls > span { font-size:.55rem; }
-}
-@media(prefers-reduced-motion:reduce) {
-  .morph-dropdown,.nav-chevron,.glass-title-canvas { transition:none; }
-}
-/* CSS optical fallback for devices where WebGL is unavailable. */
+
+/* Decorative CSS volume for devices where WebGL is unavailable. */
 .glass-fallback-ready { perspective:850px; }
-.glass-fallback-ready .glass-controls { display:flex; }
-.glass-fallback-cube { --glass-side:clamp(110px,13vw,162px);position:absolute;left:50%;top:47%;width:var(--glass-side);height:var(--glass-side);z-index:2;transform-style:preserve-3d;pointer-events:none; }
-.glass-fallback-face { position:absolute;inset:0;overflow:hidden;border:1px solid #d6fff299;border-radius:13px;backface-visibility:hidden;background:linear-gradient(145deg,#c9fff51c,#a4b9ff08 55%,#c7ffe426);box-shadow:inset 0 0 14px #e5fff533,0 0 1px #ddfff3;backdrop-filter:blur(.6px) saturate(130%); }
+.glass-fallback-ready .glass-title-canvas { display:none; }
+.glass-fallback-cube { --glass-side:clamp(190px,22vw,280px);position:absolute;left:50%;top:50%;width:var(--glass-side);height:var(--glass-side);z-index:0;translate:var(--glass-offset-x,0px) var(--glass-offset-y,0px);transform-style:preserve-3d;pointer-events:none; }
+.glass-fallback-face { position:absolute;inset:0;border:1px solid #d6fff27a;border-radius:13px;backface-visibility:hidden;background:linear-gradient(145deg,#b4ffd62e,#729fba12 55%,#a6ffce28);box-shadow:inset 0 0 24px #d5ffe31c,0 0 1px #ddfff3; }
 .glass-fallback-face--0 { transform:translateZ(calc(var(--glass-side)/2)); }
 .glass-fallback-face--1 { transform:rotateY(90deg) translateZ(calc(var(--glass-side)/2)); }
 .glass-fallback-face--2 { transform:rotateY(180deg) translateZ(calc(var(--glass-side)/2)); }
 .glass-fallback-face--3 { transform:rotateY(-90deg) translateZ(calc(var(--glass-side)/2)); }
 .glass-fallback-face--4 { transform:rotateX(90deg) translateZ(calc(var(--glass-side)/2)); }
 .glass-fallback-face--5 { transform:rotateX(-90deg) translateZ(calc(var(--glass-side)/2)); }
-.glass-face-text { position:absolute;left:50%;top:50%;width:var(--glass-copy-width);transform:translate(-50%,-50%) scale(1.15);font-size:var(--glass-copy-font);font-weight:750;line-height:1.04;letter-spacing:-.06em;text-align:center;opacity:.82;text-shadow:1px 0 1px #a5d4ff,-1px 0 1px #fff1b4; }
-.glass-fallback-ready .glass-title-canvas { z-index:3; }
-.glass-fallback-ready .glass-controls { z-index:4; }
-@media(max-width:760px) { .glass-fallback-cube { --glass-side:115px; } }
-
-.glass-fallback-face--0,.glass-fallback-face--2 { background:linear-gradient(145deg,rgba(25,56,46,.88),rgba(26,55,49,.76)); }
-.glass-fallback-face--4 .glass-face-text,.glass-fallback-face--5 .glass-face-text { display:none; }
-
+@media(max-width:760px) {
+  .site-header .morph-nav { gap:clamp(12px,4vw,24px); }
+  .glass-title-stage { min-height:210px; }
+  .home-page .glass-title-stage .immersive-title { font-size:clamp(2.1rem,7.5vw,3.5rem); }
+  .glass-title-canvas { height:clamp(300px,78vw,360px); }
+  .glass-fallback-cube { --glass-side:clamp(170px,53vw,230px); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .morph-dropdown,.nav-chevron,.glass-title-canvas { transition:none; }
+}

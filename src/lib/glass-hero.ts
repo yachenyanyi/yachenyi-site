@@ -1,41 +1,112 @@
 import { createGlassRotation } from './glass-rotation';
 
-/** A ray-marched rounded glass cube, sampling the actual typeset hero text. */
+type GlassRotation = ReturnType<typeof createGlassRotation>;
+type GlassRenderer = { resize: () => void; draw: (rotation: GlassRotation) => void };
+
+/** Decorative glass behind the title, gently following the pointer across the hero. */
 export function setupGlassHero() {
   const stage = document.querySelector<HTMLElement>('.glass-title-stage');
   const canvas = stage?.querySelector<HTMLCanvasElement>('canvas');
-  const title = stage?.querySelector<HTMLElement>('h1');
-  if (!stage || !canvas || !title) return;
+  const hero = stage?.closest<HTMLElement>('.immersive-hero');
+  if (!stage || !canvas || !hero) return;
+
+  let renderer = createWebGLRenderer(canvas) ?? createCSSRenderer(stage);
+  const rotation = createGlassRotation();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)');
+  let targetX = 0, targetY = 0, x = 0, y = 0;
+  let frame = 0, last = 0, visible = true;
+
+  const draw = () => {
+    rotation.reset();
+    // Viewer axes: right increases yaw; down decreases pitch, without accumulating turns.
+    rotation.rotate(-y * .14, x * .20);
+    stage.style.setProperty('--glass-offset-x', `${x * 18}px`);
+    stage.style.setProperty('--glass-offset-y', `${y * 12}px`);
+    renderer.draw(rotation);
+  };
+  const run = (time: number) => {
+    frame = 0;
+    if (!visible || document.hidden) { last = 0; return; }
+    const dt = last ? Math.min(64, time - last) : 16;
+    last = time;
+    const ease = 1 - Math.exp(-dt / 150);
+    x += (targetX - x) * ease;
+    y += (targetY - y) * ease;
+    const settled = Math.abs(targetX - x) < .001 && Math.abs(targetY - y) < .001;
+    if (settled) { x = targetX; y = targetY; }
+    draw();
+    if (!settled) frame = requestAnimationFrame(run);
+    else last = 0;
+  };
+  const wake = () => {
+    if (!frame && visible && !document.hidden) frame = requestAnimationFrame(run);
+  };
+  const reset = () => { targetX = targetY = 0; wake(); };
+  hero.addEventListener('pointermove', event => {
+    if (event.pointerType !== 'mouse' || !fine.matches || reduce.matches) return;
+    const rect = hero.getBoundingClientRect();
+    targetX = Math.max(-1, Math.min(1, (event.clientX - rect.left) / rect.width * 2 - 1));
+    targetY = Math.max(-1, Math.min(1, (event.clientY - rect.top) / rect.height * 2 - 1));
+    wake();
+  }, { passive: true });
+  hero.addEventListener('pointerleave', reset);
+  hero.addEventListener('pointercancel', reset);
+  window.addEventListener('blur', reset);
+  const stop = () => { cancelAnimationFrame(frame); frame = 0; last = 0; };
+  const preferenceChanged = () => {
+    if (reduce.matches || !fine.matches) {
+      stop(); targetX = targetY = x = y = 0; draw();
+    }
+  };
+  reduce.addEventListener('change', preferenceChanged);
+  fine.addEventListener('change', preferenceChanged);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop();
+    else reset();
+  });
+  canvas.addEventListener('webglcontextlost', event => {
+    event.preventDefault(); stop(); stage.classList.remove('glass-ready');
+    renderer = createCSSRenderer(stage); draw(); wake();
+  });
+  const resize = () => { renderer.resize(); draw(); };
+  if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(canvas);
+  else window.addEventListener('resize', resize, { passive: true });
+  if (typeof IntersectionObserver === 'function') {
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) wake(); else stop();
+    }).observe(stage);
+  }
+  resize();
+}
+
+/** A translucent rounded cube; the real DOM title is rendered above it. */
+function createWebGLRenderer(canvas: HTMLCanvasElement): GlassRenderer | null {
   const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
-  if (!gl) { setupGlassFallback(stage, canvas, title); return; }
+  if (!gl) return null;
   const vertex = `attribute vec2 position; varying vec2 uv; void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const fragment = `precision highp float;
-    varying vec2 uv; uniform sampler2D backdrop; uniform vec2 resolution; uniform mat3 rotation;
+    varying vec2 uv; uniform vec2 resolution; uniform mat3 rotation;
     float box(vec3 p){vec3 q=abs(p)-vec3(.60);return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-.075;}
     void main(){
       vec2 p=(uv-.5)*vec2(resolution.x/resolution.y,1.)*2.8;
-      mat3 rot=rotation;
-      vec3 ro=rot*vec3(0.,0.,4.5),rd=rot*normalize(vec3(p,-4.5));
+      vec3 ro=rotation*vec3(0.,0.,4.5),rd=rotation*normalize(vec3(p,-4.5));
       float t=0.;vec3 hit=ro;bool found=false;
       for(int i=0;i<64;i++){hit=ro+rd*t;float d=box(hit);if(d<.001){found=true;break;}t+=d;if(t>8.)break;}
       if(!found) discard;
       vec2 e=vec2(.002,0.);
       vec3 n=normalize(vec3(box(hit+e.xyy)-box(hit-e.xyy),box(hit+e.yxy)-box(hit-e.yxy),box(hit+e.yyx)-box(hit-e.yyx)));
-      vec3 bent=refract(rd,n,1./1.46);
-      // Ray displacement through the volume magnifies and bends the title underneath.
-      vec3 exitPoint=hit+bent*1.05;
-      mat3 inverseRot=mat3(vec3(rot[0].x,rot[1].x,rot[2].x),vec3(rot[0].y,rot[1].y,rot[2].y),vec3(rot[0].z,rot[1].z,rot[2].z));
-      vec3 exitWorld=inverseRot*exitPoint;
-      vec2 sampleUV=exitWorld.xy/2.8/vec2(resolution.x/resolution.y,1.)+.5;
-      float fresnel=pow(1.-max(0.,dot(-rd,n)),3.);
-      vec2 dispersion=normalize(n.xy+vec2(.001))*(.002+.009*fresnel);
-      vec3 color=vec3(texture2D(backdrop,clamp(sampleUV+dispersion,.001,.999)).r,texture2D(backdrop,clamp(sampleUV,.001,.999)).g,texture2D(backdrop,clamp(sampleUV-dispersion,.001,.999)).b);
+      mat3 localToView=mat3(vec3(rotation[0].x,rotation[1].x,rotation[2].x),vec3(rotation[0].y,rotation[1].y,rotation[2].y),vec3(rotation[0].z,rotation[1].z,rotation[2].z));
+      vec3 worldNormal=localToView*n;
+      float facing=max(0.,dot(-rd,n));
+      float fresnel=pow(1.-facing,3.);
       vec3 light=normalize(vec3(-.6,.9,1.));
-      float sheen=pow(max(0.,dot(reflect(rd,n),light)),32.);
-      color=color*.88+vec3(.15,.28,.23)*fresnel+vec3(.8,1.,.92)*sheen*.55;
-      float edge=pow(1.-max(0.,dot(-rd,n)),7.);
-      color+=vec3(.52,.85,.72)*edge*.5;
-      gl_FragColor=vec4(color,1.);
+      float diffuse=max(0.,dot(worldNormal,light));
+      float sheen=pow(max(0.,dot(reflect(localToView*rd,worldNormal),light)),28.);
+      vec3 color=mix(vec3(.12,.30,.25),vec3(.45,.75,.62),diffuse*.65);
+      color+=vec3(.60,.95,.80)*fresnel*.65+vec3(.85,1.,.94)*sheen*.55;
+      gl_FragColor=vec4(color,.30+fresnel*.42+sheen*.16);
     }`;
   const compile = (type: number, source: string) => {
     const shader = gl.createShader(type);
@@ -46,122 +117,51 @@ export function setupGlassHero() {
   };
   const vs = compile(gl.VERTEX_SHADER, vertex), fs = compile(gl.FRAGMENT_SHADER, fragment);
   const program = gl.createProgram();
-  if (!vs || !fs || !program) { gl.deleteShader(vs); gl.deleteShader(fs); gl.deleteProgram(program); setupGlassFallback(stage,canvas,title); return; }
+  if (!vs || !fs || !program) {
+    gl.deleteShader(vs); gl.deleteShader(fs); gl.deleteProgram(program); return null;
+  }
   gl.attachShader(program, vs); gl.attachShader(program, fs); gl.linkProgram(program);
   gl.deleteShader(vs); gl.deleteShader(fs);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { gl.deleteProgram(program); setupGlassFallback(stage,canvas,title); return; }
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { gl.deleteProgram(program); return null; }
   gl.useProgram(program);
   const buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
-  const position = gl.getAttribLocation(program, 'position'); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position,2,gl.FLOAT,false,0,0);
-  const texture = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-  gl.uniform1i(gl.getUniformLocation(program,'backdrop'),0);
-  const resolution = gl.getUniformLocation(program,'resolution'), rotationUniform = gl.getUniformLocation(program,'rotation');
-  const rotation = createGlassRotation();
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  let speed = 0, last = 0, frame = 0, visible = true, paused = false, dragging = false;
-  let pointer: {id:number;x:number;y:number;time:number;startX:number;startY:number} | null = null;
-  const paint = () => {
-    const rect = stage.getBoundingClientRect();
-    const scale = Math.min(devicePixelRatio || 1, 1.5);
-    canvas.width = Math.round(rect.width * scale); canvas.height = Math.round(rect.height * scale);
-    gl.viewport(0,0,canvas.width,canvas.height); gl.uniform2f(resolution,canvas.width,canvas.height);
-    const source = document.createElement('canvas'); source.width=canvas.width; source.height=canvas.height;
-    const ctx = source.getContext('2d'); if (!ctx) return;
-    ctx.scale(scale,scale);
-    const bg=ctx.createLinearGradient(0,0,rect.width,rect.height); bg.addColorStop(0,'#142d27'); bg.addColorStop(1,'#203b34');
-    ctx.fillStyle=bg;ctx.fillRect(0,0,rect.width,rect.height);
-    // DOM ranges preserve language, line wrapping and actual browser glyph positions.
-    const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
-    while(walker.nextNode()) {
-      const node=walker.currentNode; const parent=node.parentElement; if(!parent) continue;
-      const style=getComputedStyle(parent);ctx.font=`${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-      ctx.textBaseline='alphabetic';ctx.fillStyle=parent.closest('.saas-gradient-text')?'#a9e7c8':'#f4faf6';
-      const text=node.textContent || '';
-      for(let i=0;i<text.length;i++) {
-        if(!text[i].trim()) continue;
-        const range=document.createRange();range.setStart(node,i);range.setEnd(node,i+1);const glyph=range.getBoundingClientRect();
-        ctx.fillText(text[i],glyph.left-rect.left,glyph.top-rect.top+parseFloat(style.fontSize)*.81);
-      }
-    }
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.bindTexture(gl.TEXTURE_2D,texture);
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
-    draw();
+  const position = gl.getAttribLocation(program, 'position');
+  gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+  const resolution = gl.getUniformLocation(program, 'resolution');
+  const orientation = gl.getUniformLocation(program, 'rotation');
+  canvas.parentElement!.dataset.glassRenderer = 'webgl';
+  canvas.parentElement!.classList.add('glass-ready');
+  return {
+    resize() {
+      const scale = Math.min(devicePixelRatio || 1, 1.5);
+      canvas.width = Math.max(1, Math.round(canvas.clientWidth * scale));
+      canvas.height = Math.max(1, Math.round(canvas.clientHeight * scale));
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(resolution, canvas.width, canvas.height);
+    },
+    draw(rotation) {
+      gl.uniformMatrix3fv(orientation, false, rotation.viewToLocal());
+      gl.disable(gl.SCISSOR_TEST); gl.clear(gl.COLOR_BUFFER_BIT);
+      const side = Math.min(canvas.width, Math.ceil(canvas.height * .98));
+      gl.enable(gl.SCISSOR_TEST);
+      gl.scissor(Math.floor((canvas.width - side) / 2), 0, side, canvas.height);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    },
   };
-  const draw = () => {
-    gl.uniformMatrix3fv(rotationUniform,false,rotation.viewToLocal());gl.disable(gl.SCISSOR_TEST);gl.clear(gl.COLOR_BUFFER_BIT);
-    // Restrict expensive ray marching to the cube's possible silhouette.
-    const side=Math.min(canvas.width,Math.ceil(canvas.height*.98));
-    gl.enable(gl.SCISSOR_TEST);gl.scissor(Math.floor((canvas.width-side)/2),0,side,canvas.height);
-    gl.drawArrays(gl.TRIANGLES,0,6);
-  };
-  const run = (time:number) => {
-    frame=0;if(!visible || document.hidden) {last=0;return;}
-    const dt=last?Math.min(64,time-last):0;last=time;
-    if(!pointer && !reduce.matches){rotation.rotate(0,speed*1400*(1-Math.exp(-dt/1400)));speed*=Math.exp(-dt/1400);if(!paused && Math.abs(speed)<.00005)rotation.rotate(0,dt*.00014);}
-    draw();if(pointer || (!reduce.matches && (!paused || Math.abs(speed)>.00001))) frame=requestAnimationFrame(run);else last=0;
-  };
-  const wake=()=>{if(!frame && visible && !document.hidden)frame=requestAnimationFrame(run);};
-  canvas.addEventListener('pointerdown',event=>{if(!event.isPrimary || event.button!==0)return;pointer={id:event.pointerId,x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,time:event.timeStamp};speed=0;});
-  canvas.addEventListener('pointermove',event=>{
-    if(!pointer || event.pointerId!==pointer.id)return;
-    if(!dragging){if(Math.hypot(event.clientX-pointer.startX,event.clientY-pointer.startY)<6 || (event.pointerType==='touch' && Math.abs(event.clientX-pointer.startX)<Math.abs(event.clientY-pointer.startY)))return;dragging=true;canvas.setPointerCapture(event.pointerId);}
-    event.preventDefault();const dx=event.clientX-pointer.x;if(dx===0 && event.clientY===pointer.y)return;speed=reduce.matches?0:Math.max(-.012,Math.min(.012,dx/Math.max(1,event.timeStamp-pointer.time)*.012));
-    rotation.rotate(-(event.clientY-pointer.y)*.008,dx*.012);pointer.x=event.clientX;pointer.y=event.clientY;pointer.time=event.timeStamp;draw();
-  });
-  const release=(event:PointerEvent)=>{if(pointer?.id!==event.pointerId)return;pointer=null;dragging=false;if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);if(event.type!=='pointerup')speed=0;wake();};
-  window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
-  canvas.addEventListener('pointerenter',()=>{paused=true;});canvas.addEventListener('pointerleave',()=>{paused=false;wake();});
-  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(button=>button.addEventListener('click',()=>{rotation.rotate(0,Number(button.dataset.glassTurn)*Math.PI/2);speed=0;draw();wake();}));
-  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{rotation.reset();speed=0;draw();});
-  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();cancelAnimationFrame(frame);stage.classList.remove('glass-ready');});
-  document.addEventListener('visibilitychange',()=>{last=0;wake();});reduce.addEventListener('change',()=>{speed=0;last=0;wake();});
-  document.addEventListener('site:language-change',()=>requestAnimationFrame(paint));
-  if(typeof ResizeObserver==='function')new ResizeObserver(paint).observe(stage);else window.addEventListener('resize',paint,{passive:true});
-  if(typeof IntersectionObserver==='function')new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;last=0;if(visible)wake();}).observe(stage);
-  document.fonts.ready.then(paint);paint();stage.dataset.glassRenderer='webgl';stage.classList.add('glass-ready');wake();
 }
 
-
-/** Preserve a draggable glass volume on devices without a WebGL context. */
-function setupGlassFallback(stage: HTMLElement, canvas: HTMLCanvasElement, title: HTMLElement) {
-  const cube=document.createElement('div');cube.className='glass-fallback-cube';cube.setAttribute('aria-hidden','true');
-  for(let i=0;i<6;i++){const face=document.createElement('div');face.className=`glass-fallback-face glass-fallback-face--${i}`;cube.append(face);}
-  stage.append(cube);stage.classList.add('glass-fallback-ready');stage.dataset.glassRenderer='css';
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-  const rotation=createGlassRotation();
-  let speed=0,last=0,frame=0,visible=true,paused=false;
-  let pointer:{id:number;x:number;y:number;time:number;startX:number;startY:number;dragging:boolean}|null=null;
-  const draw=()=>{cube.style.transform=`translate(-50%,-50%) ${rotation.cssTransform()}`;};
-  const copyText=()=>{
-    const bounds=stage.getBoundingClientRect(),style=getComputedStyle(title);
-    cube.style.setProperty('--glass-copy-width',`${bounds.width}px`);cube.style.setProperty('--glass-copy-font',style.fontSize);
-    cube.querySelectorAll('.glass-fallback-face--0, .glass-fallback-face--2').forEach(face=>{
-      const copy=document.createElement('div');copy.className='glass-face-text';copy.innerHTML=title.innerHTML;
-      copy.querySelectorAll('[data-i18n]').forEach(e=>e.removeAttribute('data-i18n'));face.replaceChildren(copy);
-    });
+/** Keep the same pointer response on devices without WebGL. */
+function createCSSRenderer(stage: HTMLElement): GlassRenderer {
+  const cube = document.createElement('div');
+  cube.className = 'glass-fallback-cube'; cube.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 6; i++) {
+    const face = document.createElement('div');
+    face.className = `glass-fallback-face glass-fallback-face--${i}`; cube.append(face);
+  }
+  stage.append(cube); stage.classList.add('glass-fallback-ready'); stage.dataset.glassRenderer = 'css';
+  return {
+    resize() {},
+    draw(rotation) { cube.style.transform = `translate(-50%,-50%) ${rotation.cssTransform()}`; },
   };
-  const tick=(time:number)=>{frame=0;if(!visible||document.hidden){last=0;return;}const dt=last?Math.min(64,time-last):0;last=time;
-    if(!pointer&&!reduce.matches){rotation.rotate(0,speed*1400*(1-Math.exp(-dt/1400)));speed*=Math.exp(-dt/1400);if(!paused&&Math.abs(speed)<.00005)rotation.rotate(0,dt*.00014);}
-    draw();if(!reduce.matches&&(!paused||Math.abs(speed)>.00001))frame=requestAnimationFrame(tick);else last=0;
-  };
-  const wake=()=>{if(!frame&&visible&&!document.hidden)frame=requestAnimationFrame(tick);};
-  canvas.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,time:e.timeStamp,startX:e.clientX,startY:e.clientY,dragging:false};speed=0;});
-  canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;
-    if(!pointer.dragging){if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<6||(e.pointerType==='touch'&&Math.abs(e.clientX-pointer.startX)<Math.abs(e.clientY-pointer.startY)))return;pointer.dragging=true;canvas.setPointerCapture(e.pointerId);}
-    e.preventDefault();const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(!dx&&!dy)return;
-    speed=reduce.matches?0:Math.max(-.012,Math.min(.012,dx/Math.max(1,e.timeStamp-pointer.time)*.012));rotation.rotate(-dy*.008,dx*.012);pointer.x=e.clientX;pointer.y=e.clientY;pointer.time=e.timeStamp;draw();
-  });
-  const release=(e:PointerEvent)=>{if(pointer?.id!==e.pointerId)return;pointer=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(e.type!=='pointerup')speed=0;wake();};
-  window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
-  canvas.addEventListener('pointerenter',()=>{paused=true;});canvas.addEventListener('pointerleave',()=>{paused=false;wake();});
-  stage.querySelectorAll<HTMLButtonElement>('[data-glass-turn]').forEach(b=>b.addEventListener('click',()=>{rotation.rotate(0,Number(b.dataset.glassTurn)*Math.PI/2);speed=0;draw();wake();}));
-  stage.querySelector('[data-glass-reset]')?.addEventListener('click',()=>{rotation.reset();speed=0;draw();});
-  document.addEventListener('site:language-change',copyText);document.addEventListener('visibilitychange',()=>{last=0;wake();});
-  reduce.addEventListener('change',()=>{speed=0;last=0;wake();});
-  if(typeof ResizeObserver==='function')new ResizeObserver(copyText).observe(stage);else window.addEventListener('resize',copyText,{passive:true});
-  if(typeof IntersectionObserver==='function')new IntersectionObserver(([e])=>{visible=e.isIntersecting;last=0;if(visible)wake();}).observe(stage);
-  copyText();draw();wake();
 }
