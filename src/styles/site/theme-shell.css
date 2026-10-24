@@ -39,7 +39,13 @@ body {
 }
 
 /* A quiet photographic backdrop gives the homepage glass something to refract. */
-body.home-page { isolation: isolate; }
+body.home-page {
+  isolation: isolate;
+  --ambient-glow: rgba(51, 143, 113, .2);
+  --ambient-shade-top: rgba(8, 17, 15, .83);
+  --ambient-shade-middle: rgba(8, 17, 15, .72);
+  --ambient-shade-bottom: rgba(8, 17, 15, .87);
+}
 body.home-page::before {
   content: "";
   position: fixed;
@@ -47,8 +53,8 @@ body.home-page::before {
   z-index: -1;
   pointer-events: none;
   background-image:
-    radial-gradient(ellipse at 12% 65%, rgba(51, 143, 113, .2), transparent 65%),
-    linear-gradient(180deg, rgba(8, 17, 15, .83), rgba(8, 17, 15, .72) 55%, rgba(8, 17, 15, .87)),
+    radial-gradient(ellipse at 12% 65%, var(--ambient-glow), transparent 65%),
+    linear-gradient(180deg, var(--ambient-shade-top), var(--ambient-shade-middle) 55%, var(--ambient-shade-bottom)),
     var(--ambient-image);
   background-size: cover;
   background-position: center;

@@ -53,6 +53,7 @@ export function setupGlassHero() {
   hero.addEventListener('pointerleave', reset);
   hero.addEventListener('pointercancel', reset);
   window.addEventListener('blur', reset);
+  window.addEventListener('scroll', wake, { passive: true });
   const stop = () => { cancelAnimationFrame(frame); frame = 0; last = 0; };
   const preferenceChanged = () => {
     if (reduce.matches || !fine.matches) {
@@ -81,13 +82,13 @@ export function setupGlassHero() {
   resize();
 }
 
-/** A translucent rounded cube; the real DOM title is rendered above it. */
+/** Original refractive glass material, sampling the background beneath the DOM title. */
 function createWebGLRenderer(canvas: HTMLCanvasElement): GlassRenderer | null {
   const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
   if (!gl) return null;
   const vertex = `attribute vec2 position; varying vec2 uv; void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const fragment = `precision highp float;
-    varying vec2 uv; uniform vec2 resolution; uniform mat3 rotation;
+    varying vec2 uv; uniform sampler2D backdrop; uniform vec2 resolution; uniform mat3 rotation; uniform vec4 backdropBounds;
     float box(vec3 p){vec3 q=abs(p)-vec3(.60);return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-.075;}
     void main(){
       vec2 p=(uv-.5)*vec2(resolution.x/resolution.y,1.)*2.8;
@@ -97,16 +98,20 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): GlassRenderer | null {
       if(!found) discard;
       vec2 e=vec2(.002,0.);
       vec3 n=normalize(vec3(box(hit+e.xyy)-box(hit-e.xyy),box(hit+e.yxy)-box(hit-e.yxy),box(hit+e.yyx)-box(hit-e.yyx)));
+      vec3 bent=refract(rd,n,1./1.46);
+      vec3 exitPoint=hit+bent*1.05;
       mat3 localToView=mat3(vec3(rotation[0].x,rotation[1].x,rotation[2].x),vec3(rotation[0].y,rotation[1].y,rotation[2].y),vec3(rotation[0].z,rotation[1].z,rotation[2].z));
-      vec3 worldNormal=localToView*n;
-      float facing=max(0.,dot(-rd,n));
-      float fresnel=pow(1.-facing,3.);
+      vec3 exitWorld=localToView*exitPoint;
+      vec2 sampleUV=(exitWorld.xy/2.8/vec2(resolution.x/resolution.y,1.)+.5)*backdropBounds.zw+backdropBounds.xy;
+      float fresnel=pow(1.-max(0.,dot(-rd,n)),3.);
+      vec2 dispersion=normalize(n.xy+vec2(.001))*(.002+.009*fresnel)*backdropBounds.zw;
+      vec3 color=vec3(texture2D(backdrop,clamp(sampleUV+dispersion,.001,.999)).r,texture2D(backdrop,clamp(sampleUV,.001,.999)).g,texture2D(backdrop,clamp(sampleUV-dispersion,.001,.999)).b);
       vec3 light=normalize(vec3(-.6,.9,1.));
-      float diffuse=max(0.,dot(worldNormal,light));
-      float sheen=pow(max(0.,dot(reflect(localToView*rd,worldNormal),light)),28.);
-      vec3 color=mix(vec3(.12,.30,.25),vec3(.45,.75,.62),diffuse*.65);
-      color+=vec3(.60,.95,.80)*fresnel*.65+vec3(.85,1.,.94)*sheen*.55;
-      gl_FragColor=vec4(color,.30+fresnel*.42+sheen*.16);
+      float sheen=pow(max(0.,dot(reflect(rd,n),light)),32.);
+      color=color*.88+vec3(.15,.28,.23)*fresnel+vec3(.8,1.,.92)*sheen*.55;
+      float edge=pow(1.-max(0.,dot(-rd,n)),7.);
+      color+=vec3(.52,.85,.72)*edge*.5;
+      gl_FragColor=vec4(color,1.);
     }`;
   const compile = (type: number, source: string) => {
     const shader = gl.createShader(type);
@@ -130,6 +135,69 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): GlassRenderer | null {
   gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
   const resolution = gl.getUniformLocation(program, 'resolution');
   const orientation = gl.getUniformLocation(program, 'rotation');
+  const backdropBounds = gl.getUniformLocation(program, 'backdropBounds');
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.uniform1i(gl.getUniformLocation(program, 'backdrop'), 0);
+  const source = document.createElement('canvas');
+  const ctx = source.getContext('2d');
+  const image = new Image();
+  let lastRotation: GlassRotation | null = null;
+  const paintBackdrop = () => {
+    if (!ctx) return;
+    const width = innerWidth, height = innerHeight;
+    const scale = Math.min(devicePixelRatio || 1, 1.5, gl.getParameter(gl.MAX_TEXTURE_SIZE) / Math.max(width, height));
+    source.width = Math.max(1, Math.round(width * scale));
+    source.height = Math.max(1, Math.round(height * scale));
+    ctx.scale(source.width / width, source.height / height);
+    ctx.fillStyle = '#08110f'; ctx.fillRect(0, 0, width, height);
+    if (image.naturalWidth && image.naturalHeight) {
+      const cover = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+      const w = image.naturalWidth * cover, h = image.naturalHeight * cover;
+      ctx.drawImage(image, (width - w) / 2, (height - h) / 2, w, h);
+    }
+    // Share the background tint with CSS, without copying the foreground text into the glass.
+    const style = getComputedStyle(document.body);
+    const shade = ctx.createLinearGradient(0, 0, 0, height);
+    shade.addColorStop(0, style.getPropertyValue('--ambient-shade-top').trim());
+    shade.addColorStop(.55, style.getPropertyValue('--ambient-shade-middle').trim());
+    shade.addColorStop(1, style.getPropertyValue('--ambient-shade-bottom').trim());
+    ctx.fillStyle = shade; ctx.fillRect(0, 0, width, height);
+    ctx.save();
+    const cx = width * .12, cy = height * .65;
+    const rx = width * .88 * Math.SQRT2, ry = height * .65 * Math.SQRT2;
+    ctx.translate(cx, cy); ctx.scale(rx, ry);
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+    glow.addColorStop(0, style.getPropertyValue('--ambient-glow').trim());
+    glow.addColorStop(.65, 'transparent');
+    ctx.fillStyle = glow; ctx.fillRect(-cx / rx, -cy / ry, width / rx, height / ry);
+    ctx.restore();
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+  };
+  const draw = (rotation: GlassRotation) => {
+    lastRotation = rotation;
+    const rect = canvas.getBoundingClientRect();
+    gl.uniform4f(backdropBounds, rect.left / innerWidth, 1 - rect.bottom / innerHeight, rect.width / innerWidth, rect.height / innerHeight);
+    gl.uniformMatrix3fv(orientation, false, rotation.viewToLocal());
+    gl.disable(gl.SCISSOR_TEST); gl.clear(gl.COLOR_BUFFER_BIT);
+    const side = Math.min(canvas.width, Math.ceil(canvas.height * .98));
+    gl.enable(gl.SCISSOR_TEST);
+    gl.scissor(Math.floor((canvas.width - side) / 2), 0, side, canvas.height);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  };
+  image.onload = () => { paintBackdrop(); if (lastRotation) draw(lastRotation); };
+  window.addEventListener('resize', () => {
+    paintBackdrop(); if (lastRotation) draw(lastRotation);
+  }, { passive: true });
+  const ambient = getComputedStyle(document.body).getPropertyValue('--ambient-image').trim();
+  const url = ambient.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+  if (url) image.src = url;
   canvas.parentElement!.dataset.glassRenderer = 'webgl';
   canvas.parentElement!.classList.add('glass-ready');
   return {
@@ -139,15 +207,9 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): GlassRenderer | null {
       canvas.height = Math.max(1, Math.round(canvas.clientHeight * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(resolution, canvas.width, canvas.height);
+      paintBackdrop();
     },
-    draw(rotation) {
-      gl.uniformMatrix3fv(orientation, false, rotation.viewToLocal());
-      gl.disable(gl.SCISSOR_TEST); gl.clear(gl.COLOR_BUFFER_BIT);
-      const side = Math.min(canvas.width, Math.ceil(canvas.height * .98));
-      gl.enable(gl.SCISSOR_TEST);
-      gl.scissor(Math.floor((canvas.width - side) / 2), 0, side, canvas.height);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-    },
+    draw,
   };
 }
 
