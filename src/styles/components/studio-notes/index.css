@@ -1,0 +1,200 @@
+/* components/studio-notes/index.css: owned styles, including responsive and interaction states. */
+
+.home-notes {
+  padding-top: clamp(88px, 10vw, 144px);
+}
+
+.home-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.home-note-card {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(170px, .78fr) 1.22fr;
+  min-height: 220px;
+  overflow: hidden;
+  border-radius: 24px;
+  color: var(--text);
+  background: #14211c;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: transform .22s ease, border-color .22s ease;
+}
+
+.home-note-card::before {
+  content: "";
+  grid-area: 1 / 1;
+  min-height: 220px;
+}
+
+.home-note-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(151, 237, 196, .43);
+}
+
+.home-note-card > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(.68) brightness(.76);
+}
+
+.home-note-card__body {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 25px;
+}
+
+.note-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 7px 14px;
+  color: rgba(199, 223, 207, .6);
+  font: 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.home-note-card h3 {
+  max-width: 430px;
+  margin: 0;
+  color: #f6f9f6;
+  font-size: clamp(1.12rem, 1.65vw, 1.55rem);
+  font-weight: 620;
+  line-height: 1.25;
+  letter-spacing: -.04em;
+}
+
+.note-open {
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  color: var(--accent-soft);
+}
+
+.home-note-card__body {
+  background: linear-gradient(135deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .035)),
+    rgba(9, 24, 20, .36);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 -1px 0 rgba(255, 255, 255, .035), 0 16px 40px rgba(0, 0, 0, .2);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.home-note-card__body {
+  border-left: 1px solid rgba(255, 255, 255, .2);
+}
+
+.home-page .note-meta {
+  color: rgba(232, 245, 237, .78);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+
+  .home-note-card__body {
+    background: #20352e;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+
+  .home-note-card__body {
+    background: #20352e;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+
+  .home-page .home-note-card {
+    transition: transform .65s cubic-bezier(.25, .8, .25, 1), translate .45s cubic-bezier(.16, 1, .3, 1), border-color .3s ease;
+  }
+
+  html.motion-enabled .home-page .home-note-card[data-reveal] {
+    transition-property: opacity, transform, translate, border-color;
+    transition-duration: .95s, .95s, .45s, .3s;
+  }
+
+  .home-page .home-note-card:hover {
+    translate: 0 -6px;
+  }
+
+  .home-note-card > img {
+    transform: translate(var(--image-x, 0px), var(--image-y, 0px)) scale(1);
+    transition: transform .7s cubic-bezier(.16, 1, .3, 1), filter .4s ease;
+  }
+
+  .home-note-card:hover > img {
+    transform: translate(var(--image-x, 0px), var(--image-y, 0px)) scale(1.1);
+    filter: saturate(.95) brightness(.88);
+  }
+}
+
+@media (max-width: 760px) {
+
+  .home-notes {
+    padding-top: 92px;
+  }
+
+  .home-notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-note-card {
+    grid-template-columns: minmax(120px, .72fr) 1.28fr;
+    min-height: 180px;
+  }
+
+  .home-note-card::before {
+    min-height: 180px;
+  }
+
+  .home-note-card__body {
+    gap: 13px;
+    padding: 18px;
+  }
+
+  .home-note-card h3 {
+    font-size: 1.08rem;
+  }
+
+  .note-open {
+    right: 17px;
+    bottom: 13px;
+  }
+}
+
+@media (max-width: 520px) {
+
+  .home-notes {
+    padding-top: 72px;
+  }
+
+  .home-note-card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-note-card::before {
+    min-height: 150px;
+  }
+
+  .home-note-card__body {
+    grid-area: 2 / 1;
+    min-height: 145px;
+    padding: 19px;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, .2);
+  }
+}

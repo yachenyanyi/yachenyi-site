@@ -1,0 +1,153 @@
+/* components/contact/index.css: owned styles, including responsive and interaction states. */
+
+.contact-grid {
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: clamp(48px, 8vw, 110px);
+  padding: 76px 0 120px;
+}
+
+.contact-grid h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+  margin: 0 0 30px;
+}
+
+.contact-grid p {
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+
+.contact-options {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.contact-option {
+  background: var(--bg);
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  transition: background .2s ease;
+}
+
+.contact-option:hover {
+  background: var(--surface);
+}
+
+.contact-option strong {
+  font-size: 1rem;
+}
+
+.contact-option small {
+  color: var(--muted);
+  display: block;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .contact-grid {
+    padding: 52px 0 80px;
+    gap: 38px;
+  }
+
+  .contact-grid h2 {
+    font-size: clamp(2.35rem, 11vw, 3.3rem);
+  }
+
+  .contact-option {
+    padding: 20px;
+  }
+}
+
+.contact-option {
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  color: var(--text);
+  background: var(--glass);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(40px) saturate(135%);
+  transition: transform .23s ease, border-color .23s ease, background .23s ease;
+}
+
+.contact-option:hover {
+  transform: translateY(-4px);
+  border-color: rgba(151, 237, 196, .42);
+  background: rgba(255, 255, 255, .14);
+}
+
+.contact-grid h2 {
+  color: #f5f8f5;
+  font-family: inherit;
+  font-weight: 660;
+  letter-spacing: -.05em;
+}
+
+.contact-grid {
+  gap: clamp(34px, 6vw, 82px);
+  margin: 18px 0 86px;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  background: var(--glass);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(40px) saturate(135%);
+}
+
+.contact-grid h2 {
+  font-size: clamp(2.4rem, 4.2vw, 4rem);
+}
+
+.contact-grid p {
+  color: rgba(222, 232, 225, .76);
+  line-height: 1.78;
+}
+
+.contact-options {
+  gap: 11px;
+  border: 0;
+  background: transparent;
+}
+
+.contact-option {
+  padding: 20px 22px;
+}
+
+.contact-option strong {
+  color: #f5f8f5;
+}
+
+.contact-option small {
+  color: rgba(217, 230, 221, .65);
+}
+
+.contact-option > span:last-child {
+  color: var(--accent-soft);
+}
+
+@media (max-width: 760px) {
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-bottom: 58px;
+    padding: 22px;
+  }
+}

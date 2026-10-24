@@ -13,30 +13,38 @@ export function setupGlassHero() {
   let renderer = createWebGLRenderer(canvas) ?? createCSSRenderer(stage);
   const rotation = createGlassRotation();
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const fine = matchMedia('(hover: hover) and (pointer: fine)');
+  const fine = matchMedia('(any-hover: hover) and (any-pointer: fine)');
   let targetX = 0, targetY = 0, x = 0, y = 0;
-  let frame = 0, last = 0, visible = true;
+  let frame = 0, last = 0, visible = true, idleTime = 0;
+  const animated = () => !reduce.matches && fine.matches;
 
   const draw = () => {
     rotation.reset();
     // Viewer axes: right increases yaw; down decreases pitch, without accumulating turns.
-    rotation.rotate(-y * .14, x * .20);
-    stage.style.setProperty('--glass-offset-x', `${x * 18}px`);
-    stage.style.setProperty('--glass-offset-y', `${y * 12}px`);
+    const driftX = animated() ? Math.sin(idleTime / 2800) : 0;
+    const driftY = animated() ? Math.sin(idleTime / 3600) : 0;
+    rotation.rotate(-y * .22 + driftY * .025, x * .32 + driftX * .035);
+    stage.style.setProperty('--glass-offset-x', `${x * 22 + driftX * 1.8}px`);
+    stage.style.setProperty('--glass-offset-y', `${y * 14 + driftY * 1.2}px`);
     renderer.draw(rotation);
   };
   const run = (time: number) => {
     frame = 0;
     if (!visible || document.hidden) { last = 0; return; }
+    if (!animated()) {
+      targetX = targetY = x = y = idleTime = 0;
+      draw(); last = 0; return;
+    }
     const dt = last ? Math.min(64, time - last) : 16;
     last = time;
+    if (animated()) idleTime += dt;
     const ease = 1 - Math.exp(-dt / 150);
     x += (targetX - x) * ease;
     y += (targetY - y) * ease;
     const settled = Math.abs(targetX - x) < .001 && Math.abs(targetY - y) < .001;
     if (settled) { x = targetX; y = targetY; }
     draw();
-    if (!settled) frame = requestAnimationFrame(run);
+    if (!settled || animated()) frame = requestAnimationFrame(run);
     else last = 0;
   };
   const wake = () => {
@@ -44,7 +52,7 @@ export function setupGlassHero() {
   };
   const reset = () => { targetX = targetY = 0; wake(); };
   hero.addEventListener('pointermove', event => {
-    if (event.pointerType !== 'mouse' || !fine.matches || reduce.matches) return;
+    if (!['mouse', 'pen'].includes(event.pointerType) || !animated()) return;
     const rect = hero.getBoundingClientRect();
     targetX = Math.max(-1, Math.min(1, (event.clientX - rect.left) / rect.width * 2 - 1));
     targetY = Math.max(-1, Math.min(1, (event.clientY - rect.top) / rect.height * 2 - 1));
@@ -57,8 +65,8 @@ export function setupGlassHero() {
   const stop = () => { cancelAnimationFrame(frame); frame = 0; last = 0; };
   const preferenceChanged = () => {
     if (reduce.matches || !fine.matches) {
-      stop(); targetX = targetY = x = y = 0; draw();
-    }
+      stop(); targetX = targetY = x = y = idleTime = 0; draw();
+    } else wake();
   };
   reduce.addEventListener('change', preferenceChanged);
   fine.addEventListener('change', preferenceChanged);
@@ -80,6 +88,7 @@ export function setupGlassHero() {
     }).observe(stage);
   }
   resize();
+  wake();
 }
 
 /** Original refractive glass material, sampling the background beneath the DOM title. */
@@ -111,7 +120,7 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): GlassRenderer | null {
       color=color*.88+vec3(.15,.28,.23)*fresnel+vec3(.8,1.,.92)*sheen*.55;
       float edge=pow(1.-max(0.,dot(-rd,n)),7.);
       color+=vec3(.52,.85,.72)*edge*.5;
-      gl_FragColor=vec4(color,1.);
+      gl_FragColor=vec4(color,.24+fresnel*.46+sheen*.12);
     }`;
   const compile = (type: number, source: string) => {
     const shader = gl.createShader(type);

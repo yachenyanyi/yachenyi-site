@@ -1,0 +1,103 @@
+/* components/lab-card/index.css: owned styles, including responsive and interaction states. */
+
+.lab-card h2, .lab-card h3 {
+  font-size: 1.25rem;
+  margin: 10px 0;
+  font-weight: 600;
+}
+
+.lab-card p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.lab-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.lab-card > img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  filter: saturate(.72);
+}
+
+.lab-card-body {
+  padding: 26px;
+}
+
+@media (max-width: 640px) {
+
+  .lab-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .lab-card-body {
+    padding: 20px;
+  }
+
+  .lab-card > img {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.lab-card {
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  color: var(--text);
+  background: var(--glass);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(40px) saturate(135%);
+  transition: transform .23s ease, border-color .23s ease, background .23s ease;
+}
+
+.lab-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(151, 237, 196, .42);
+  background: rgba(255, 255, 255, .14);
+}
+
+.lab-card > img {
+  filter: saturate(.77) brightness(.8);
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+
+.lab-card:hover > img {
+  transform: scale(1.06);
+}
+
+.lab-card-body {
+  color: #f4f8f4;
+}
+
+.lab-card p {
+  color: rgba(217, 230, 221, .68);
+  line-height: 1.7;
+}
+
+.lab-card h2, .lab-card h3 {
+  color: #f6f9f6;
+  font-weight: 650;
+  letter-spacing: -.035em;
+}
+
+.lab-grid {
+  gap: 16px;
+}
+
+@media (max-width: 520px) {
+
+  .lab-grid {
+    grid-template-columns: 1fr;
+  }
+}

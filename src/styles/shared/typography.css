@@ -1,0 +1,46 @@
+/* shared/typography.css: owned styles, including responsive and interaction states. */
+
+.eyebrow {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-size: .72rem;
+  font-weight: 650;
+}
+
+.lead {
+  max-width: 700px;
+  color: var(--muted);
+  font-size: clamp(1.08rem, 1.6vw, 1.32rem);
+  line-height: 1.65;
+}
+
+.text-link {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: .92rem;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.saas-soft-text {
+  color: rgba(223, 236, 227, .59);
+  -webkit-text-fill-color: currentColor;
+}
+
+.eyebrow, .meta {
+  color: var(--accent-soft);
+  letter-spacing: .12em;
+}
+
+.text-link {
+  color: var(--accent-soft);
+}

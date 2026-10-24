@@ -1,0 +1,9 @@
+/* foundation/accessibility.css: owned styles, including responsive and interaction states. */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

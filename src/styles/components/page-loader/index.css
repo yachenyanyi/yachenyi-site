@@ -1,0 +1,40 @@
+/* components/page-loader/index.css: owned styles, including responsive and interaction states. */
+
+.page-loader {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 2px;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  background: transparent;
+  transition: opacity .22s ease;
+}
+
+.page-loader span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--text);
+  transform: scaleX(.08);
+  transform-origin: left center;
+  transition: transform .52s cubic-bezier(.22, 1, .36, 1);
+}
+
+html.motion-ready .page-loader {
+  opacity: .82;
+}
+
+html.motion-ready.page-ready .page-loader span {
+  transform: scaleX(.78);
+}
+
+html.motion-ready.page-complete .page-loader span {
+  transform: scaleX(1);
+}
+
+html.motion-ready.page-complete .page-loader {
+  opacity: 0;
+  transition: opacity .24s ease .18s;
+}

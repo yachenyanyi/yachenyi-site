@@ -1,0 +1,58 @@
+/* components/facts-list/index.css: owned styles, including responsive and interaction states. */
+
+.facts-list {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.facts-list > div {
+  display: grid;
+  grid-template-columns: minmax(140px, .35fr) 1fr;
+  gap: 30px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.facts-list dt {
+  color: var(--muted);
+}
+
+.facts-list dd {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+
+  .facts-list > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+.facts-list {
+  border-color: var(--glass-border);
+}
+
+.facts-list > div {
+  border-color: rgba(255, 255, 255, .13);
+}
+
+.facts-list dt {
+  color: rgba(197, 216, 203, .62);
+}
+
+.facts-list dd {
+  color: #f0f5f1;
+}
+
+.facts-list a {
+  color: var(--accent-soft);
+}
+
+@media (max-width: 520px) {
+
+  .facts-list > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}

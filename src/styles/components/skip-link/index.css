@@ -1,0 +1,16 @@
+/* components/skip-link/index.css: owned styles, including responsive and interaction states. */
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--text);
+  color: var(--surface);
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}

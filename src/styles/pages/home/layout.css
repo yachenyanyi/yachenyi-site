@@ -1,0 +1,26 @@
+/* pages/home/layout.css: owned styles, including responsive and interaction states. */
+
+.home-page main {
+  width: 100%;
+}
+
+.landing-stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100svh - 84px);
+  padding-bottom: 18px;
+}
+
+.home-page main > .home-notes, .home-page main > .home-contact {
+  width: min(var(--max), calc(100% - var(--page-gutter) * 2));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 760px) {
+
+  .landing-stage {
+    min-height: calc(100svh - 126px);
+  }
+}

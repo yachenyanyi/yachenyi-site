@@ -24,8 +24,9 @@ npm run verify:build
 - `src/pages`: homepage, projects, services, lab, about, contact and facts.
 - `src/content`: Markdown content collections and SEO fields.
 - `src/layouts/BaseLayout.astro`: shared navigation, language switch and footer.
-- `src/styles/global.css`: base resets, typography and shared layout defaults.
-- `src/styles/site`: glass theme modules for the site shell, home, content pages, motion, hero and navigation.
+- `src/styles/index.css`: the ordered style import entry; no component declarations.
+- `src/styles/foundation`, `shared`, `components`, `pages`: document defaults, reusable primitives, component-owned styles, and page backgrounds/layouts. See `src/styles/README.md` for the directory map.
+- `agent.md`: mandatory component styling and collaboration rules; `AGENTS.md` is the automatic agent entry point.
 - `src/lib`: translations, base-path handling and homepage motion.
 - `public/admin`: Decap CMS scaffold. Remote authentication still requires an OAuth proxy; this is not a finished management backend.
 
@@ -60,4 +61,4 @@ See [deployment details](docs/deployment/cloudflare-pages.md).
 
 The header uses one shared frosted dropdown that changes position and size between a project discovery list with a shared image preview, service image cards, and compact lab and studio lists. Project hover links a sliding selection to a blurred image crossfade; menu contents travel and crossfade while the outer glass stays clear. Desktop hover opens it; touch opens it on the first tap; the original page links remain usable. Arrow Down opens the panel for keyboard users and Escape returns focus to its trigger.
 
-The homepage title remains selectable semantic HTML above a larger refractive WebGL cube. The original glass material retains its refraction, RGB dispersion and edge highlights, sampling the photographic background beneath the text. Moving the mouse across the hero gently tilts the cube around the viewer's axes and offsets its position by up to 18px horizontally and 12px vertically; leaving the hero smoothly returns it to its starting pose. Rightward movement increases yaw and downward movement decreases pitch. The effect stops when settled, offscreen or hidden, and remains still for touch devices and reduced-motion preferences. Without WebGL, a CSS 3D cube uses the same pointer response and layering. These are original implementations inspired by MotionSites Halden and Design World public previews.
+The homepage title remains selectable semantic HTML above a larger transparent WebGL glass cube. Its material retains refraction, RGB dispersion and edge highlights, sampling the photographic background beneath the text. Moving the mouse across the hero tilts the cube around the viewer's axes and offsets its position by up to 22px horizontally and 14px vertically, with a subtle idle float of less than two pixels. Leaving the hero smoothly returns the pointer offset to its starting pose. Rightward movement increases yaw and downward movement decreases pitch. Rendering pauses offscreen or when hidden, and remains still for devices without a hovering precision pointer and for reduced-motion preferences. Without WebGL, a CSS 3D cube uses the same pointer response and layering. These are original implementations inspired by MotionSites Halden and Design World public previews.
