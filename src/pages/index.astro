@@ -37,35 +37,45 @@ const schema = [
   <section
     class="immersive-hero"
     aria-labelledby="home-title"
-    style={`--hero-image: url("${withBase('/images/generated/home-misty-mountains.webp')}")`}
   >
     <div class="immersive-hero__content">
-      <div class="hero-kicker" data-reveal>
-        <span class="hero-kicker__dot" aria-hidden="true"></span>
-        <span data-i18n="home.saas.eyebrow">Independent AI Software Studio</span>
-      </div>
-      <div class="glass-title-stage">
       <h1 id="home-title" class="immersive-title" data-i18n="home.saas.title">
-        Build smarter software.<br /><span class="saas-gradient-text">Make every step count.</span>
+        I build tools for complex workflows.
       </h1>
-        <canvas class="glass-title-canvas" aria-hidden="true"></canvas>
-      </div>
       <p class="immersive-lead" data-reveal data-i18n="home.saas.lead">
         From agent orchestration to everyday automation, I turn complex workflows into focused, reliable software — built to be understood, improved, and used.
       </p>
       <div class="hero-actions" data-reveal>
         <a href={withBase('/projects/')} class="button button-accent">
-          <span data-i18n="home.saas.action.projects">Explore projects</span><span aria-hidden="true">↗</span>
+          <span data-i18n="home.saas.action.projects">Explore projects</span>
         </a>
         <a href={withBase('/contact/')} class="button button-glass">
-          <span data-i18n="home.saas.action.contact">Let's build together</span><span aria-hidden="true">→</span>
+          <span data-i18n="home.saas.action.contact">Let's build together</span>
         </a>
       </div>
-      <LiquidGlass class="hero-proof" data-reveal>
-        <div><span data-i18n="home.proof.approach">Approach</span><strong data-i18n="home.proof.approach.value">Independent by design</strong></div>
-        <div><span data-i18n="home.proof.focus">Focus</span><strong data-i18n="home.proof.focus.value">AI-native systems</strong></div>
-        <div><span data-i18n="home.proof.standard">Standard</span><strong data-i18n="home.proof.standard.value">Small and reliable</strong></div>
-      </LiquidGlass>
+    </div>
+    <div class="hero-artwork glass-title-stage" aria-hidden="true">
+      <svg class="hero-artwork__diagram" viewBox="0 0 560 440" fill="none">
+        <defs>
+          <radialGradient id="orbit-light">
+            <stop stop-color="#7189ec" stop-opacity=".42" />
+            <stop offset="1" stop-color="#26345e" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <ellipse cx="280" cy="220" rx="255" ry="210" fill="url(#orbit-light)" />
+        <g stroke="#a9baff" stroke-opacity=".32">
+          <circle cx="280" cy="220" r="163" />
+          <circle cx="280" cy="220" r="188" stroke-dasharray="1 7" />
+          <ellipse cx="280" cy="220" rx="230" ry="102" transform="rotate(-28 280 220)" />
+          <ellipse cx="280" cy="220" rx="230" ry="102" transform="rotate(28 280 220)" />
+        </g>
+        <g fill="#ffd9a0">
+          <circle cx="114" cy="271" r="4" />
+          <circle cx="431" cy="156" r="5" />
+        </g>
+        <circle cx="378" cy="357" r="3" fill="#b9c3df" />
+      </svg>
+      <canvas class="glass-title-canvas"></canvas>
     </div>
   </section>
 
@@ -99,7 +109,6 @@ const schema = [
             <span class="project-arrow" aria-hidden="true">↗</span>
           </div>
           <LiquidGlass class="home-project-card__body" variant="strip" image={withBase(projectImages[project.id] ?? '/images/generated/ai-network-workbench.webp')}>
-            <span class="project-index">0{index + 1} / PROJECT</span>
             <h3>{project.data.title}</h3>
           </LiquidGlass>
         </a>

@@ -107,7 +107,7 @@ export const staticTranslations = {
 
     // SaaS-inspired home page
     'home.saas.eyebrow': '独立 AI 软件工作室',
-    'home.saas.title': '让软件更聪明。<br /><span class="saas-gradient-text">让每一步都有价值。</span>',
+    'home.saas.title': '把复杂流程做成趁手的工具',
     'home.saas.lead': '从多智能体协作到日常工作流自动化，把复杂的需求转化为专注、可靠、真正可用的软件——易于理解、持续改进。',
     'home.saas.action.projects': '探索项目',
     'home.saas.action.contact': '一起构建',
