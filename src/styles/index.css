@@ -1,5 +1,8 @@
 /* Explicit ordered entry; declarations belong to their component. */
 @import '@fontsource-variable/space-grotesk';
+@import '@fontsource/noto-sans-sc/chinese-simplified-400.css';
+@import '@fontsource/noto-sans-sc/chinese-simplified-500.css';
+@import '@fontsource/noto-sans-sc/chinese-simplified-700.css';
 @import '@fontsource/jetbrains-mono/latin-400.css';
 @import './foundation/tokens.css';
 @import './foundation/base.css';

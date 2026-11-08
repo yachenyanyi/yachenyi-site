@@ -1,38 +1,90 @@
-/* Inner-page introduction: open editorial layout, no enclosing panel. */
+/* Inner-page introduction: cartographic header aligned with the homepage system. */
 .page-intro {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   justify-items: start;
-  gap: 24px;
-  padding: clamp(64px, 8vw, 112px) 0 clamp(48px, 6vw, 80px);
+  gap: 22px;
+  padding: clamp(52px, 6.5vw, 88px) clamp(250px, 29vw, 380px) clamp(48px, 6vw, 76px) 0;
+}
+
+.page-intro::before {
+  content: "";
+  position: absolute;
+  top: clamp(44px, 5.5vw, 72px);
+  right: 0;
+  bottom: clamp(44px, 5.5vw, 68px);
+  width: clamp(220px, 25vw, 330px);
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid #2159aa30;
+  background:
+    linear-gradient(90deg, transparent 49.7%, #2159aa1a 50%, transparent 50.3%),
+    linear-gradient(transparent 49.7%, #2159aa1a 50%, transparent 50.3%),
+    repeating-linear-gradient(0deg, transparent 0 43px, #2159aa0a 43px 44px),
+    repeating-linear-gradient(90deg, transparent 0 43px, #2159aa0a 43px 44px),
+    radial-gradient(ellipse at 68% 72%, #b8dadb55, transparent 72%),
+    #f2f7fa;
+}
+
+.page-intro::after {
+  content: "Y / ARCHIVE — VERIFIED";
+  position: absolute;
+  right: 14px;
+  bottom: calc(clamp(44px, 5.5vw, 68px) + 14px);
+  z-index: -1;
+  pointer-events: none;
+  padding: 5px 10px;
+  background: #19272e;
+  border-left: 3px solid var(--cyan);
+  color: #fff;
+  font: 9px var(--font-mono);
+  letter-spacing: .12em;
 }
 
 .page-intro > * { min-width: 0; }
 
-.page-intro .eyebrow { margin: 0; }
+.page-intro .eyebrow {
+  margin: 0;
+  padding: 6px 12px;
+  background: #19272e;
+  border-left: 3px solid var(--cyan);
+  color: #fff;
+}
 
 .page-title {
   max-width: 100%;
   margin: 0;
   color: var(--text);
   font-family: inherit;
-  font-size: clamp(2.5rem, 6.5vw, 6rem);
-  font-weight: 650;
+  font-size: clamp(2.5rem, 5.8vw, 5.4rem);
+  font-weight: 700;
   line-height: 1.14;
-  letter-spacing: 0;
+  letter-spacing: -.03em;
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
+html[lang="zh-CN"] .page-title {
+  letter-spacing: -.015em;
+  line-height: 1.2;
+}
+
 .page-intro .lead {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0;
-  color: var(--muted);
-  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
   line-height: 1.85;
 }
 
+@media (max-width: 960px) {
+  .page-intro { padding-right: 0; }
+  .page-intro::before, .page-intro::after { display: none; }
+}
+
 @media (max-width: 640px) {
-  .page-intro { gap: 20px; padding: 48px 0 40px; }
-  .page-title { font-size: clamp(2rem, 9vw, 3.5rem); line-height: 1.2; }
+  .page-intro { gap: 18px; padding: 40px 0 36px; }
+  .page-title { font-size: clamp(2rem, 9vw, 3.4rem); line-height: 1.2; }
 }

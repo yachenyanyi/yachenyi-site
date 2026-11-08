@@ -16,6 +16,7 @@
   --mist: #dcebed;
   --coral: #bc695c;
   --font-mono: 'JetBrains Mono', monospace;
-  font-family: 'Space Grotesk Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  /* 西文与中文共用同一族系：西文使用 Space Grotesk，中文使用 Noto Sans SC。 */
+  font-family: 'Space Grotesk Variable', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-synthesis: none;
 }
