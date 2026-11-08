@@ -1,8 +1,9 @@
-/* Explicit style order: foundations, shared primitives, components, then accessibility. */
+/* Explicit ordered entry; declarations belong to their component. */
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource/jetbrains-mono/latin-400.css';
 @import './foundation/tokens.css';
 @import './foundation/base.css';
 @import './shared/typography.css';
-@import './shared/glass-surface.css';
 @import './shared/section.css';
 @import './components/skip-link/index.css';
 @import './components/page-loader/index.css';
@@ -17,17 +18,8 @@
 @import './components/about/index.css';
 @import './components/contact/index.css';
 @import './components/facts-list/index.css';
-@import './pages/home/background.css';
-@import './pages/home/layout.css';
-@import './components/hero/index.css';
-@import './components/hero/proof.css';
-@import './components/glass-cube/index.css';
-@import './components/project-carousel/card.css';
-@import './components/project-carousel/index.css';
-@import './components/studio-notes/index.css';
-@import './components/home-contact/index.css';
+@import './components/studio/index.css';
+@import './components/cartographic-art/index.css';
 @import './components/footer/index.css';
-@import './components/liquid-glass/index.css';
-@import './shared/card-preview.css';
 @import './shared/reveal.css';
 @import './foundation/accessibility.css';

@@ -1,5 +1,16 @@
 export const staticTranslations = {
   zh: {
+    'new.hero.one': '让复杂，变简单。',
+    'new.hero.two': '让想法，有可能。',
+    'new.hero.copy': '独立构建 AI 智能体、自动化与软件工具。把复杂的工作，变成清晰、顺手的体验。',
+    'new.hero.action': '走进我的工作台',
+    'new.window.hint': '一个窗口，不同可能。',
+    'new.motion': '暂停动态',
+    'new.project': '了解这个项目',
+    'new.manifesto': '保持小而精。<br/>把可能做大。',
+    'new.manifesto.copy': '一个独立开发者，从第一个问题到最终产品，保持直接。少一点噪音，多一点用心，做能理解、能持续使用的系统。',
+    'new.notes': '在构建中思考。',
+    'new.cta': '一起做点<br/>有意义的事。',
     'nav.project.agent': '智能体协作与可持续的项目状态。',
     'nav.project.issue': '把分散的对话整理为清晰的问题包。',
     'nav.project.screen': '探索自然语言驱动的安卓自动化。',

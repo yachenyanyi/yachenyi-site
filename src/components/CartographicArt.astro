@@ -1,0 +1,22 @@
+---
+interface Props { variant?: 'hero' | 'window'; }
+const { variant = 'hero' } = Astro.props;
+---
+<div class:list={['cartographic-art', `cartographic-art--${variant}`]} aria-hidden="true">
+  <svg viewBox="0 0 360 400" fill="none" focusable="false">
+    <path class="cartographic-wash" d="M60 340V180C60 90 125 44 180 24C235 44 300 90 300 180V340Z" />
+    <g class="cartographic-contours">
+      {Array.from({length:9},(_,i)=> <path d={`M${36+i*12} 350 C${80+i*9} 306 ${54+i*13} 145 180 ${30+i*10} C${306-i*13} 145 ${280-i*9} 306 ${324-i*12} 350`} />)}
+      <path d="M80 350V190a100 100 0 0 1 200 0v160M112 350V190a68 68 0 0 1 136 0v160" />
+    </g>
+    <g class="cartographic-guides">
+      <path d="M180 8V385M18 350H342M28 104H330M28 245H330" />
+      <path d="M175 18l5-10 5 10M332 345l10 5-10 5" />
+      {Array.from({length:10},(_,i)=><path d={`M174 ${40+i*32}h12M${36+i*32} 344v12`} />)}
+    </g>
+    <g class="cartographic-fragments"><path d="M37 135h65v47H37zM258 268h66v46h-66z"/><path d="M44 142h51v33H44zM265 275h52v32h-52z"/></g>
+    <g class="cartographic-nodes"><circle cx="180" cy="30" r="4"/><circle cx="112" cy="245" r="4"/><circle cx="280" cy="190" r="4"/><circle cx="180" cy="350" r="4"/></g>
+    <g class="cartographic-labels"><text x="192" y="32">Y / 01</text><text x="68" y="239">N—02</text><text x="291" y="186">03</text><text x="192" y="379">0,0 → X</text><text x="35" y="126">[ FIELD ]</text><text x="259" y="334">[ STATE ]</text></g>
+  </svg>
+  <span class="cartographic-index">SYSTEM / ATLAS</span>
+</div>

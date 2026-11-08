@@ -1,0 +1,17 @@
+.cartographic-art { pointer-events:none; color:var(--accent); }
+.cartographic-art svg { display:block; width:100%; height:100%; overflow:visible; }
+.cartographic-art--hero { position:absolute; width:310px; height:350px; right:0; top:100px; z-index:-1; }
+.cartographic-wash { fill:#d7e9ed; opacity:.48; }
+.cartographic-contours { stroke:currentColor; stroke-width:.7; opacity:.38; }
+.cartographic-guides { stroke:currentColor; stroke-width:.8; opacity:.65; }
+.cartographic-guides>path:first-child { stroke-dasharray:9 6; }
+.cartographic-fragments { stroke:currentColor; stroke-width:.8; fill:#f8fafb; }
+.cartographic-fragments>path:last-child { fill:#b4d7df; stroke:none; }
+.cartographic-nodes { fill:#172b36; }
+.cartographic-labels { fill:currentColor; font:9px var(--font-mono); letter-spacing:.04em; }
+.cartographic-index { position:absolute; top:50%; left:-18px; writing-mode:vertical-rl; font:8px var(--font-mono); letter-spacing:.22em; color:#758a9a; }
+.cartographic-art--window { position:absolute; width:72%; height:105%; right:-8%; top:-1%; opacity:.48; transform:translateY(calc(var(--story-progress,0)*-16px)); }
+.cartographic-art--window .cartographic-index { display:none; }
+@media(max-width:1100px) { .cartographic-art--hero { width:230px; opacity:.7; } }
+@media(max-width:900px) { .cartographic-art--hero { display:none; } }
+@media(prefers-reduced-motion:reduce) { .cartographic-art--window { transform:none; } }

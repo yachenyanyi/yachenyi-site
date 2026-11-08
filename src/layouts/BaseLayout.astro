@@ -34,7 +34,7 @@ const isCurrent = (prefix: string) =>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="theme-color" content="#09120f" />
+    <meta name="theme-color" content="#fafaf7" />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -72,7 +72,6 @@ const isCurrent = (prefix: string) =>
   </head>
   <body
     class:list={{ 'home-page': logicalPath === '/' }}
-    style={logicalPath === '/' ? `--ambient-image: url("${withBase('/images/generated/home-misty-mountains.webp')}")` : undefined}
   >
     <div class="page-loader" aria-hidden="true"><span></span></div>
     <a class="skip-link" href="#content" data-i18n="common.skip">Skip to content</a>
