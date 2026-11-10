@@ -18,10 +18,13 @@
   width: clamp(220px, 25vw, 330px);
   z-index: -1;
   pointer-events: none;
-  border: 1px solid #2159aa30;
+  border: 1px solid #2159aa35;
+  border-radius: 4px;
+  box-shadow: 0 14px 34px -26px #243c7135;
   background:
-    linear-gradient(90deg, transparent 49.7%, #2159aa1a 50%, transparent 50.3%),
-    linear-gradient(transparent 49.7%, #2159aa1a 50%, transparent 50.3%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M76 196V110a84 84 0 0 1 168 0v86' fill='%23d7e9ed' fill-opacity='.48'/%3E%3Ccircle cx='160' cy='110' r='64' stroke='%232159aa' stroke-opacity='.32' stroke-width='.9'/%3E%3Ccircle cx='160' cy='110' r='40' stroke='%232159aa' stroke-opacity='.26' stroke-dasharray='4 4' stroke-width='.9'/%3E%3Cpath d='M26 110h268M160 18v184' stroke='%232159aa' stroke-opacity='.38' stroke-width='.8'/%3E%3Crect x='42' y='44' width='48' height='30' fill='%23f8fafb' stroke='%232159aa' stroke-opacity='.55' stroke-width='.9'/%3E%3Crect x='47' y='49' width='38' height='20' fill='%23b4d7df' fill-opacity='.65'/%3E%3Crect x='228' y='132' width='50' height='30' fill='%23f8fafb' stroke='%232159aa' stroke-opacity='.55' stroke-width='.9'/%3E%3Cpath d='M90 59h42l28 51h68' stroke='%232159aa' stroke-opacity='.55' stroke-dasharray='4 5' stroke-width='1'/%3E%3Ccircle cx='160' cy='46' r='3.2' fill='%23172b36'/%3E%3Ccircle cx='160' cy='110' r='3.5' fill='%23079dc4'/%3E%3Ccircle cx='224' cy='110' r='3.2' fill='%23172b36'/%3E%3Ctext x='168' y='36' fill='%232159aa' font-family='monospace' font-size='8' letter-spacing='1'%3EAXIS / 01%3C/text%3E%3Ctext x='42' y='37' fill='%232159aa' font-family='monospace' font-size='7.5' letter-spacing='1'%3E%5B FIELD %5D%3C/text%3E%3Ctext x='272' y='28' fill='%23079dc4' font-family='sans-serif' font-size='18'%3E%E2%9C%B3%3C/text%3E%3C/svg%3E") center / cover no-repeat,
+    linear-gradient(90deg, transparent 49.7%, #2159aa16 50%, transparent 50.3%),
+    linear-gradient(transparent 49.7%, #2159aa16 50%, transparent 50.3%),
     repeating-linear-gradient(0deg, transparent 0 43px, #2159aa0a 43px 44px),
     repeating-linear-gradient(90deg, transparent 0 43px, #2159aa0a 43px 44px),
     radial-gradient(ellipse at 68% 72%, #b8dadb55, transparent 72%),

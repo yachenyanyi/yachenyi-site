@@ -2,6 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '../../lib/site';
+import { staticTranslations } from '../../lib/i18n';
+
+const zh = staticTranslations.zh as Record<string, string>;
+const i18nKey = (key: string) => (key in zh ? key : undefined);
 
 const posts = (await getCollection('lab'))
   .filter(({ data }) => !data.draft)
@@ -31,8 +35,8 @@ const images = [
           <img src={withBase(images[index % images.length])} alt="" loading="lazy" />
           <div class="lab-card-body">
             <div class="meta">{post.data.publishedAt.toISOString().slice(0, 10)} · {post.data.tags.slice(0, 2).join(' / ')}</div>
-            <h2>{post.data.title}</h2>
-            <p>{post.data.summary}</p>
+            <h2 data-i18n={i18nKey(`new.lab.${post.id}.title`)}>{post.data.title}</h2>
+            <p data-i18n={i18nKey(`new.lab.${post.id}.summary`)}>{post.data.summary}</p>
           </div>
         </a>
       ))}

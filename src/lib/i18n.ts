@@ -144,6 +144,12 @@ export const staticTranslations = {
     'service.model.value': '独立 / 聚焦协作',
     'service.principle': '原则',
     'service.principle.value': '最小可靠系统优先',
+    'service.ai-agents.title': 'AI 智能体系统',
+    'service.ai-agents.summary': '设计与实现实用的智能体工作流、工具调用、任务路由与持久化项目状态。',
+    'service.automation.title': '自动化与内部工具',
+    'service.automation.summary': '用聚焦的自动化流程、数据管道与清晰的小工具替代重复的日常人工操作。',
+    'service.web-systems.title': 'Web 系统与应用',
+    'service.web-systems.summary': '构建快速、易维护的网站与聚焦型 Web 应用，兼具清晰的信息架构与扎实的技术底座。',
 
     'lab.eyebrow': '实验室 / 构建记录',
     'lab.title': '来自工作台的<br />记录。',

@@ -1,21 +1,27 @@
-/* Service index cards: fine borders and restrained blue affordances. */
+/* Service index cards: cartographic icon stage and restrained blue affordances. */
 .service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.service-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; min-width: 0; min-height: 320px; padding: 28px; border: 1px solid var(--line); color: var(--text); background: var(--surface); transition: border-color .2s ease; }
-.service-card:hover, .service-card:focus-visible { border-color: var(--accent); }
+.service-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-width: 0; min-height: 320px; padding: 26px 28px 28px; border: 1px solid #c8cdd7; border-radius: 5px; color: var(--text); background: linear-gradient(180deg, #fff 0%, #f9fbfd 100%); box-shadow: 0 14px 32px -24px #243c7130; transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
+.service-card:hover, .service-card:focus-visible { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 20px 38px -24px #2159aa42; }
 .service-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.service-card h2, .service-card h3 { margin: 12px 0; color: var(--text); font-size: 1.3rem; font-weight: 650; line-height: 1.4; letter-spacing: 0; overflow-wrap: anywhere; text-wrap: balance; }
-.service-card p { margin-bottom: 0; color: var(--muted); line-height: 1.8; overflow-wrap: anywhere; }
-.service-icon { display: block; width: 80px; height: 80px; object-fit: contain; }
-.card-arrow { position: absolute; top: 28px; right: 28px; color: var(--accent); }
+.service-card .meta { display: inline-grid; place-items: center; width: 32px; height: 36px; margin-bottom: 6px; background: #cfe0ea; color: var(--accent); font: 11px var(--font-mono); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.service-card:first-child .meta { background: var(--cyan); color: #fff; }
+.service-card h2, .service-card h3 { margin: 10px 0 12px; color: var(--text); font-size: 1.32rem; font-weight: 650; line-height: 1.38; letter-spacing: -.01em; overflow-wrap: anywhere; text-wrap: balance; transition: color .2s; }
+html[lang="zh-CN"] .service-card h2, html[lang="zh-CN"] .service-card h3 { font-weight: 500; letter-spacing: .01em; }
+.service-card:hover h2, .service-card:hover h3 { color: var(--accent); }
+.service-card p { margin-bottom: 0; color: var(--ink-soft); font-size: .93rem; line-height: 1.8; overflow-wrap: anywhere; }
+.service-icon { display: block; width: 92px; height: 92px; padding: 14px; border: 1px solid #2159aa28; border-radius: 4px; background: repeating-linear-gradient(0deg, transparent 0 21px, #2159aa0c 21px 22px), repeating-linear-gradient(90deg, transparent 0 21px, #2159aa0c 21px 22px), radial-gradient(circle at 70% 30%, #cfe4ea66, transparent 70%), #f2f7fa; object-fit: contain; }
+.card-arrow { position: absolute; top: 26px; right: 26px; display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--accent); font-size: .85rem; transition: border-color .2s, background .2s, color .2s, transform .2s; }
+.service-card:hover .card-arrow { border-color: var(--accent); background: var(--accent); color: #fff; transform: translate(2px, -2px); }
 @media (max-width: 1000px) {
   .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
   .service-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
-  .service-card { min-height: 260px; padding: 24px 20px; gap: 32px; }
-  .service-icon { width: 64px; height: 64px; }
+  .service-card { min-height: 260px; padding: 24px 20px; gap: 24px; }
+  .service-icon { width: 76px; height: 76px; padding: 12px; }
   .card-arrow { top: 24px; right: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .service-card { transition: none; }
+  .service-card, .card-arrow { transition: none; }
+  .service-card:hover, .service-card:hover .card-arrow { transform: none; }
 }

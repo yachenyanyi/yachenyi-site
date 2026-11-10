@@ -1,12 +1,16 @@
-/* Lab index cards share the flat editorial rhythm of project cards. */
+/* Lab index cards share the cartographic framing of project cards. */
 .lab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
-.lab-card { min-width: 0; border: 1px solid var(--line); color: var(--text); background: var(--surface); transition: border-color .2s ease; }
-.lab-card:hover, .lab-card:focus-visible { border-color: var(--accent); }
+.lab-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid #c8cdd7; border-radius: 5px; overflow: hidden; color: var(--text); background: var(--surface); box-shadow: 0 14px 32px -24px #243c7130; transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
+.lab-card:hover, .lab-card:focus-visible { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 20px 38px -24px #2159aa42; }
 .lab-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.lab-card > img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.lab-card-body { min-width: 0; padding: 28px; }
-.lab-card h2, .lab-card h3 { margin: 12px 0; color: var(--text); font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 650; line-height: 1.4; letter-spacing: 0; overflow-wrap: anywhere; text-wrap: balance; }
-.lab-card p { margin-bottom: 0; color: var(--muted); line-height: 1.8; overflow-wrap: anywhere; }
+.lab-card > img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-bottom: 1px solid var(--line); }
+.lab-card-body { min-width: 0; padding: 26px 28px 28px; flex: 1; background: linear-gradient(180deg, #fff 0%, #f9fbfd 100%); }
+.lab-card .meta { display: inline-flex; align-items: center; gap: 8px; padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px dashed var(--line); color: var(--accent); }
+.lab-card .meta::before { content: "◆"; color: var(--cyan); font-size: .65rem; }
+.lab-card h2, .lab-card h3 { margin: 12px 0 10px; color: var(--text); font-size: clamp(1.22rem, 1.9vw, 1.58rem); font-weight: 650; line-height: 1.38; letter-spacing: -.01em; overflow-wrap: anywhere; text-wrap: balance; transition: color .2s; }
+html[lang="zh-CN"] .lab-card h2, html[lang="zh-CN"] .lab-card h3 { font-weight: 500; letter-spacing: .01em; }
+.lab-card:hover h2, .lab-card:hover h3 { color: var(--accent); }
+.lab-card p { margin-bottom: 0; color: var(--ink-soft); font-size: .94rem; line-height: 1.82; overflow-wrap: anywhere; }
 .lab-card-body a { color: var(--accent); text-underline-offset: 4px; }
 @media (max-width: 640px) {
   .lab-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -14,4 +18,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .lab-card { transition: none; }
+  .lab-card:hover { transform: none; }
 }

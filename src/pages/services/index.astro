@@ -2,6 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '../../lib/site';
+import { staticTranslations } from '../../lib/i18n';
+
+const zh = staticTranslations.zh as Record<string, string>;
+const i18nKey = (key: string) => (key in zh ? key : undefined);
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const serviceIcons: Record<string, string> = {
@@ -28,8 +32,8 @@ const serviceIcons: Record<string, string> = {
           <img class="service-icon" src={withBase(serviceIcons[service.id] ?? '/icons/services/web-systems.webp')} alt="" loading="lazy" width="92" height="92" />
           <div>
             <div class="meta">0{service.data.order}</div>
-            <h2>{service.data.title}</h2>
-            <p>{service.data.summary}</p>
+            <h2 data-i18n={i18nKey(`service.${service.id}.title`)}>{service.data.title}</h2>
+            <p data-i18n={i18nKey(`service.${service.id}.summary`)}>{service.data.summary}</p>
           </div>
           <span class="card-arrow" aria-hidden="true">↗</span>
         </a>

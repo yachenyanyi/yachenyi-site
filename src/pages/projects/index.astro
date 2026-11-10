@@ -2,6 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '../../lib/site';
+import { staticTranslations } from '../../lib/i18n';
+
+const zh = staticTranslations.zh as Record<string, string>;
+const i18nKey = (key: string) => (key in zh ? key : undefined);
 
 const projects = (await getCollection('projects'))
   .sort((a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf());
@@ -34,7 +38,7 @@ const images: Record<string, string> = {
           <div class="project-card-body">
             <div class="meta">{project.data.status} · {project.data.updatedAt.toISOString().slice(0, 10)}</div>
             <h2>{project.data.title}</h2>
-            <p>{project.data.summary}</p>
+            <p data-i18n={i18nKey(`new.work.${project.id}.summary`)}>{project.data.summary}</p>
           </div>
         </a>
       ))}

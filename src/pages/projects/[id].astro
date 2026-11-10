@@ -2,6 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { withBase } from '../../lib/site';
+import { staticTranslations } from '../../lib/i18n';
+
+const zh = staticTranslations.zh as Record<string, string>;
+const i18nKey = (key: string) => (key in zh ? key : undefined);
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -39,7 +43,7 @@ const schema = {
     <div>
       <div class="eyebrow"><span data-i18n="project.label">Project</span> / {project.data.status}</div>
       <h1 class="article-title">{project.data.title}</h1>
-      <p class="lead article-summary">{project.data.summary}</p>
+      <p class="lead article-summary" data-i18n={i18nKey(`new.work.${project.id}.summary`)}>{project.data.summary}</p>
       {project.data.github && (
         <div class="hero-actions">
           <a class="button button-dark" href={project.data.github} data-i18n="project.source">View source ↗</a>

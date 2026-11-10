@@ -1,3 +1,52 @@
-/* Service article artwork on an unembellished white field. */
-.service-symbol { display: grid; place-items: center; min-width: 0; aspect-ratio: 4 / 3; border: 1px solid var(--line); background: var(--surface); }
-.service-symbol img { display: block; width: min(46%, 190px); max-width: 100%; height: auto; object-fit: contain; }
+/* Service article artwork on a cartographic coordinate field. */
+.service-symbol {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  padding: 28px;
+  border: 1px solid #2159aa35;
+  border-radius: 5px;
+  box-shadow: 0 16px 38px -26px #243c7135;
+  background:
+    linear-gradient(90deg, transparent 49.7%, #2159aa18 50%, transparent 50.3%),
+    linear-gradient(transparent 49.7%, #2159aa18 50%, transparent 50.3%),
+    repeating-linear-gradient(0deg, transparent 0 43px, #2159aa0a 43px 44px),
+    repeating-linear-gradient(90deg, transparent 0 43px, #2159aa0a 43px 44px),
+    radial-gradient(ellipse at 68% 72%, #b8dadb55, transparent 72%),
+    #f2f7fa;
+}
+.service-symbol::before {
+  content: "Y / SERVICE — ARCHITECTURE";
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 5px 10px;
+  background: #19272e;
+  border-left: 3px solid var(--cyan);
+  color: #fff;
+  font: 9px var(--font-mono);
+  letter-spacing: .12em;
+}
+.service-symbol::after {
+  content: "FIG. 01 — SPEC";
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  color: var(--accent);
+  font: 9px var(--font-mono);
+  letter-spacing: .1em;
+}
+.service-symbol img {
+  display: block;
+  width: min(44%, 172px);
+  max-width: 100%;
+  height: auto;
+  padding: 22px;
+  border: 1px solid #2159aa30;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 6px 6px 0 #2159aa12;
+  object-fit: contain;
+}
